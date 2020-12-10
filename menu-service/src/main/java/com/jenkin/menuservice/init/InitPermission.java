@@ -1,7 +1,7 @@
 package com.jenkin.menuservice.init;
 
 import cn.hutool.core.util.ArrayUtil;
-import com.jenkin.common.entity.pos.PermissionPo;
+import com.jenkin.common.entity.pos.system.PermissionPo;
 import com.jenkin.common.anno.MyPermission;
 import com.jenkin.menuservice.service.PermissionService;
 import com.jenkin.common.utils.ProxyUtil;

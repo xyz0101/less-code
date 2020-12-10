@@ -1,7 +1,7 @@
 package com.jenkin.menuservice.service.impl;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.jenkin.common.entity.pos.UserRolePo;
+import com.jenkin.common.entity.pos.system.UserRolePo;
 import com.jenkin.common.config.MyQueryWrapper;
 import com.jenkin.menuservice.dao.UserRoleMapper;
 

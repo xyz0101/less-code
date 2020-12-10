@@ -1,7 +1,7 @@
 package com.jenkin.menuservice.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.jenkin.common.entity.pos.PermissionPo;
+import com.jenkin.common.entity.pos.system.PermissionPo;
 
 /**
  * @author jenkin

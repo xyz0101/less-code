@@ -1,7 +1,7 @@
 package com.jenkin.menuservice.service.impl;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.jenkin.common.entity.pos.RolePo;
+import com.jenkin.common.entity.pos.system.RolePo;
 import com.jenkin.menuservice.dao.RoleMapper;
 import com.jenkin.menuservice.service.RoleService;
 import org.springframework.stereotype.Service;

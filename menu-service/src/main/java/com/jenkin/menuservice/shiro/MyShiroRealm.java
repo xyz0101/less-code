@@ -1,11 +1,11 @@
 package com.jenkin.menuservice.shiro;
 
 
-import com.jenkin.common.entity.dtos.RoleDto;
-import com.jenkin.common.entity.dtos.UserDto;
-import com.jenkin.common.entity.pos.MenuPo;
-import com.jenkin.common.entity.pos.RolePo;
-import com.jenkin.common.entity.pos.UserRolePo;
+import com.jenkin.common.entity.dtos.system.RoleDto;
+import com.jenkin.common.entity.dtos.system.UserDto;
+import com.jenkin.common.entity.pos.system.MenuPo;
+import com.jenkin.common.entity.pos.system.RolePo;
+import com.jenkin.common.entity.pos.system.UserRolePo;
 import com.jenkin.common.utils.BeanUtils;
 import com.jenkin.common.utils.ShiroUtils;
 import com.jenkin.menuservice.service.*;

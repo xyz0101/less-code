@@ -29,8 +29,8 @@ public class Response<T> implements Serializable {
         this.data = t;
     }
 
-    public static Response ok(){
-        return new Response("200","请求成功");
+    public static  <T> Response<T> ok(){
+        return new Response<>("200","请求成功");
     }
     public static <T> Response<T> ok(T t){
         return new Response<T>("200","请求成功",t);

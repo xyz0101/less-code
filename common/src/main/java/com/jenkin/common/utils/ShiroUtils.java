@@ -9,9 +9,9 @@
 package com.jenkin.common.utils;
 
 
-import com.jenkin.common.entity.dtos.RoleDto;
-import com.jenkin.common.entity.dtos.UserDto;
-import com.jenkin.common.entity.pos.MenuPo;
+import com.jenkin.common.entity.dtos.system.RoleDto;
+import com.jenkin.common.entity.dtos.system.UserDto;
+import com.jenkin.common.entity.pos.system.MenuPo;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.crypto.hash.SimpleHash;
 import org.apache.shiro.session.Session;

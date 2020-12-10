@@ -1,8 +1,9 @@
-package com.jenkin.common.entity.pos;
+package com.jenkin.common.entity.pos.system;
 
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.gitee.sunchenbin.mybatis.actable.annotation.Column;
 import com.gitee.sunchenbin.mybatis.actable.annotation.Table;
+import com.jenkin.common.entity.pos.BasePo;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;

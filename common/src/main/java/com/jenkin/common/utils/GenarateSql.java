@@ -30,9 +30,10 @@ import static com.gitee.sunchenbin.mybatis.actable.command.JavaToMysqlType.javaT
 public class GenarateSql {
     private static String defaultCharSet = "utf8mb4";
     private static String defaultCharSetCollect = "utf8mb4_bin";
-    private static String path = "D:\\ideaProjects\\less-code\\common\\src\\main\\java\\com\\jenkin\\common\\entity\\pos";
+    private static String path = System.getProperty("user.dir")+"\\common\\src\\main\\java\\com\\jenkin\\common\\entity\\pos";
     private static String packageName = "com.jenkin.common.entity.pos";
     public static void main(String[] args) throws ClassNotFoundException {
+        System.out.println(System.getProperty("user.dir"));
         List<TableBean> tableBeans= getTable();
         System.out.println(tableBeans);
         generateTable(tableBeans);
@@ -48,14 +49,28 @@ public class GenarateSql {
                     id = colum.getName();
                 }
                 if (!colum.getType().equals("VARCHAR")) {
-                    colum.setComment("'"+colum.getComment()+"'");
+                    if(!StringUtils.isEmpty(colum.getDefaultValue())) {
+                        colum.setDefaultValue("'" + colum.getDefaultValue() + "'");
+                    }
                 }
-                sql.append(" `").append(colum.getName()).append("` ").append(colum.getType()).append("(")
-                        .append(colum.length).append(")").append(" CHARACTER SET ").append(defaultCharSet).append(" COLLATE ")
-                        .append(defaultCharSetCollect).append(" NULL ").append(" DEFAULT ")
-                        .append(StringUtils.isEmpty(colum.getDefaultValue())?" NULL ":colum.getDefaultValue())
-                        .append(colum.isAutoInc?" AUTO_INCREMENT ":"")
-                        .append(" COMMENT ").append(colum.getComment()).append(" ,");
+                colum.setComment("'"+colum.getComment()+"'");
+
+                sql.append(" `").append(colum.getName()).append("` ").append(colum.getType());
+                    if (colum.length!=null&&colum.length>0) {
+                            sql.append("(")
+                                .append(colum.length).append(")");
+                    }
+                if (colum.getType().equals("VARCHAR")) {
+                    sql.append(" CHARACTER SET ").append(defaultCharSet).append(" COLLATE ")
+                            .append(defaultCharSetCollect).append(" NULL ");
+                }
+                        if(!StringUtils.isEmpty(colum.getDefaultValue())) {
+                                sql.append(" DEFAULT ")
+                                    .append(StringUtils.isEmpty(colum.getDefaultValue()) ? " NULL " : colum.getDefaultValue());
+                        }
+                       sql.append(colum.isAutoInc?" AUTO_INCREMENT ":"")
+                        .append(" COMMENT ").append(colum.getComment())
+                        .append(" ,");
             }
             if (id==null) {
                 sql.deleteCharAt(sql.length()-1);
@@ -64,7 +79,7 @@ public class GenarateSql {
             }
             sql.append(") ").append(" ENGINE = InnoDB CHARACTER SET = ")
                     .append(defaultCharSet).append(" COLLATE = ")
-                    .append(defaultCharSetCollect).append(" ROW_FORMAT = Dynamic COMMENT '"+item.getTableName()+"';");
+                    .append(defaultCharSetCollect).append(" ROW_FORMAT = Dynamic COMMENT '"+item.getComment()+"';");
             System.out.println(sql);
             System.out.println();
             System.out.println();
@@ -174,9 +189,9 @@ public class GenarateSql {
         private boolean isId;
         private boolean isAutoInc;
         private String name;
-        private int length;
+        private Integer length;
         private String type;
-        private int decimalLength;
+        private Integer decimalLength;
         private String defaultValue;
         private String encode;
         private String sort;

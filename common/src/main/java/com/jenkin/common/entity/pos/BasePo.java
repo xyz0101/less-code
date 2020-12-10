@@ -32,6 +32,7 @@ public class BasePo {
     @ApiModelProperty("删除标识")
     @TableField(fill= FieldFill.INSERT)
     @Column(comment = "删除标识")
+    @TableLogic
     private Integer deleteFlag;
     @ApiModelProperty(value = "创建人")
     @TableField(fill= FieldFill.INSERT)

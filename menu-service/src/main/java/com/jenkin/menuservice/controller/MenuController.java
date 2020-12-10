@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/test")
 @CrossOrigin
-public class Controller {
+public class MenuController {
 
 
     @GetMapping("/loginOut")

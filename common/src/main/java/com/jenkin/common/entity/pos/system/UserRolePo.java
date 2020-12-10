@@ -1,10 +1,11 @@
-package com.jenkin.common.entity.pos;
+package com.jenkin.common.entity.pos.system;
 
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.gitee.sunchenbin.mybatis.actable.annotation.Column;
 import com.gitee.sunchenbin.mybatis.actable.annotation.Table;
 import com.gitee.sunchenbin.mybatis.actable.constants.MySqlCharsetConstant;
 import com.gitee.sunchenbin.mybatis.actable.manager.system.SysMysqlCreateTableManagerImpl;
+import com.jenkin.common.entity.pos.BasePo;
 import lombok.Data;
 import lombok.experimental.FieldNameConstants;
 

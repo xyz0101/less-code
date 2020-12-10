@@ -1,7 +1,7 @@
-package com.jenkin.common.entity.dtos;
+package com.jenkin.common.entity.dtos.system;
 
-import com.jenkin.common.entity.pos.MenuPo;
-import com.jenkin.common.entity.pos.RolePo;
+import com.jenkin.common.entity.pos.system.MenuPo;
+import com.jenkin.common.entity.pos.system.RolePo;
 import lombok.Data;
 
 import java.io.Serializable;

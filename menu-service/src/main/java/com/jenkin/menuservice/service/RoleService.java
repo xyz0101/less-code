@@ -1,7 +1,7 @@
 package com.jenkin.menuservice.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.jenkin.common.entity.pos.RolePo;
+import com.jenkin.common.entity.pos.system.RolePo;
 
 /**
  * @author jenkin

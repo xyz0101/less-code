@@ -72,12 +72,12 @@ public class BeanUtils {
     }
 
     
-    public static <S, T> List<T> mapList(final Mapper mapper, List<S> sourceList, Class<T> targetObjectClass) {
+    public static <S, T> List<T> mapList(  List<S> sourceList, Class<T> targetObjectClass) {
         List<T> resList = new ArrayList<>();
         if (!CollectionUtils.isEmpty(sourceList)) {
             for (S item : sourceList) {
                 if (item!=null) {
-                    T res = mapper.map(item, targetObjectClass);
+                    T res = mappers.map(item, targetObjectClass);
                     resList.add(res);
                 }else{
                     resList.add(null);
