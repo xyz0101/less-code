@@ -1,10 +1,10 @@
 package com.jenkin.menuservice.init;
 
 import cn.hutool.core.util.ArrayUtil;
-import com.jenkin.menuservice.anno.MyPermission;
-import com.jenkin.menuservice.entity.pos.PermissionPo;
+import com.jenkin.common.entity.pos.PermissionPo;
+import com.jenkin.common.anno.MyPermission;
 import com.jenkin.menuservice.service.PermissionService;
-import com.jenkin.menuservice.shiro.ProxyUtil;
+import com.jenkin.common.utils.ProxyUtil;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextRefreshedEvent;

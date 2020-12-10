@@ -1,13 +1,15 @@
 package com.jenkin.menuservice.shiro;
 
-import com.jenkin.menuservice.BeanUtils;
-import com.jenkin.menuservice.ShiroUtils;
-import com.jenkin.menuservice.entity.dtos.RoleDto;
-import com.jenkin.menuservice.entity.dtos.UserDto;
-import com.jenkin.menuservice.entity.pos.MenuPo;
-import com.jenkin.menuservice.entity.pos.RolePo;
-import com.jenkin.menuservice.entity.pos.UserRolePo;
+
+import com.jenkin.common.entity.dtos.RoleDto;
+import com.jenkin.common.entity.dtos.UserDto;
+import com.jenkin.common.entity.pos.MenuPo;
+import com.jenkin.common.entity.pos.RolePo;
+import com.jenkin.common.entity.pos.UserRolePo;
+import com.jenkin.common.utils.BeanUtils;
+import com.jenkin.common.utils.ShiroUtils;
 import com.jenkin.menuservice.service.*;
+
 import org.apache.shiro.authc.*;
 import org.apache.shiro.authc.credential.CredentialsMatcher;
 import org.apache.shiro.authc.credential.HashedCredentialsMatcher;
@@ -39,7 +41,11 @@ public class MyShiroRealm extends AuthorizingRealm {
     @Resource
     PermissionService permissionService;
 
-    //角色权限和对应权限添加
+    /**
+     * 角色权限和对应权限添加
+     * @param principalCollection
+     * @return
+     */
     @Override
     protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principalCollection) {
         UserDto userDto= (UserDto) principalCollection.getPrimaryPrincipal();
@@ -111,9 +117,9 @@ public class MyShiroRealm extends AuthorizingRealm {
         if (!CollectionUtils.isEmpty(allById)) {
             for (RolePo role : allById) {
                 RoleDto roleDto = BeanUtils.map(role,RoleDto.class);
-                if (StringUtils.hasLength(role.getMenus())) {
+                if (StringUtils.hasLength(role.getMenuStr())) {
                     List<Integer> ids= new ArrayList<>();
-                    for (String s : role.getMenus().split(",")) {
+                    for (String s : role.getMenuStr().split(",")) {
                         ids.add(Integer.parseInt(s));
                     }
                     List<MenuPo> allMenu = CollectionUtils.isEmpty(ids)?new ArrayList<>()

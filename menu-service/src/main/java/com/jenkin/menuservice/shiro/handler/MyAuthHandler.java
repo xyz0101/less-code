@@ -1,6 +1,6 @@
 package com.jenkin.menuservice.shiro.handler;
 
-import com.jenkin.menuservice.anno.MyPermission;
+import com.jenkin.common.anno.MyPermission;
 import org.apache.shiro.authz.AuthorizationException;
 import org.apache.shiro.authz.aop.AuthorizingAnnotationHandler;
 

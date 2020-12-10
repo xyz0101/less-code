@@ -1,14 +1,11 @@
 package com.jenkin.menuservice.service.impl;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.jenkin.menuservice.BeanUtils;
-import com.jenkin.menuservice.config.MyQueryWrapper;
-import com.jenkin.menuservice.dao.MenuMapper;
+import com.jenkin.common.config.MyQueryWrapper;
+import com.jenkin.common.entity.dtos.UserDto;
+import com.jenkin.common.entity.pos.UserPo;
+import com.jenkin.common.utils.BeanUtils;
 import com.jenkin.menuservice.dao.UserMapper;
-import com.jenkin.menuservice.entity.dtos.UserDto;
-import com.jenkin.menuservice.entity.pos.MenuPo;
-import com.jenkin.menuservice.entity.pos.UserPo;
-import com.jenkin.menuservice.service.MenuService;
 import com.jenkin.menuservice.service.UserService;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;

@@ -25,10 +25,10 @@ import java.util.Map;
  */
 @Configuration
 public class ShiroConfig {
-    @Value("${redis.host:192.168.3.47}")
+    @Value("${redis.host:mall.jenkin.tech}")
     private String host;
 
-    @Value("${redis.port:6379}")
+    @Value("${redis.port:9001}")
     private int port;
 
     @Value("${redis.password:}")

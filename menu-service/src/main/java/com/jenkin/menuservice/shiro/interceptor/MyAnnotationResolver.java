@@ -3,8 +3,8 @@ package com.jenkin.menuservice.shiro.interceptor;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 
-import com.jenkin.menuservice.anno.MyPermission;
-import com.jenkin.menuservice.shiro.anno.IgnoreCheck;
+import com.jenkin.common.anno.MyPermission;
+import com.jenkin.common.anno.IgnoreCheck;
 import org.apache.shiro.aop.MethodInvocation;
 import org.apache.shiro.spring.aop.SpringAnnotationResolver;
 import org.springframework.web.bind.annotation.*;

@@ -1,8 +1,8 @@
 package com.jenkin.menuservice.dao;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.jenkin.menuservice.entity.pos.UserPo;
-import com.jenkin.menuservice.entity.pos.UserRolePo;
+import com.jenkin.common.entity.pos.UserRolePo;
+
 
 /**
  * @author jenkin

@@ -1,6 +1,6 @@
 package com.jenkin.menuservice.shiro.handler;
 
-import com.jenkin.menuservice.entity.Response;
+import com.jenkin.common.entity.Response;
 import org.apache.shiro.authc.IncorrectCredentialsException;
 import org.apache.shiro.authz.AuthorizationException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
