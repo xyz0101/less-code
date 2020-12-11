@@ -1,0 +1,21 @@
+package ${entityPackageName}.qos.${moduleName};
+
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Data;
+
+/**
+ * @author ：jenkin
+ * @date ：Created at 2020/12/10 21:20
+ * @description：
+ * @modified By：
+ * @version: 1.0
+ */
+@ApiModel("${tableComments}查询条件实体")
+@Data
+public class ${className}Qo {
+    #foreach ($column in $columns)
+    @ApiModelProperty(" $column.comments")
+    private $column.type $column.name;
+#end
+}

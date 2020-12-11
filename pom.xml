@@ -13,6 +13,7 @@
         <module>common</module>
         <module>less-code-service</module>
         <module>menu-service</module>
+        <module>code-generater</module>
     </modules>
 
     <properties>
@@ -25,7 +26,7 @@
         <common-lang.version>2.4</common-lang.version>
         <dozer.version>6.5.0</dozer.version>
         <mybatis-plus-boot.version>3.4.1</mybatis-plus-boot.version>
-
+        <fastjson.version>1.2.71</fastjson.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <spring-boot.version>2.3.4.RELEASE</spring-boot.version>
@@ -143,7 +144,11 @@
             <artifactId>mybatis-enhance-actable</artifactId>
             <version>1.4.0.RELEASE</version>
         </dependency>
-
+        <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>fastjson</artifactId>
+            <version>${fastjson.version}</version>
+        </dependency>
     </dependencies>
 
     <dependencyManagement>

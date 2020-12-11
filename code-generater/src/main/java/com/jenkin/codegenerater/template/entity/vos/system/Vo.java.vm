@@ -1,0 +1,12 @@
+package ${entityPackageName}.vos.${moduleName};
+import io.swagger.annotations.ApiModel;
+import {entityPackageName}.dtos.${moduleName}.${className}Dto;
+/**
+ * @author jenkin
+ * @className Vo
+ * @description TODO
+ * @date 2020/12/11 17:03
+ */
+@ApiModel("${tableComments}视图")
+public class ${className}Vo extends ${className}Dto  {
+}

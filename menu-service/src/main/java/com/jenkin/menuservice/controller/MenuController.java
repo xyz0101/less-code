@@ -19,12 +19,7 @@ import org.springframework.web.bind.annotation.*;
 public class MenuController {
 
 
-    @GetMapping("/loginOut")
 
-    public Response loginOut(){
-        ShiroUtils.logout();
-        return Response.ok();
-    }
 
 
 }

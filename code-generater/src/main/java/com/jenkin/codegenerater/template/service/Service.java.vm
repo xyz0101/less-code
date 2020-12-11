@@ -1,0 +1,38 @@
+package ${packageName}.${moduleName}.service;
+
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.baomidou.mybatisplus.extension.service.IService;
+import ${entityPackageName}.dtos.${moduleName}.${className}Dto;
+import ${entityPackageName}.pos.${moduleName}.${className}Po;
+import ${entityPackageName}.qos.BaseQo;
+import ${entityPackageName}.qos.${moduleName}.${className}Qo;
+
+/**
+ * @author jenkin
+ * @className MenuService
+ * @description TODO
+ * @date 2020/12/9 15:58
+ */
+public interface ${className}Service extends IService<${className}Po> {
+
+        /**
+         * 根据用户编号获取用户
+         * @param id
+         * @return
+         */
+        ${className}Dto getById(Integer id);
+
+        /**
+         * 分页获取用户
+         * @param  ${classNameLower}
+         */
+        Page<${className}Dto> listByPage(BaseQo<${className}Qo>  ${classNameLower});
+
+        /**
+         * 保存用户信息
+         * @param  ${classNameLower}Dto
+         * @return
+         */
+        ${className}Dto save${className}Info(${className}Dto  ${classNameLower}Dto);
+    
+}

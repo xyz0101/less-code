@@ -1,7 +1,10 @@
 package com.jenkin.menuservice.controller;
 
 import cn.hutool.crypto.SecureUtil;
+import cn.hutool.crypto.asymmetric.KeyType;
+import cn.hutool.crypto.asymmetric.RSA;
 import cn.hutool.crypto.symmetric.AES;
+import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.jenkin.common.anno.IgnoreCheck;
 import com.jenkin.common.entity.Response;
@@ -18,6 +21,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
+import javax.crypto.spec.SecretKeySpec;
+import java.nio.charset.StandardCharsets;
+import java.security.PublicKey;
 import java.util.Arrays;
 import java.util.List;
 
@@ -31,6 +37,8 @@ import java.util.List;
 @RestController
 @RequestMapping("/user")
 public class UserController {
+
+    RSA rsa = new RSA();
 
     @Autowired
     private UserService userService;
@@ -74,13 +82,21 @@ public class UserController {
     @GetMapping("/login")
     @IgnoreCheck
     public Response login(@RequestHeader String info){
-
-        //TODO 加密解密
+        byte[] decrypt2 = rsa.decrypt(info, KeyType.PrivateKey);
+        String userStr = new String(decrypt2);
+        UserDto userDto = JSON.parseObject(userStr, UserDto.class);
         Subject subject = ShiroUtils.getSubject();
-        UsernamePasswordToken token = new UsernamePasswordToken(username, password);
+        UsernamePasswordToken token = new UsernamePasswordToken(userDto.getUserName(), userDto.getPassword());
         subject.login(token);
         UserDto userEntity = ShiroUtils.getUserEntityNoPermissionStr();
         return Response.ok(userEntity);
+    }
+
+    @GetMapping("/getPublicKey")
+    @IgnoreCheck
+    public Response<PublicKey> getPublicKey(){
+        PublicKey publicKey = rsa.getPublicKey();
+        return Response.ok(publicKey );
     }
 
 

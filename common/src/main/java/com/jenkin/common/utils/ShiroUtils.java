@@ -24,9 +24,12 @@ import java.util.List;
 /**
  * Shiro工具类
  *
- * @author Mark sunlightcs@gmail.com
+ * @author jenkin
  */
 public class ShiroUtils {
+
+	public static final String AES_SECURITY_KEY = "02200059#nobody";
+
 	/**  加密算法 */
 	public final static String hashAlgorithmName = "SHA-256";
 	/**  循环次数 */

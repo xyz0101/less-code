@@ -1,0 +1,13 @@
+package ${packageName}.${moduleName}.dao;
+
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import ${entityPackageName}.pos.${moduleName}.${className}Po;
+
+/**
+ * @author jenkin
+ * @className MenuPo
+ * @description TODO
+ * @date 2020/12/9 15:52
+ */
+public interface ${className}Mapper extends BaseMapper<${className}Po> {
+}

@@ -124,10 +124,12 @@ public class ShiroConfig {
         shiroFilterFactoryBean.setSecurityManager(securityManager);
         Map<String,String> map = new HashMap<String, String>();
         //登出
-        map.put("/test/logout","logout");
+        map.put("/user/logout","logout");
         //登录
-        map.put("/test/login","anon");
-        map.put("/test/register","anon");
+        map.put("/user/login","anon");
+        map.put("/user/register","anon");
+        map.put("/user/getPublicKey","anon");
+
         //对所有用户认证
         map.put("/**","authc");
         //登录

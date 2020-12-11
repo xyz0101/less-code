@@ -33,4 +33,4 @@ spring:
 
 server:
   servlet:
-    context-path: /lsc/system
+    context-path: /lsc/code-generate
