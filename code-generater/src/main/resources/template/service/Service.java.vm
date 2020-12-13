@@ -1,0 +1,39 @@
+package ${info.packageName}.${info.moduleName}.service;
+
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.baomidou.mybatisplus.extension.service.IService;
+import ${info.entityPackageName}.dtos.${info.moduleName}.${info.className}Dto;
+import ${info.entityPackageName}.pos.${info.moduleName}.${info.className}Po;
+import ${info.entityPackageName}.qos.BaseQo;
+import ${info.entityPackageName}.qos.${info.moduleName}.${info.className}Qo;
+
+/**
+ * @author ：${info.author}
+ * @date ：Created at ${info.createDate}
+ * @description：
+ * @modified By：
+ * @version: 1.0
+ */
+public interface ${info.className}Service extends IService<${info.className}Po> {
+
+        /**
+         * 根据用户编号获取用户
+         * @param id
+         * @return
+         */
+        ${info.className}Dto getById(Integer id);
+
+        /**
+         * 分页获取用户
+         * @param  ${info.classNameLower}
+         */
+        Page<${info.className}Dto> listByPage(BaseQo<${info.className}Qo>  ${info.classNameLower});
+
+        /**
+         * 保存用户信息
+         * @param  ${info.classNameLower}Dto
+         * @return
+         */
+        ${info.className}Dto save${info.className}Info(${info.className}Dto  ${info.classNameLower}Dto);
+    
+}

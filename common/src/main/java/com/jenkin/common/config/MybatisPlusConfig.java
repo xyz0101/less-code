@@ -8,12 +8,14 @@ import com.baomidou.mybatisplus.extension.plugins.PaginationInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.SqlExplainInterceptor;
 import com.jenkin.common.utils.ShiroUtils;
 import org.apache.ibatis.reflection.MetaObject;
+import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -24,6 +26,7 @@ import java.util.List;
  */
 @Configuration
 @EnableTransactionManagement
+
 public class MybatisPlusConfig {
 
     /**
@@ -67,15 +70,15 @@ public class MybatisPlusConfig {
                 public void insertFill(MetaObject metaObject) {
                     this.strictInsertFill(metaObject, "deleteFlag", Integer.class, 0);
 
-                    this.strictInsertFill(metaObject, "creationDate", LocalDateTime.class, LocalDateTime.now());
+                    this.strictInsertFill(metaObject, "creationDate", Date.class, new Date());
                     this.strictInsertFill(metaObject, "createdBy", String.class, ShiroUtils.getUserCode());
-                    this.strictInsertFill(metaObject, "lastUpdateDate", LocalDateTime.class, LocalDateTime.now());
+                    this.strictInsertFill(metaObject, "lastUpdateDate", Date.class, new Date());
                     this.strictInsertFill(metaObject, "lastUpdatedBy", String.class, ShiroUtils.getUserCode());
                 }
 
                 @Override
                 public void updateFill(MetaObject metaObject) {
-                    this.strictInsertFill(metaObject, "lastUpdateDate", LocalDateTime.class, LocalDateTime.now());
+                    this.strictInsertFill(metaObject, "lastUpdateDate", Date.class, new Date());
                     this.strictInsertFill(metaObject, "lastUpdatedBy", String.class, ShiroUtils.getUserCode());
                 }
             };

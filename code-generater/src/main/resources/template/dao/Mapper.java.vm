@@ -1,0 +1,14 @@
+package ${info.packageName}.${info.moduleName}.dao;
+
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import ${info.entityPackageName}.pos.${info.moduleName}.${info.className}Po;
+
+/**
+ * @author ：${info.author}
+ * @date ：Created at ${info.createDate}
+ * @description：
+ * @modified By：
+ * @version: 1.0
+ */
+public interface ${info.className}Mapper extends BaseMapper<${info.className}Po> {
+}

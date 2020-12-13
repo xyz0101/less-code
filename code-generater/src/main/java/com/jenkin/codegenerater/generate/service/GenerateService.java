@@ -1,5 +1,6 @@
 package com.jenkin.codegenerater.generate.service;
 
+import com.jenkin.codegenerater.entity.CodeGenerateInfo;
 import com.jenkin.codegenerater.entity.TableInfo;
 
 import java.io.OutputStream;
@@ -38,9 +39,9 @@ public interface GenerateService {
 
     /**
      * 生成代码
-     * @param tableInfos
+     * @param codeGenerateInfos
      * @param outputStream
      */
-    void generateCode(List<TableInfo> tableInfos, OutputStream outputStream);
+    void generateCode(List<CodeGenerateInfo> codeGenerateInfos, OutputStream outputStream);
 
 }

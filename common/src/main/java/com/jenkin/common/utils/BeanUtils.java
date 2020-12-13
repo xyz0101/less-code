@@ -52,14 +52,18 @@ public class BeanUtils {
     }
 
     private static  void removeFields(Object map,  Class<?> var2,String[] ignores) {
+        Field[] allFields = getAllFields(var2);
+        Map<String,Field> fieldMap = new HashMap<>();
+        Arrays.stream(allFields).forEach(item->fieldMap.put(item.getName(),item));
         for (String ignore : ignores) {
             try {
-                Field declaredField = var2.getDeclaredField(ignore);
+                Field declaredField = fieldMap.get(ignore);
+
                 if (declaredField!=null) {
                     declaredField.setAccessible(true);
                     declaredField.set(map,null);
                 }
-            } catch (NoSuchFieldException | IllegalAccessException e) {
+            } catch ( IllegalAccessException e) {
                 e.printStackTrace();
 
             }
@@ -85,5 +89,18 @@ public class BeanUtils {
             }
         }
         return resList;
+    }
+
+
+    private static Field[] getAllFields(Class tempClass){
+
+        List<Field> fieldList = new ArrayList<>() ;
+
+        while (tempClass != null) {//当父类为null的时候说明到达了最上层的父类(Object类).
+            fieldList.addAll(Arrays.asList(tempClass .getDeclaredFields()));
+            tempClass = tempClass.getSuperclass(); //得到父类,然后赋给自己
+        }
+        Field[] fields = new Field[fieldList.size()];
+        return fieldList.toArray(fields);
     }
 }

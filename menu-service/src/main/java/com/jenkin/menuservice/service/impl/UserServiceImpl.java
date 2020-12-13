@@ -6,8 +6,9 @@ import com.jenkin.common.config.MyQueryWrapper;
 import com.jenkin.common.entity.dtos.system.UserDto;
 import com.jenkin.common.entity.pos.system.UserPo;
 import com.jenkin.common.entity.qos.BaseQo;
-import com.jenkin.common.entity.qos.Sort;
 import com.jenkin.common.entity.qos.system.UserQo;
+import com.jenkin.common.shiro.service.BaseUserService;
+import com.jenkin.common.shiro.service.impl.BaseUserServiceImpl;
 import com.jenkin.common.utils.BeanUtils;
 import com.jenkin.common.utils.ShiroUtils;
 import com.jenkin.common.utils.SimpleQuery;
@@ -17,25 +18,15 @@ import org.apache.commons.lang.RandomStringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
-import java.util.List;
-
 /**
  * @author jenkin
  * @className MenuServiceImpl
  * @description TODO
  * @date 2020/12/9 15:58
  */
-@Service
-public class UserServiceImpl extends ServiceImpl<UserMapper, UserPo> implements UserService {
-    @Override
-    public UserDto getByCode(String code) {
-        if (!StringUtils.hasLength(code)) {
-            return null;
-        }
-        MyQueryWrapper<UserPo> myQueryWrapper = new MyQueryWrapper<>();
-        UserPo userPo = getOne(myQueryWrapper.eq(UserPo.Fields.userCode, code));
-        return BeanUtils.map(userPo,UserDto.class);
-    }
+@Service()
+public class UserServiceImpl extends BaseUserServiceImpl implements UserService {
+
 
     /**
      * 分页获取用户

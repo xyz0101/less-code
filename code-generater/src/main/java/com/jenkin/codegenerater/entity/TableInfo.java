@@ -4,6 +4,7 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
@@ -14,15 +15,19 @@ import java.util.List;
  */
 @Data
 @ApiModel("表信息")
-public class TableInfo {
+public class TableInfo implements Serializable {
+    @ApiModelProperty("数据库")
+    private String tableSchema;
+    @ApiModelProperty("表名称")
     private String tableName;
     @ApiModelProperty("存储引擎，默认Innodb")
-    private String engin;
+    private String engine;
     @ApiModelProperty("编码，默认 utf8mb4")
     private String encode="utf8mb4";
     @ApiModelProperty("编码排序规则，默认utf8mb4_bin")
-    private String sort="utf8mb4_bin";
+    private String tableCollation="utf8mb4_bin";
     @ApiModelProperty("注释")
-    private String comment;
-    private List<ColumInfo> colums;
+    private String tableComments;
+    @ApiModelProperty("列信息")
+    private List<ColumnInfo> columns;
 }

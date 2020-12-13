@@ -1,0 +1,23 @@
+package ${info.entityPackageName}.pos.${info.moduleName};
+
+import ${info.entityPackageName}.pos.${info.moduleName}.UserPo;
+import lombok.Data;
+import io.swagger.annotations.ApiModel;
+import java.lang.*;
+import java.math.BigDecimal;
+import java.util.Date;
+import java.io.Serializable;
+import java.util.List;
+
+/**
+ * @author ：${info.author}
+ * @date ：Created at ${info.createDate}
+ * @description：
+ * @modified By：
+ * @version: 1.0
+ */
+@Data
+@ApiModel("${info.tableInfo.tableComments}数据传输实体")
+public class ${info.className}Dto extends ${info.className}Po implements Serializable {
+
+}

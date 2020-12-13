@@ -1,5 +1,9 @@
 package com.jenkin.codegenerater.generate.controller;
 
+import com.baomidou.mybatisplus.core.toolkit.StringUtils;
+import com.jenkin.codegenerater.entity.CodeGenerateInfo;
+import com.jenkin.codegenerater.entity.JavaToMysqlType;
+import com.jenkin.codegenerater.entity.MysqlType;
 import com.jenkin.codegenerater.entity.TableInfo;
 import com.jenkin.codegenerater.generate.service.GenerateService;
 import com.jenkin.common.entity.Response;
@@ -12,6 +16,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author jenkin
@@ -42,10 +47,10 @@ public class Controller {
      *
      * @return
      */
-    @GetMapping("/listDbTables")
+    @GetMapping("/listUnCreateTables")
     @ApiOperation("获取还未创建的表信息")
     public Response<List<TableInfo>> listUnCreateTables() {
-        return Response.ok(generateService.listDbTables());
+        return Response.ok(generateService.listUnCreateTables());
     }
 
     /**
@@ -75,21 +80,44 @@ public class Controller {
     /**
      * 生成代码
      *
-     * @param tableInfos
+     * @param codeGenerateInfos
      * @param response
      */
     @PostMapping("/generateCode")
     @ApiOperation("生成代码")
-    public void generateCode(@RequestBody List<TableInfo> tableInfos, HttpServletResponse response) {
+    public void generateCode(@RequestBody List<CodeGenerateInfo> codeGenerateInfos, HttpServletResponse response) {
         try {
             response.setHeader("content-type", "application/octet-stream");
             response.setContentType("application/octet-stream");
             response.setHeader("Content-Disposition", "attachment;filename=result.zip"   );
-            generateService.generateCode(tableInfos,response.getOutputStream());
+            generateService.generateCode(codeGenerateInfos,response.getOutputStream());
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
+
+    /**
+     * 获取数据库字段和java字段的映射关系
+     * @return
+     */
+    @ApiOperation("获取数据库字段和java字段的映射关系")
+    @GetMapping("/getTypeInfo")
+    public Response<Map<String, MysqlType>> getTypeInfo(){
+        return Response.ok(JavaToMysqlType.mysqlToJavaTypeMap);
+    }
+
+
+    /**
+     * 获取数据库字段和java字段的映射关系
+     * @return
+     */
+    @ApiOperation("下划线转驼峰")
+    @GetMapping("/underlineToCamel")
+    public Response<String> underlineToCamel(String code){
+        return Response.ok(StringUtils.underlineToCamel(code));
+    }
+
+
 
 
 }

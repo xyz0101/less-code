@@ -1,0 +1,55 @@
+package com.jenkin.men ${info.classNameLower}vice.template.service.impl;
+
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.jenkin.common.config.MyQueryWrapper;
+import ${info.entityPackageName}.dtos.${info.moduleName}.${info.className}Dto;
+import ${info.entityPackageName}.pos.${info.moduleName}.MenuPo;
+import ${info.entityPackageName}.pos.${info.moduleName}.${info.className}Po;
+import ${info.entityPackageName}.qos.BaseQo;
+import ${info.entityPackageName}.qos.${info.moduleName}.${info.className}Qo;
+import com.jenkin.common.utils.BeanUtils;
+import com.jenkin.common.utils.SimpleQuery;
+
+import org.springframework.stereotype.Service;
+
+
+/**
+ * @author ：${info.author}
+ * @date ：Created at ${info.createDate}
+ * @description：
+ * @modified By：
+ * @version: 1.0
+ */
+@Service
+public class ${info.className}ServiceImpl extends ServiceImpl<${info.className}Mapper, MenuPo> implements ${info.className}Service {
+    @Override
+    public ${info.className}Dto getById(Integer id) {
+        return BeanUtils.map(getById(id),${info.className}Dto.class);
+    }
+
+    /**
+     * 分页获取用户
+     *
+     * @param  ${info.classNameLower}
+     */
+    @Override
+    public Page<${info.className}Dto> listByPage(BaseQo<${info.className}Qo>  ${info.classNameLower}) {
+        SimpleQuery<${info.className}Po> simpleQuery = SimpleQuery.builder( ${info.classNameLower},this).sort();
+        MyQueryWrapper<${info.className}Po> query = simpleQuery.getQuery();
+        return simpleQuery.page(${info.className}Dto.class);
+    }
+
+    /**
+     * 保存用户信息
+     *
+     * @param  ${info.classNameLower}
+     * @return
+     */
+    @Override
+    public ${info.className}Dto save${info.className}Info(${info.className}Dto  ${info.classNameLower}) {
+        saveOrUpdate( ${info.classNameLower});
+        return  ${info.classNameLower};
+    }
+
+}

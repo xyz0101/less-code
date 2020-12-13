@@ -1,0 +1,23 @@
+package ${info.entityPackageName}.qos.${info.moduleName};
+import java.lang.*;
+import java.math.BigDecimal;
+import java.util.Date;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Data;
+
+/**
+ * @author ：${info.author}
+ * @date ：Created at ${info.createDate}
+ * @description：
+ * @modified By：
+ * @version: 1.0
+ */
+@ApiModel("${info.tableInfo.tableComments}查询条件实体")
+@Data
+public class ${info.className}Qo {
+    #foreach ($column in $info.tableInfo.columns)
+    @ApiModelProperty(" $column.comments")
+    private $column.javaType $column.javaColName;
+#end
+}

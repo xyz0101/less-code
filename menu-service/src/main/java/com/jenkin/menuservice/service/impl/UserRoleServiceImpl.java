@@ -3,6 +3,8 @@ package com.jenkin.menuservice.service.impl;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.jenkin.common.entity.pos.system.UserRolePo;
 import com.jenkin.common.config.MyQueryWrapper;
+import com.jenkin.common.shiro.service.BaseUserRoleService;
+import com.jenkin.common.shiro.service.impl.BaseUserRoleServiceImpl;
 import com.jenkin.menuservice.dao.UserRoleMapper;
 
 import com.jenkin.menuservice.service.UserRoleService;
@@ -17,8 +19,8 @@ import java.util.List;
  * @description TODO
  * @date 2020/12/9 15:58
  */
-@Service
-public class UserRoleServiceImpl extends ServiceImpl<UserRoleMapper, UserRolePo> implements UserRoleService {
+@Service()
+public class UserRoleServiceImpl extends BaseUserRoleServiceImpl implements UserRoleService {
     @Override
     public List<UserRolePo> listByUserId(Integer id) {
         if (id==null) {

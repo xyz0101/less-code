@@ -3,8 +3,8 @@ package com.jenkin.menuservice.init;
 import cn.hutool.core.util.ArrayUtil;
 import com.jenkin.common.entity.pos.system.PermissionPo;
 import com.jenkin.common.anno.MyPermission;
-import com.jenkin.menuservice.service.PermissionService;
 import com.jenkin.common.utils.ProxyUtil;
+import com.jenkin.menuservice.service.PermissionService;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextRefreshedEvent;
@@ -43,6 +43,7 @@ public class InitPermission implements ApplicationListener<ContextRefreshedEvent
         }else{
             List<String> collect = all.stream().map(item -> item.getCode()).collect(Collectors.toList());
             codes.removeAll(collect);
+            all.clear();
             for (String code : codes) {
                 all.add(new PermissionPo(code,code));
             }

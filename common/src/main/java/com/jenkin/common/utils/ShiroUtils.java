@@ -9,15 +9,26 @@
 package com.jenkin.common.utils;
 
 
+import cn.hutool.core.codec.Base64;
+import cn.hutool.crypto.SecureUtil;
+import cn.hutool.crypto.asymmetric.KeyType;
+import cn.hutool.crypto.asymmetric.RSA;
+import cn.hutool.crypto.symmetric.AES;
+import com.fasterxml.jackson.databind.ser.Serializers;
 import com.jenkin.common.entity.dtos.system.RoleDto;
 import com.jenkin.common.entity.dtos.system.UserDto;
 import com.jenkin.common.entity.pos.system.MenuPo;
+import com.jenkin.common.shiro.token.MyToken;
 import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.authc.SimpleAuthenticationInfo;
 import org.apache.shiro.crypto.hash.SimpleHash;
 import org.apache.shiro.session.Session;
 import org.apache.shiro.subject.Subject;
+import org.apache.shiro.util.ByteSource;
 import org.springframework.util.CollectionUtils;
 
+import java.math.BigInteger;
+import java.security.PrivateKey;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,14 +39,19 @@ import java.util.List;
  */
 public class ShiroUtils {
 
-	public static final String AES_SECURITY_KEY = "02200059#nobody";
+
 
 	/**  加密算法 */
 	public final static String hashAlgorithmName = "SHA-256";
 	/**  循环次数 */
 	public final static int hashIterations = 16;
 
+
+
+
 	public static String sha256(String password, String salt) {
+
+
 		return new SimpleHash(hashAlgorithmName, password, salt, hashIterations).toString();
 	}
 
@@ -43,16 +59,23 @@ public class ShiroUtils {
 		return SecurityUtils.getSubject().getSession();
 	}
 
-	public static Subject getSubject() {
-		return SecurityUtils.getSubject();
+	public static void login(MyToken myToken) {
+		SecurityUtils.getSubject().login(myToken);
+
 	}
 
+
+
 	public static UserDto getUserEntity() {
-		return (UserDto)SecurityUtils.getSubject().getPrincipal();
+		return (UserDto) SecurityUtils.getSubject().getPrincipal();
 	}
 	public static UserDto getUserEntityNoPermissionStr() {
-		UserDto principal = (UserDto) SecurityUtils.getSubject().getPrincipal();
-	 	UserDto userDto = BeanUtils.map(principal,UserDto.class,"password","salt","id");
+		UserDto principal =  getUserEntity();
+		return removeSentiveMessage(principal);
+	}
+
+	public static UserDto removeSentiveMessage(UserDto principal) {
+		UserDto userDto = BeanUtils.map(principal,UserDto.class,"password","salt","id");
 		List<RoleDto> roles = principal.getRoles();
 		List<RoleDto> newRoles = new ArrayList<>();
 		if (!CollectionUtils.isEmpty(roles)) {
@@ -73,8 +96,19 @@ public class ShiroUtils {
 		userDto.setRoles(newRoles);
 		return userDto;
 	}
+
 	public static String getUserCode() {
-		return getUserEntity().getUserCode();
+		try {
+			UserDto userEntity = getUserEntity();
+			if (userEntity==null) {
+				return "system";
+			}
+			return userEntity.getUserCode();
+		}catch (Exception e){
+			return "system";
+		}
+
+
 	}
 	
 	public static void setSessionAttribute(Object key, Object value) {
