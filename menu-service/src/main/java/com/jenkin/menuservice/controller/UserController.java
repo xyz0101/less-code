@@ -81,11 +81,11 @@ public class UserController {
         return Response.ok();
     }
 
-    @GetMapping("/login")
+    @PostMapping("/login")
     @IgnoreCheck
     public Response login(@RequestHeader String info){
-//        byte[] decrypt2 = rsa.decrypt(info, KeyType.PrivateKey);
-        byte[] decrypt2 = info.getBytes();
+        byte[] decrypt2 = rsa.decrypt(info, KeyType.PrivateKey);
+//        byte[] decrypt2 = info.getBytes();
         String userStr = new String(decrypt2);
         UserDto userDto = JSON.parseObject(userStr, UserDto.class);
         UserDto userEntityNoPermissionStr = ShiroUtils.removeSentiveMessage(userDto);
