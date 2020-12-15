@@ -1,5 +1,7 @@
 package com.jenkin.systemservice.dao;
 
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.jenkin.common.entity.pos.system.UserRolePo;
 import com.jenkin.common.shiro.dao.BaseUserRoleMapper;
 
 
@@ -9,5 +11,5 @@ import com.jenkin.common.shiro.dao.BaseUserRoleMapper;
  * @description TODO
  * @date 2020/12/9 15:52
  */
-public interface UserRoleMapper extends BaseUserRoleMapper {
+public interface UserRoleMapper extends BaseUserRoleMapper , BaseMapper<UserRolePo> {
 }

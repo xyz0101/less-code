@@ -19,7 +19,7 @@ import java.util.List;
  */
 @Service
 @Primary
-public class BaseUserRoleServiceImpl extends ServiceImpl<BaseUserRoleMapper, UserRolePo> implements BaseUserRoleService {
+public class BaseUserRoleServiceImpl<M, P> extends ServiceImpl<BaseUserRoleMapper, UserRolePo> implements BaseUserRoleService {
     @Override
     public List<UserRolePo> listByUserId(Integer id) {
         if (id==null) {

@@ -2,9 +2,7 @@ package com.jenkin.common.entity.pos.system;
 
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.gitee.sunchenbin.mybatis.actable.annotation.Column;
-import com.gitee.sunchenbin.mybatis.actable.annotation.Table;
-import com.gitee.sunchenbin.mybatis.actable.constants.MySqlTypeConstant;
+
 import com.jenkin.common.entity.pos.BasePo;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -23,7 +21,6 @@ import java.io.Serializable;
 @Data
 @FieldNameConstants
 @TableName("lsc_user")
-@Table(name = "lsc_user",comment = "用户信息")
 @ApiModel("用户信息")
 public class UserPo extends BasePo implements Serializable {
     @ApiModelProperty("用户名称")

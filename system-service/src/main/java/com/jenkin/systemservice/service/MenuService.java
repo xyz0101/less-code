@@ -1,5 +1,7 @@
 package com.jenkin.systemservice.service;
 
+import com.baomidou.mybatisplus.extension.service.IService;
+import com.jenkin.common.entity.pos.system.MenuPo;
 import com.jenkin.common.shiro.service.BaseMenuService;
 
 /**
@@ -8,5 +10,5 @@ import com.jenkin.common.shiro.service.BaseMenuService;
  * @description TODO
  * @date 2020/12/9 15:58
  */
-public interface MenuService extends BaseMenuService {
+public interface MenuService extends BaseMenuService, IService<MenuPo> {
 }

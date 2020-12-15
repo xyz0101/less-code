@@ -9,7 +9,7 @@
         <version>0.0.1-SNAPSHOT</version>
         <!--<relativePath/> &lt;!&ndash; lookup parent from repository &ndash;&gt;-->
     </parent>
-    <artifactId>menu-service</artifactId>
+    <artifactId>system-service</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>system-service</name>
     <description>Demo project for Spring Boot</description>

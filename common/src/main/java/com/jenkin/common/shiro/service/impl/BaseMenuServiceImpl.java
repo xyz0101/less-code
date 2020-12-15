@@ -15,5 +15,5 @@ import org.springframework.stereotype.Service;
  */
 @Service
 @Primary
-public class BaseMenuServiceImpl extends ServiceImpl<BaseMenuMapper, MenuPo> implements BaseMenuService {
+public class BaseMenuServiceImpl<M, P> extends ServiceImpl<BaseMenuMapper, MenuPo> implements BaseMenuService {
 }

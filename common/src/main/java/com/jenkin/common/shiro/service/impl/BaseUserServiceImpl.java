@@ -25,7 +25,7 @@ import org.springframework.util.StringUtils;
  */
 @Service
 @Primary
-public class BaseUserServiceImpl extends ServiceImpl<BaseUserMapper, UserPo> implements BaseUserService {
+public class BaseUserServiceImpl<M, P> extends ServiceImpl<BaseUserMapper, UserPo> implements BaseUserService {
     @Override
     public UserDto getByCode(String code) {
         if (!StringUtils.hasLength(code)) {

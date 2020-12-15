@@ -130,8 +130,8 @@ public class FileUtils {
         OutputStream outputStream = null;
         try {
 
-            response.setHeader("content-type", "application/octet-stream");
-            response.setContentType("application/octet-stream");
+            response.setHeader("content-type", FileUtils.getContentType(fileName));
+            response.setContentType( FileUtils.getContentType(fileName));
             response.setHeader("Content-Disposition", "attachment;filename=" + fileName);
             outputStream = response.getOutputStream();
             buffInputStream = new BufferedInputStream(inputStream);

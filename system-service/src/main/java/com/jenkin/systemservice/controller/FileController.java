@@ -46,6 +46,7 @@ public class FileController {
     @ApiOperation(("文件下载"))
     public void downloadFile(String code, HttpServletResponse response){
         InputStream file = fileService.getFile(code);
+
         FileUtils.downloadFile(code,file,response);
     }
 

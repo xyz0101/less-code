@@ -9,6 +9,7 @@ import com.jenkin.common.entity.qos.system.UserQo;
 import com.jenkin.common.shiro.service.impl.BaseUserServiceImpl;
 import com.jenkin.common.utils.ShiroUtils;
 import com.jenkin.common.utils.SimpleQuery;
+import com.jenkin.systemservice.dao.UserMapper;
 import com.jenkin.systemservice.service.UserService;
 import org.apache.commons.lang.RandomStringUtils;
 import org.springframework.stereotype.Service;
@@ -20,7 +21,7 @@ import org.springframework.stereotype.Service;
  * @date 2020/12/9 15:58
  */
 @Service()
-public class UserServiceImpl extends BaseUserServiceImpl implements UserService {
+public class UserServiceImpl extends BaseUserServiceImpl<UserMapper,UserPo> implements UserService {
 
 
     /**
@@ -44,10 +45,11 @@ public class UserServiceImpl extends BaseUserServiceImpl implements UserService 
     @Override
     public UserDto saveUserInfo(UserDto user) {
         //sha256加密
-        String salt = RandomStringUtils.randomAlphanumeric(20);
-        user.setSalt(salt);
-        user.setPassword(ShiroUtils.sha256(user.getPassword(), user.getSalt()));
-        save(user);
+//        String salt = RandomStringUtils.randomAlphanumeric(20);
+//        user.setSalt(salt);
+//        user.setPassword(ShiroUtils.sha256(user.getPassword(), user.getSalt()));
+
+        saveOrUpdate(user);
         return user;
     }
 

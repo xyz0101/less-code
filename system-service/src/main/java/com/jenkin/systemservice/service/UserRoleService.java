@@ -1,5 +1,6 @@
 package com.jenkin.systemservice.service;
 
+import com.baomidou.mybatisplus.extension.service.IService;
 import com.jenkin.common.entity.pos.system.UserRolePo;
 import com.jenkin.common.shiro.service.BaseUserRoleService;
 
@@ -11,7 +12,7 @@ import java.util.List;
  * @description TODO
  * @date 2020/12/9 15:58
  */
-public interface UserRoleService extends BaseUserRoleService {
+public interface UserRoleService extends BaseUserRoleService , IService<UserRolePo> {
     /**
      * 根据用户ID获取用户角色关系
      * @param id
