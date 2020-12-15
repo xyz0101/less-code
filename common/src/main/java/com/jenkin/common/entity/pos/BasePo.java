@@ -1,6 +1,7 @@
 package com.jenkin.common.entity.pos;
 
 import com.baomidou.mybatisplus.annotation.*;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.gitee.sunchenbin.mybatis.actable.annotation.Column;
 import com.gitee.sunchenbin.mybatis.actable.annotation.IsAutoIncrement;
 import com.gitee.sunchenbin.mybatis.actable.annotation.IsKey;
@@ -33,6 +34,7 @@ public class BasePo {
     @TableField(fill= FieldFill.INSERT)
     @Column(comment = "删除标识")
     @TableLogic
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private Integer deleteFlag;
     @ApiModelProperty(value = "创建人")
     @TableField(fill= FieldFill.INSERT)

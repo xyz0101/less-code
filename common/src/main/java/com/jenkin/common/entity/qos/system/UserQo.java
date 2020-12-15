@@ -13,4 +13,5 @@ import lombok.Data;
 @ApiModel("用户查询条件实体")
 @Data
 public class UserQo {
+
 }

@@ -35,10 +35,13 @@ public class Response<T> implements Serializable {
     public static <T> Response<T> ok(T t){
         return new Response<T>("200","请求成功",t);
     }
-    public static Response error(){
-        return new Response("500","请求失败");
+    public static  <T> Response <T> error(){
+        return new Response<T>("500","请求失败");
     }
-    public static Response error(String msg){
-        return new Response("500",msg);
+    public static <T> Response<T> error(String msg){
+        return new Response<T>("500",msg);
+    }
+    public static <T> Response<T> error(String code,String msg){
+        return new Response<T>(code,msg);
     }
 }

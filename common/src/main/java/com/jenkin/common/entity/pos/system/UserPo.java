@@ -1,6 +1,7 @@
 package com.jenkin.common.entity.pos.system;
 
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.gitee.sunchenbin.mybatis.actable.annotation.Column;
 import com.gitee.sunchenbin.mybatis.actable.annotation.Table;
 import com.gitee.sunchenbin.mybatis.actable.constants.MySqlTypeConstant;
@@ -25,24 +26,25 @@ import java.io.Serializable;
 @Table(name = "lsc_user",comment = "用户信息")
 @ApiModel("用户信息")
 public class UserPo extends BasePo implements Serializable {
-    @Column(comment = "用户名称",name = "user_name",length = 50)
     @ApiModelProperty("用户名称")
     private String userName;
-    @Column(comment = "用户编码",name = "user_code",length = 50)
     @ApiModelProperty("用户编码")
     private String userCode;
-    @Column(comment = "用户密码",name = "password",length = 50)
     @ApiModelProperty("用户密码")
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String password;
-    @Column(comment = "用户邮箱",name = "user_email",length = 50)
     @ApiModelProperty("用户邮箱")
     private String userEmail;
-    @Column(comment = "密码加盐",name = "salt",length = 50)
     @ApiModelProperty("密码加盐")
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String salt;
-    @Column(comment = "用户状态，1正常，0禁用",name = "user_status",length = 2,type = MySqlTypeConstant.TINYINT,defaultValue = "1")
     @ApiModelProperty("用户状态，1正常，0禁用")
     private Integer userStatus;
-
+    @ApiModelProperty("用户头像")
+    private String userHead;
+    @ApiModelProperty("用户简介")
+    private String userIntroduce;
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    private Integer userPlaceId;
 
 }

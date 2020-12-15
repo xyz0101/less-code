@@ -24,7 +24,7 @@ public class ShiroController {
     @IgnoreCheck
     public Response needLogin(){
         log.error("请登录");
-        return Response.error("请登录");
+        return Response.error("401","请登录");
     }
 
 
