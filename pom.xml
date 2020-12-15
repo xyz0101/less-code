@@ -12,8 +12,8 @@
     <modules>
         <module>common</module>
         <module>less-code-service</module>
-        <module>menu-service</module>
-        <module>code-generater</module>
+        <module>system-service</module>
+        <module>code-generator</module>
     </modules>
 
     <properties>
