@@ -124,6 +124,7 @@ public class ShiroUtils {
 	}
 
 	public static void logout() {
+
 		SecurityUtils.getSubject().logout();
 	}
 	

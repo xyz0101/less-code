@@ -12,6 +12,8 @@ import com.jenkin.common.entity.qos.BaseQo;
 import com.jenkin.common.entity.qos.system.UserQo;
 import com.jenkin.common.shiro.AESUtil;
 import com.jenkin.common.shiro.token.MyToken;
+import com.jenkin.common.shiro.token.MyTokenFilter;
+import com.jenkin.common.utils.Redis;
 import com.jenkin.common.utils.ShiroUtils;
 import com.jenkin.systemservice.service.UserService;
 import io.swagger.annotations.ApiOperation;
@@ -36,7 +38,8 @@ import java.util.UUID;
 public class UserController {
 
     RSA rsa = new RSA();
-
+    @Autowired
+    private Redis redis;
     @Autowired
     private UserService userService;
 
@@ -104,6 +107,15 @@ public class UserController {
         return Response.ok(publicKey );
     }
 
+    @GetMapping("/logOut")
+    @IgnoreCheck
+    public Response<String> logOut(){
+
+        String key = MyTokenFilter.TOKEN_KEY + ShiroUtils.getUserCode();
+        redis.del(key);
+        ShiroUtils.logout();
+        return Response.ok();
+    }
 
 
 

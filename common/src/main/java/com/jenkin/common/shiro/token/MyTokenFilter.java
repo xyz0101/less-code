@@ -26,7 +26,7 @@ import java.io.IOException;
  */
 @Slf4j
 public class MyTokenFilter extends BasicHttpAuthenticationFilter {
-    public static final String TOKEN_KEY="mytoken:shiro:user";
+    public static final String TOKEN_KEY="mytoken:shiro:user:";
     public static final int EXPIRE_TIME =24*3600;
     private Redis redis;
     public MyTokenFilter(){
