@@ -12,6 +12,7 @@ import com.jenkin.common.utils.SimpleQuery;
 import com.jenkin.systemservice.dao.UserMapper;
 import com.jenkin.systemservice.service.UserService;
 import org.apache.commons.lang.RandomStringUtils;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.stereotype.Service;
 
 /**
@@ -45,10 +46,11 @@ public class UserServiceImpl extends BaseUserServiceImpl<UserMapper,UserPo> impl
     @Override
     public UserDto saveUserInfo(UserDto user) {
         //sha256加密
-//        String salt = RandomStringUtils.randomAlphanumeric(20);
-//        user.setSalt(salt);
-//        user.setPassword(ShiroUtils.sha256(user.getPassword(), user.getSalt()));
-
+        if (StringUtils.isNotEmpty(user.getPassword())&&user.getId()==null) {
+            String salt = RandomStringUtils.randomAlphanumeric(20);
+            user.setSalt(salt);
+            user.setPassword(ShiroUtils.sha256(user.getPassword(), user.getSalt()));
+        }
         saveOrUpdate(user);
         return user;
     }
