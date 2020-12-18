@@ -19,14 +19,14 @@ public class ColumnInfo  implements Serializable {
      * 是否主键
      */
     @ApiModelProperty("是否主键")
-    private Boolean isId;
+    private Boolean idFlag;
     /**
      * 是否自增
      */
     @ApiModelProperty("是否自增")
-    private Boolean isAutoInc;
+    private Boolean autoIncFlag;
     @ApiModelProperty("是否空值")
-    private Boolean isNull;
+    private Boolean nullFlag;
 
     @ApiModelProperty("列名称")
     private String name;

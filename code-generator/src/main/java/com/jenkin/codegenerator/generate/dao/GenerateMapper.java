@@ -10,38 +10,39 @@ import java.util.List;
 
 public interface GenerateMapper extends BaseMapper<Object> {
 
-    @Select("SELECT\n" +
-            "    *\n" +
-            "FROM\n" +
-            "    information_schema.`TABLES`\n" +
-            "WHERE\n" +
+    @Select("SELECT " +
+            "    t.*, t.table_comment table_comments  " +
+            "FROM " +
+            "    information_schema.`TABLES` t " +
+            "WHERE " +
             "    TABLE_SCHEMA = #{dbName} ")
     List<TableInfo> listTables(@Param("dbName") String dbName);
 
-    @Select("SELECT\n" +
-            "    *\n" +
-            "FROM\n" +
-            "    information_schema.`TABLES`\n" +
-            "WHERE\n" +
+    @Select("SELECT " +
+            "    t.* , t.table_comment table_comments " +
+            "FROM " +
+            "    information_schema.`TABLES` t " +
+            "WHERE " +
             "    TABLE_SCHEMA = #{dbName} and table_name = #{tableName}")
     TableInfo getOneTable(@Param("dbName") String dbName,@Param("tableName") String tableName);
-    @Select("SELECT\n" +
-            "\tIF(column_key='PRI',true,false) as is_id,\n" +
-            "\tIF(is_nullable='YES',true,false) as is_null,\n" +
-            "\tIF(extra='auto_increment',true,false) as is_auto_inc,\n" +
-            "\t column_name as `name`,\n" +
-            "\tIF(CHARACTER_maximum_length is NULL,NUMERIC_precision,CHARACTER_maximum_length) as `length`,\n" +
-            "\t DATA_TYPE as `type`,\n" +
-            "\t NUMERIC_scale as `decimal_Length`,\n" +
-            "\t COLUMN_default as `default_Value`,\n" +
-            "\t character_set_name as `encode`,\n" +
-            "\t\tcollation_name as `sort`,\n" +
-            "\tcolumn_comment as `comment`\n" +
-            "\t \n" +
-            "FROM\n" +
-            "\tinformation_schema. COLUMNS\n" +
-            "WHERE\n" +
-            "\ttable_schema =#{dbName}\n" +
+    @Select("SELECT " +
+            " IF(column_key='PRI',true,false) as id_flag, " +
+            " IF(is_nullable='YES',true,false) as null_flag, " +
+            " IF(extra='auto_increment',true,false) as auto_inc_flag, " +
+            "  column_name as `name`, " +
+            " IF(CHARACTER_maximum_length is NULL,NUMERIC_precision,CHARACTER_maximum_length) as `length`, " +
+            "  DATA_TYPE as `type`, " +
+            "  NUMERIC_scale as `decimal_Length`, " +
+            "  COLUMN_default as `default_Value`, " +
+            "  character_set_name as `encode`, " +
+            "  collation_name as `sort`, " +
+            " column_comment as `comment` ," +
+            " column_comment as `comments` " +
+            "   " +
+            "FROM " +
+            " information_schema. COLUMNS " +
+            "WHERE " +
+            " table_schema =#{dbName} " +
             "AND table_name = #{tableName} ")
     List<ColumnInfo> listColunms(@Param("dbName") String dbName, @Param("tableName") String tableName);
 

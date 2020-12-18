@@ -1,5 +1,6 @@
 package com.jenkin.codegenerator.entity;
 
+import com.baomidou.mybatisplus.annotation.TableField;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -27,6 +28,7 @@ public class TableInfo implements Serializable {
     @ApiModelProperty("编码排序规则，默认utf8mb4_bin")
     private String tableCollation="utf8mb4_bin";
     @ApiModelProperty("注释")
+    @TableField(value = "table_comment")
     private String tableComments;
     @ApiModelProperty("列信息")
     private List<ColumnInfo> columns;

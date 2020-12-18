@@ -66,6 +66,8 @@ public class FileUtils {
             contentType = ContentType.IMAGE_PNG;
         } else if ("jpg".equals(suffix)) {
             contentType = ContentType.IMAGE_JPEG;
+        } else if ("jpeg".equals(suffix)) {
+            contentType = ContentType.IMAGE_JPEG;
         } else if ("bmp".equals(suffix)) {
             contentType = ContentType.IMAGE_BMP;
         } else if ("gif".equals(suffix)) {

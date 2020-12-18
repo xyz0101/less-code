@@ -145,7 +145,7 @@ public class GenerateServiceImpl implements GenerateService {
         StringBuilder sql = new StringBuilder();
         sql.append("create table `").append(item.getTableName()).append("` ").append("(");
         for (ColumnInfo colum : item.getColumns()) {
-            if (colum.getIsId()){
+            if (colum.getIdFlag()){
                 id = colum.getName();
             }
             if (!colum.getType().equals("VARCHAR")) {
@@ -166,13 +166,13 @@ public class GenerateServiceImpl implements GenerateService {
             }
             if (colum.getType().equals("VARCHAR")) {
                 sql.append(" CHARACTER SET ").append(colum.getEncode()).append(" COLLATE ")
-                        .append(colum.getSort()).append(" NULL ");
+                        .append(colum.getSort()).append( colum.getNullFlag()? " NULL ":" NOT NULL ");
             }
             if(!StringUtils.isEmpty(colum.getDefaultValue())) {
                 sql.append(" DEFAULT ")
                         .append(StringUtils.isEmpty(colum.getDefaultValue()) ? " NULL " : colum.getDefaultValue());
             }
-            sql.append(colum.getIsAutoInc()?" AUTO_INCREMENT ":"")
+            sql.append(colum.getAutoIncFlag()?" AUTO_INCREMENT ":"")
                     .append(" COMMENT ").append(colum.getComments())
                     .append(" ,");
         }
