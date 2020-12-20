@@ -1,8 +1,8 @@
 package com.jenkin.codegenerator.generate.dao;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.jenkin.codegenerator.entity.ColumnInfo;
-import com.jenkin.codegenerator.entity.TableInfo;
+import com.jenkin.common.entity.dtos.generate.ColumnInfoDto;
+import com.jenkin.common.entity.dtos.generate.TableInfoDto;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 
@@ -16,7 +16,7 @@ public interface GenerateMapper extends BaseMapper<Object> {
             "    information_schema.`TABLES` t " +
             "WHERE " +
             "    TABLE_SCHEMA = #{dbName} ")
-    List<TableInfo> listTables(@Param("dbName") String dbName);
+    List<TableInfoDto> listTables(@Param("dbName") String dbName);
 
     @Select("SELECT " +
             "    t.* , t.table_comment table_comments " +
@@ -24,7 +24,7 @@ public interface GenerateMapper extends BaseMapper<Object> {
             "    information_schema.`TABLES` t " +
             "WHERE " +
             "    TABLE_SCHEMA = #{dbName} and table_name = #{tableName}")
-    TableInfo getOneTable(@Param("dbName") String dbName,@Param("tableName") String tableName);
+    TableInfoDto getOneTable(@Param("dbName") String dbName, @Param("tableName") String tableName);
     @Select("SELECT " +
             " IF(column_key='PRI',true,false) as id_flag, " +
             " IF(is_nullable='YES',true,false) as null_flag, " +
@@ -44,7 +44,9 @@ public interface GenerateMapper extends BaseMapper<Object> {
             "WHERE " +
             " table_schema =#{dbName} " +
             "AND table_name = #{tableName} ")
-    List<ColumnInfo> listColunms(@Param("dbName") String dbName, @Param("tableName") String tableName);
+    List<ColumnInfoDto> listColunms(@Param("dbName") String dbName, @Param("tableName") String tableName);
+
+
 
 
 }

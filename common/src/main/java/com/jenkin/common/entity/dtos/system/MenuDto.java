@@ -18,6 +18,11 @@ import java.util.List;
 
 @Data
 public class MenuDto extends MenuPo implements Serializable {
-
+    /**
+     * 桑倩菜单需要的权限
+     */
     private List<PermissionPo> permissionPos;
+
+    private List<MenuDto> subList;
+
 }

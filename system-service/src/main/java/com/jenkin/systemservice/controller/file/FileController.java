@@ -1,4 +1,4 @@
-package com.jenkin.systemservice.controller;
+package com.jenkin.systemservice.controller.file;
 
 import cn.hutool.core.io.FileUtil;
 import com.jenkin.common.entity.Response;

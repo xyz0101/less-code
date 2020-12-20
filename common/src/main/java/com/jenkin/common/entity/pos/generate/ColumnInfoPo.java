@@ -1,20 +1,31 @@
-package com.jenkin.codegenerator.entity;
+package com.jenkin.common.entity.pos.generate;
 
+import com.baomidou.mybatisplus.annotation.TableName;
+import com.jenkin.common.entity.pos.BasePo;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import lombok.experimental.FieldNameConstants;
 
 import java.io.Serializable;
 
 /**
  * @author jenkin
- * @className ColumnInfo
+ * @className ColumnInfoDto
  * @description TODO
  * @date 2020/12/11 17:25
  */
 @Data
 @ApiModel("列信息")
-public class ColumnInfo  implements Serializable {
+@TableName("lsc_column_info")
+@FieldNameConstants
+public class ColumnInfoPo extends BasePo implements Serializable {
+    /**
+     * 表ID
+     */
+    @ApiModelProperty("关联的表的ID")
+    private Integer tableId;
+
     /**
      * 是否主键
      */

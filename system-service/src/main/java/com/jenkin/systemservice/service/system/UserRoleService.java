@@ -1,4 +1,4 @@
-package com.jenkin.systemservice.service;
+package com.jenkin.systemservice.service.system;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.jenkin.common.entity.pos.system.UserRolePo;

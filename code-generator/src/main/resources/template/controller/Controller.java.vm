@@ -1,17 +1,25 @@
 package ${info.packageName}.controller.${info.moduleName};
 
-
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import ${info.entityPackageName}.Response;
 import ${info.entityPackageName}.qos.${info.moduleName}.${info.className}Qo;
 import ${info.entityPackageName}.qos.BaseQo;
 import com.jenkin.common.entity.dtos.${info.moduleName}.${info.className}Dto;
+import com.jenkin.common.entity.pos.${info.moduleName}.${info.className}Po;
+import com.jenkin.common.utils.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import com.jenkin.systemservice.service.system.${info.className}Service;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.Api;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Arrays;
+import java.util.List;
 
 
 /**
@@ -29,10 +37,16 @@ public class ${info.className}Controller {
     @Autowired
     private ${info.className}Service ${info.classNameLower}Service;
 
+    @GetMapping("/listAllData")
+    @ApiOperation("获取所有信息，不分页")
+    public Response< List<${info.className}Dto>> listAllData(){
+        List<${info.className}Po> res =  ${info.classNameLower}Service.list();
+        return Response.ok(BeanUtils.mapList(res,${info.className}Dto.class));
+    }
 
     @PostMapping("/listByPage")
     @ApiOperation("分页获取信息")
-    public Response<Page<${info.className}Dto>> list ${info.className}ByPage(@RequestBody BaseQo<${info.className}Qo> qo){
+    public Response<Page<${info.className}Dto>> list${info.className}ByPage(@RequestBody BaseQo<${info.className}Qo> qo){
         Page<${info.className}Dto>  ${info.classNameLower}DtoPage =  ${info.classNameLower}Service.listByPage(qo);
         return Response.ok( ${info.classNameLower}DtoPage);
     }
@@ -42,13 +56,13 @@ public class ${info.className}Controller {
         if (id==null) {
             return Response.ok();
         }
-        ${info.className}Dto byCode =  ${info.classNameLower}Service.getByCode(code);
-        return Response.ok(byCode);
+        ${info.className}Dto byId =  ${info.classNameLower}Service.getById(id);
+        return Response.ok(byId);
     }
     @PostMapping("/save")
     @ApiOperation("保存信息")
     public Response save(@RequestBody  ${info.className}Dto  ${info.classNameLower}Dto){
-        ${info.className}Dto data =  ${info.classNameLower}Service.save ${info.className}Info( ${info.classNameLower}Dto);
+        ${info.className}Dto data =  ${info.classNameLower}Service.save${info.className}Info( ${info.classNameLower}Dto);
         return Response.ok();
     }
 

@@ -4,6 +4,8 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import com.gitee.sunchenbin.mybatis.actable.annotation.Column;
 import com.gitee.sunchenbin.mybatis.actable.annotation.Table;
 import com.jenkin.common.entity.pos.BasePo;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.experimental.FieldNameConstants;
 
@@ -18,24 +20,27 @@ import java.io.Serializable;
  */
 @TableName("lsc_menu")
 @FieldNameConstants
-@Table(name = "lsc_menu",comment = "菜单表")
 @Data
+@ApiModel("菜单表")
 public class MenuPo extends BasePo implements Serializable {
 
-    @Column(comment = "菜单名称")
+    @ApiModelProperty( "菜单名称")
     private String name;
-    @Column(comment = "菜单编号")
+    @ApiModelProperty( "菜单编号")
     private String code;
-    @Column(comment = "菜单父ID")
+    @ApiModelProperty( "菜单父ID")
     private Integer parent;
-    @Column(comment = "菜单权限ID集合")
+    @ApiModelProperty( "菜单的层级")
+    private Integer menuLevel;
+    @ApiModelProperty( "菜单权限ID集合")
     private String permissions;
+    @ApiModelProperty("菜单url")
     private String menuUrl;
-    @Column(comment = "菜单的图标")
+    @ApiModelProperty( "菜单的图标")
     private String menuIcon;
-    @Column(comment = "菜单的顺序")
+    @ApiModelProperty( "菜单的顺序")
     private Integer menuOrder;
-    @Column(comment = "菜单类型，1：菜单，2、按钮")
+    @ApiModelProperty( "菜单类型，1：菜单，2、按钮")
     private Integer menuType;
 
 }

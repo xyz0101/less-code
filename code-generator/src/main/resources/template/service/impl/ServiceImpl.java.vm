@@ -4,7 +4,6 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.jenkin.common.config.MyQueryWrapper;
 import ${info.entityPackageName}.dtos.${info.moduleName}.${info.className}Dto;
-import ${info.entityPackageName}.pos.${info.moduleName}.MenuPo;
 import ${info.entityPackageName}.pos.${info.moduleName}.${info.className}Po;
 import ${info.entityPackageName}.qos.BaseQo;
 import ${info.entityPackageName}.qos.${info.moduleName}.${info.className}Qo;
@@ -23,13 +22,14 @@ import org.springframework.stereotype.Service;
  */
 @Service
 public class ${info.className}ServiceImpl extends ServiceImpl<${info.className}Mapper, MenuPo> implements ${info.className}Service {
+
     @Override
     public ${info.className}Dto getById(Integer id) {
         return BeanUtils.map(getById(id),${info.className}Dto.class);
     }
 
     /**
-     * 分页获取用户
+     * 分页获取数据
      *
      * @param  ${info.classNameLower}
      */
@@ -41,7 +41,7 @@ public class ${info.className}ServiceImpl extends ServiceImpl<${info.className}M
     }
 
     /**
-     * 保存用户信息
+     * 保存信息
      *
      * @param  ${info.classNameLower}
      * @return

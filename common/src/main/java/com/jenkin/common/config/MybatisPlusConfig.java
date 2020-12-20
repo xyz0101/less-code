@@ -70,15 +70,15 @@ public class MybatisPlusConfig {
                 public void insertFill(MetaObject metaObject) {
                     this.strictInsertFill(metaObject, "deleteFlag", Integer.class, 0);
 
-                    this.strictInsertFill(metaObject, "creationDate", Date.class, new Date());
+                    this.strictInsertFill(metaObject, "creationDate", LocalDateTime.class, LocalDateTime.now());
                     this.strictInsertFill(metaObject, "createdBy", String.class, ShiroUtils.getUserCode());
-                    this.strictInsertFill(metaObject, "lastUpdateDate", Date.class, new Date());
+                    this.strictInsertFill(metaObject, "lastUpdateDate", LocalDateTime.class, LocalDateTime.now());
                     this.strictInsertFill(metaObject, "lastUpdatedBy", String.class, ShiroUtils.getUserCode());
                 }
 
                 @Override
                 public void updateFill(MetaObject metaObject) {
-                    this.strictInsertFill(metaObject, "lastUpdateDate", Date.class, new Date());
+                    this.strictInsertFill(metaObject, "lastUpdateDate", LocalDateTime.class, LocalDateTime.now());
                     this.strictInsertFill(metaObject, "lastUpdatedBy", String.class, ShiroUtils.getUserCode());
                 }
             };

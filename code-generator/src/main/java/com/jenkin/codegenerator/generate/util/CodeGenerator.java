@@ -3,7 +3,7 @@ package com.jenkin.codegenerator.generate.util;
 import cn.hutool.core.util.CharsetUtil;
 import cn.hutool.core.util.ZipUtil;
 import com.jenkin.codegenerator.entity.CodeGenerateInfo;
-import com.jenkin.codegenerator.entity.ColumnInfo;
+import com.jenkin.common.entity.dtos.generate.ColumnInfoDto;
 import com.jenkin.common.utils.FileUtils;
 import com.jenkin.common.utils.ShiroUtils;
 import lombok.extern.slf4j.Slf4j;
@@ -72,7 +72,7 @@ public class CodeGenerator {
         String[] ignores = {"id", "delete_flag", "created_by", "creation_date", "last_update_date", "last_updated_by", "version_number"};
         VelocityEngine velocityEngine =initVelocityEngine();
         VelocityContext ctx = new VelocityContext();
-        List<ColumnInfo> collect = info.getTableInfo().getColumns().stream().filter(item ->
+        List<ColumnInfoDto> collect = info.getTableInfo().getColumns().stream().filter(item ->
                 !Arrays.asList(ignores).contains(item.getName().toLowerCase())).collect(Collectors.toList());
         info.getTableInfo().setColumns(collect);
         ctx.put("info",info);

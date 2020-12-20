@@ -17,20 +17,20 @@ import ${info.entityPackageName}.qos.${info.moduleName}.${info.className}Qo;
 public interface ${info.className}Service extends IService<${info.className}Po> {
 
         /**
-         * 根据用户编号获取用户
+         * 根据ID编号获取数据
          * @param id
          * @return
          */
         ${info.className}Dto getById(Integer id);
 
         /**
-         * 分页获取用户
+         * 分页获取数据
          * @param  ${info.classNameLower}
          */
         Page<${info.className}Dto> listByPage(BaseQo<${info.className}Qo>  ${info.classNameLower});
 
         /**
-         * 保存用户信息
+         * 保存信息
          * @param  ${info.classNameLower}Dto
          * @return
          */

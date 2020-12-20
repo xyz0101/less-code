@@ -1,5 +1,6 @@
 package com.jenkin.codegenerator.entity;
 
+import com.jenkin.common.entity.dtos.generate.TableInfoDto;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -19,7 +20,7 @@ import java.util.Date;
 @ApiModel("代码生成的实体类")
 public class CodeGenerateInfo {
     @ApiModelProperty("数据库表的信息")
-    private TableInfo tableInfo;
+    private TableInfoDto tableInfo;
     @ApiModelProperty("项目模块名称，例如 codegenerate")
     private String projectModule="";
     @ApiModelProperty("基础包，默认是 com.jenkin")

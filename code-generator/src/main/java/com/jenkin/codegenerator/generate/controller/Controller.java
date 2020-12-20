@@ -4,7 +4,8 @@ import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.jenkin.codegenerator.entity.CodeGenerateInfo;
 import com.jenkin.codegenerator.entity.JavaToMysqlType;
 import com.jenkin.codegenerator.entity.MysqlType;
-import com.jenkin.codegenerator.entity.TableInfo;
+import com.jenkin.common.entity.dtos.generate.TableInfoDto;
+import com.jenkin.codegenerator.generate.dao.GenerateMapper;
 import com.jenkin.codegenerator.generate.service.GenerateService;
 import com.jenkin.common.entity.Response;
 import io.swagger.annotations.Api;
@@ -12,8 +13,11 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -30,6 +34,10 @@ import java.util.Map;
 public class Controller {
     @Autowired
     private GenerateService generateService;
+
+    @Resource
+    private GenerateMapper generateMapper;
+
     /**
      * 获取数据库里面的所有表信息
      *
@@ -37,8 +45,12 @@ public class Controller {
      */
     @GetMapping("/listDbTables")
     @ApiOperation("获取数据库里面的所有表信息")
-    public Response<List<TableInfo>> listDbTables() {
-        return Response.ok(generateService.listDbTables());
+    public Response<List<TableInfoDto>> listDbTables() {
+
+        List<TableInfoDto> tableInfoDtos = generateService.listDbTables();
+        List<TableInfoDto> unCreateTables = generateService.listUnCreateTables();
+        unCreateTables.addAll(tableInfoDtos);
+        return Response.ok(unCreateTables);
     }
 
     /**
@@ -48,19 +60,19 @@ public class Controller {
      */
     @GetMapping("/listUnCreateTables")
     @ApiOperation("获取还未创建的表信息")
-    public Response<List<TableInfo>> listUnCreateTables() {
+    public Response<List<TableInfoDto>> listUnCreateTables() {
         return Response.ok(generateService.listUnCreateTables());
     }
 
     /**
      * 保存创建表的元数据
      *
-     * @param tableInfos
+     * @param tableInfo
      */
     @PostMapping("/saveTableInfo")
     @ApiOperation(("保存建表信息"))
-    public Response saveTableInfo(@RequestBody List<TableInfo> tableInfos) {
-        generateService.saveTableInfo(tableInfos);
+    public Response saveTableInfo(@RequestBody TableInfoDto tableInfo) {
+        generateService.saveTableInfo(Collections.singletonList(tableInfo));
         return Response.ok();
     }
 
@@ -71,7 +83,7 @@ public class Controller {
      */
     @PostMapping("/createTable")
     @ApiOperation("创建表")
-    public Response createTable(@RequestBody List<TableInfo> tableInfos) {
+    public Response createTable(@RequestBody List<TableInfoDto> tableInfos) {
         generateService.createTable(tableInfos);
         return Response.ok();
     }
@@ -115,6 +127,25 @@ public class Controller {
     public Response<String> underlineToCamel(String code){
         return Response.ok(StringUtils.underlineToCamel(code));
     }
+
+    /**
+     * 获取字符集和排序
+     * @return
+     */
+    @ApiOperation("获取字符集和排序")
+    @GetMapping("/getCollation")
+    public Response<Map<String,List<String>>> getCollation(){
+        return Response.ok(generateService.listCollation());
+    }
+
+
+    @PostMapping("/deleteTables")
+    @ApiOperation("删除信息")
+    public Response deleteTables(@RequestBody Integer[] ids){
+        generateService.removeTableByIds(Arrays.asList(ids));
+        return Response.ok();
+    }
+
 
 
 

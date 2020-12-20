@@ -44,12 +44,12 @@ public class BasePo {
     @ApiModelProperty(value = "创建时间")
     @TableField(fill= FieldFill.INSERT)
     @Column(comment = "创建时间",type = MySqlTypeConstant.DATE )
-    private Date creationDate;
+    private LocalDateTime creationDate;
 
     @ApiModelProperty(value = "更新时间")
     @TableField(fill= FieldFill.INSERT_UPDATE)
     @Column(comment = "更新时间",type = MySqlTypeConstant.DATE )
-    private Date lastUpdateDate;
+    private LocalDateTime lastUpdateDate;
 
     @ApiModelProperty(value = "更新人")
     @TableField(fill= FieldFill.INSERT_UPDATE)

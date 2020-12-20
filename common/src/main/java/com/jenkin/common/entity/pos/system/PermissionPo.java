@@ -25,13 +25,22 @@ import java.io.Serializable;
 @ApiModel("权限信息表")
 public class PermissionPo extends BasePo implements Serializable {
 
-    @Column(comment = "权限名称")
-    @ApiModelProperty("权限名称")
+    @ApiModelProperty(" 菜单地址")
+    private String menuUrl;
+    @ApiModelProperty(" 菜单名称")
     private String name;
-    @Column(comment = "权限编码")
-    @ApiModelProperty("权限编码")
+    @ApiModelProperty(" 菜单编号")
     private String code;
-
+    @ApiModelProperty(" 菜单父ID")
+    private Integer parent;
+    @ApiModelProperty(" 菜单权限ID集合")
+    private String permissions;
+    @ApiModelProperty(" 菜单的图标")
+    private String menuIcon;
+    @ApiModelProperty(" 菜单的顺序")
+    private Integer menuOrder;
+    @ApiModelProperty(" 菜单类型，1：菜单，2、按钮")
+    private Integer menuType;
     public PermissionPo() {
     }
 

@@ -1,4 +1,4 @@
-package com.jenkin.systemservice.controller;
+package com.jenkin.systemservice.controller.system;
 
 import cn.hutool.crypto.asymmetric.KeyType;
 import cn.hutool.crypto.asymmetric.RSA;
@@ -15,15 +15,15 @@ import com.jenkin.common.shiro.token.MyToken;
 import com.jenkin.common.shiro.token.MyTokenFilter;
 import com.jenkin.common.utils.Redis;
 import com.jenkin.common.utils.ShiroUtils;
-import com.jenkin.systemservice.service.UserService;
+import com.jenkin.systemservice.service.system.UserService;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.PublicKey;
+import java.time.LocalDateTime;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.UUID;
 
 /**
@@ -91,8 +91,8 @@ public class UserController {
         UserDto userEntityNoPermissionStr = ShiroUtils.removeSentiveMessage(userDto);
         userEntityNoPermissionStr.setSalt(UUID.randomUUID().toString()+
                 UUID.randomUUID().toString()+UUID.randomUUID().toString()+UUID.randomUUID().toString());
-        userDto.setLastUpdateDate(new Date());
-        userDto.setCreationDate(new Date());
+        userDto.setLastUpdateDate(LocalDateTime.now());
+        userDto.setCreationDate(LocalDateTime.now());
         String encrypt = AESUtil.encrypt(JSON.toJSONString(userEntityNoPermissionStr));
         MyToken myToken = new MyToken(userDto);
         myToken.setToken(encrypt);

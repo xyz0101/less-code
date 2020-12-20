@@ -1,22 +1,27 @@
-package com.jenkin.codegenerator.entity;
+package com.jenkin.common.entity.pos.generate;
 
 import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableName;
+import com.jenkin.common.entity.pos.BasePo;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import lombok.experimental.FieldNameConstants;
 
 import java.io.Serializable;
 import java.util.List;
 
 /**
  * @author jenkin
- * @className TableInfo
+ * @className TableInfoDto
  * @description TODO
  * @date 2020/12/11 17:24
  */
 @Data
 @ApiModel("表信息")
-public class TableInfo implements Serializable {
+@TableName("lsc_table_info")
+@FieldNameConstants
+public class TableInfoPo extends BasePo implements Serializable {
     @ApiModelProperty("数据库")
     private String tableSchema;
     @ApiModelProperty("表名称")
@@ -30,6 +35,7 @@ public class TableInfo implements Serializable {
     @ApiModelProperty("注释")
     @TableField(value = "table_comment")
     private String tableComments;
-    @ApiModelProperty("列信息")
-    private List<ColumnInfo> columns;
+    @ApiModelProperty("是否未创建")
+    private Boolean unCreateFlag;
+
 }

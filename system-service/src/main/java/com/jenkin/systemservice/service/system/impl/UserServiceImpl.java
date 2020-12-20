@@ -1,4 +1,4 @@
-package com.jenkin.systemservice.service.impl;
+package com.jenkin.systemservice.service.system.impl;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.jenkin.common.config.MyQueryWrapper;
@@ -9,8 +9,8 @@ import com.jenkin.common.entity.qos.system.UserQo;
 import com.jenkin.common.shiro.service.impl.BaseUserServiceImpl;
 import com.jenkin.common.utils.ShiroUtils;
 import com.jenkin.common.utils.SimpleQuery;
-import com.jenkin.systemservice.dao.UserMapper;
-import com.jenkin.systemservice.service.UserService;
+import com.jenkin.systemservice.dao.system.UserMapper;
+import com.jenkin.systemservice.service.system.UserService;
 import org.apache.commons.lang.RandomStringUtils;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.stereotype.Service;

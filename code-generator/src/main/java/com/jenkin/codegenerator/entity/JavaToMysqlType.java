@@ -29,17 +29,19 @@ public class JavaToMysqlType {
         javaToMysqlTypeMap.put("char", MySqlTypeConstant.VARCHAR);
     }
     static {
+
         mysqlToJavaTypeMap.put("VARCHAR", new MysqlType("VARCHAR","java.lang.String",255,null,false,true));
         mysqlToJavaTypeMap.put("TEXT", new MysqlType("TEXT","java.lang.String",255,null,false,true));
         mysqlToJavaTypeMap.put("JSON", new MysqlType("JSON","java.lang.String",null,null,false,true));
         mysqlToJavaTypeMap.put("BIGINT", new MysqlType("BIGINT","java.lang.Long",11,null,false));
         mysqlToJavaTypeMap.put("INT", new MysqlType("INT","java.lang.Integer",11,null,true));
         mysqlToJavaTypeMap.put("BIT", new MysqlType("BIT","java.lang.Boolean",1,null,false));
+        mysqlToJavaTypeMap.put("TINYINT", new MysqlType("TINYINT","java.lang.Boolean",1,null,false));
         mysqlToJavaTypeMap.put("DOUBLE", new MysqlType("DOUBLE","java.lang.Double",9,2,false));
         mysqlToJavaTypeMap.put("FLOAT", new MysqlType("FLOAT","java.lang.Float",9,2,false));
         mysqlToJavaTypeMap.put("DECIMAL", new MysqlType("DECIMAL","java.math.BigDecimal",9,2,false));
         mysqlToJavaTypeMap.put("DATE", new MysqlType("DATE","java.util.Date",null,null,false));
-        mysqlToJavaTypeMap.put("DATETIME", new MysqlType("DATETIME","java.util.Date",null,null,false));
+        mysqlToJavaTypeMap.put("DATETIME", new MysqlType("DATETIME","java.time.LocalDateTime",null,null,false));
         mysqlToJavaTypeMap.put("TIME", new MysqlType("TIME","java.util.Date",null,null,false));
 
 

@@ -1,11 +1,11 @@
-package com.jenkin.systemservice.service.impl;
+package com.jenkin.systemservice.service.system.impl;
 
 import com.jenkin.common.entity.pos.system.UserRolePo;
 import com.jenkin.common.config.MyQueryWrapper;
 import com.jenkin.common.shiro.service.impl.BaseUserRoleServiceImpl;
 
-import com.jenkin.systemservice.dao.UserRoleMapper;
-import com.jenkin.systemservice.service.UserRoleService;
+import com.jenkin.systemservice.dao.system.UserRoleMapper;
+import com.jenkin.systemservice.service.system.UserRoleService;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;

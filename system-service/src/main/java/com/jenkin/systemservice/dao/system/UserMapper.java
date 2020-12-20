@@ -1,4 +1,4 @@
-package com.jenkin.systemservice.dao;
+package com.jenkin.systemservice.dao.system;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.jenkin.common.entity.pos.system.UserPo;

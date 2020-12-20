@@ -1,10 +1,11 @@
 package com.jenkin.codegenerator.generate.service;
 
 import com.jenkin.codegenerator.entity.CodeGenerateInfo;
-import com.jenkin.codegenerator.entity.TableInfo;
+import com.jenkin.common.entity.dtos.generate.TableInfoDto;
 
 import java.io.OutputStream;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author jenkin
@@ -17,25 +18,25 @@ public interface GenerateService {
      * 获取数据库里面的所有表信息
      * @return
      */
-    List<TableInfo> listDbTables();
+    List<TableInfoDto> listDbTables();
 
     /**
      * 获取还未创建的表信息
      * @return
      */
-    List<TableInfo> listUnCreateTables();
+    List<TableInfoDto> listUnCreateTables();
 
     /**
      * 保存创建表的元数据
      * @param tableInfos
      */
-    void saveTableInfo(List<TableInfo> tableInfos);
+    void saveTableInfo(List<TableInfoDto> tableInfos);
 
     /**
      * 创建表
      * @param tableInfos
      */
-    void createTable(List<TableInfo> tableInfos);
+    void createTable(List<TableInfoDto> tableInfos);
 
     /**
      * 生成代码
@@ -44,4 +45,15 @@ public interface GenerateService {
      */
     void generateCode(List<CodeGenerateInfo> codeGenerateInfos, OutputStream outputStream);
 
+    /**
+     * 获取字符集和排序
+     * @return
+     */
+    Map<String,List<String>> listCollation();
+
+    /**
+     * 删除表信息
+     * @param ids
+     */
+    void removeTableByIds(List<Integer> ids);
 }
