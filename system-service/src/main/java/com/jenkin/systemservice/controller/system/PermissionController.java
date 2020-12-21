@@ -30,8 +30,9 @@ import java.util.List;
  * @version: 1.0
  */
 @RestController
-@RequestMapping("/system")
+@RequestMapping("/permission")
 @CrossOrigin
+@Api(tags = "权限相关接口")
 public class PermissionController {
 
     @Autowired

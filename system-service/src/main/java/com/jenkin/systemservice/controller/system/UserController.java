@@ -16,6 +16,7 @@ import com.jenkin.common.shiro.token.MyTokenFilter;
 import com.jenkin.common.utils.Redis;
 import com.jenkin.common.utils.ShiroUtils;
 import com.jenkin.systemservice.service.system.UserService;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
@@ -35,6 +36,7 @@ import java.util.UUID;
  */
 @RestController
 @RequestMapping("/user")
+@Api(tags = "用户相关接口")
 public class UserController {
 
     RSA rsa = new RSA();

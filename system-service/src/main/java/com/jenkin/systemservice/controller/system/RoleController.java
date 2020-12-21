@@ -25,8 +25,9 @@ import java.util.List;
  * @version: 1.0
  */
 @RestController
-@RequestMapping("/system")
+@RequestMapping("/role")
 @CrossOrigin
+@Api(tags = "角色相关接口")
 public class RoleController {
 
     @Autowired

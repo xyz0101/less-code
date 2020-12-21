@@ -4,6 +4,7 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 /**
  * @author jenkin
@@ -19,5 +20,5 @@ public class Sort {
     private String sortField;
     @ApiModelProperty("排序值，升序 asc还是降序desc")
     private String sortValue;
-
+    public Sort(){}
 }

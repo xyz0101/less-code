@@ -29,7 +29,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/menu")
 @CrossOrigin
-@Api(tags = "")
+@Api(tags = "菜单相关接口")
 public class MenuController {
 
     @Autowired
@@ -45,7 +45,7 @@ public class MenuController {
 
 
     @GetMapping("/listMenuTree")
-    @ApiOperation("获取所有信息，不分页")
+    @ApiOperation("获取菜单树形结构")
     public Response< List<MenuDto>> listMenuTree(){
         List<MenuDto> res =  menuService.listMenuTree();
         return Response.ok(BeanUtils.mapList(res,MenuDto.class));
