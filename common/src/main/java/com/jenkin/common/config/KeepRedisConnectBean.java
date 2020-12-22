@@ -22,6 +22,7 @@ public class KeepRedisConnectBean {
     Redis redis;
 
     private static final ScheduledThreadPoolExecutor SINGLE_SCHEDULED_EXECUTOR =  new ScheduledThreadPoolExecutor(1, new ThreadFactory() {
+        @Override
         public Thread newThread(Runnable r) {
             Thread thread = new Thread(r);
             thread.setDaemon(true);
@@ -33,8 +34,14 @@ public class KeepRedisConnectBean {
     public  void run(){
         SINGLE_SCHEDULED_EXECUTOR.schedule(()->{
             log.info("keep redis connect");
-            redis.set("SINGLE_SCHEDULED_EXECUTOR","jenkin schedule keep redis connect");
-        },5, TimeUnit.MINUTES);
+            try {
+                redis.set("SINGLE_SCHEDULED_EXECUTOR", "jenkin schedule keep redis connect");
+            }catch (Exception e){
+                log.error(e.getMessage());
+            }finally {
+                run();
+            }
+        },60, TimeUnit.SECONDS);
     }
     @PostConstruct
     public void postConstruct(){
