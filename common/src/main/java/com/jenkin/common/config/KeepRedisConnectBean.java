@@ -35,6 +35,7 @@ public class KeepRedisConnectBean {
         SINGLE_SCHEDULED_EXECUTOR.schedule(()->{
             log.info("keep redis connect");
             try {
+                redis.get("SINGLE_SCHEDULED_EXECUTOR" );
                 redis.set("SINGLE_SCHEDULED_EXECUTOR", "jenkin schedule keep redis connect");
             }catch (Exception e){
                 log.error(e.getMessage());

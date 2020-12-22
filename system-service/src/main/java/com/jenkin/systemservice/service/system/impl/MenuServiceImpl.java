@@ -2,6 +2,8 @@ package com.jenkin.systemservice.service.system.impl;
 
 import com.jenkin.common.entity.pos.system.MenuPo;
 import com.jenkin.common.entity.pos.system.PermissionPo;
+import com.jenkin.common.exception.ExceptionEnum;
+import com.jenkin.common.exception.LscException;
 import com.jenkin.common.shiro.service.impl.BaseMenuServiceImpl;
 import com.jenkin.systemservice.dao.system.MenuMapper;
 import com.jenkin.systemservice.service.system.MenuService;
@@ -39,7 +41,8 @@ public class MenuServiceImpl extends BaseMenuServiceImpl<MenuMapper, MenuPo> imp
 
     @Override
     public MenuDto getById(Integer id) {
-        return BeanUtils.map(getById(id),MenuDto.class);
+        MenuPo byId = super.getById(id);
+        return BeanUtils.map(byId,MenuDto.class);
     }
 
     /**
@@ -62,6 +65,15 @@ public class MenuServiceImpl extends BaseMenuServiceImpl<MenuMapper, MenuPo> imp
      */
     @Override
     public MenuDto saveMenuInfo(MenuDto  menu) {
+        Integer parent = menu.getParent();
+        int level = 0;
+        if (parent>0) {
+            MenuDto byId = getById(parent);
+            if (byId!=null) {
+                level = byId.getMenuLevel()+1;
+            }
+        }
+       menu.setMenuLevel(level);
         saveOrUpdate( menu);
         return  menu;
     }
@@ -127,14 +139,16 @@ public class MenuServiceImpl extends BaseMenuServiceImpl<MenuMapper, MenuPo> imp
      */
     @Override
     public void deleteMenuByIds(List<Integer> ids) {
+        if (CollectionUtils.isEmpty(ids)) {
+            throw new LscException(ExceptionEnum.DELETE_TOOMUCH_EXCEPTION);
+        }
 
         List<MenuDto> menuDtos = this.listMenuTree();
         List<MenuDto> deleteMenus = new ArrayList<>();
         for (MenuDto menuDto : menuDtos) {
             findNeedDeleteId(ids,menuDto,deleteMenus,false);
         }
-        Set<Integer> deleteIds = menuDtos.stream().map(item -> item.getId()).collect(Collectors.toSet());
-        menuDtos.stream().map(item -> item.getPermissionPos()).collect(Collectors.toSet());
+        Set<Integer> deleteIds = deleteMenus.stream().map(item -> item.getId()).collect(Collectors.toSet());
         removeByIds(deleteIds);
 
 

@@ -7,6 +7,7 @@ import com.jenkin.common.entity.pos.system.UserPo;
 import com.jenkin.common.entity.qos.BaseQo;
 import com.jenkin.common.entity.qos.system.UserQo;
 import com.jenkin.common.shiro.service.impl.BaseUserServiceImpl;
+import com.jenkin.common.utils.BeanUtils;
 import com.jenkin.common.utils.ShiroUtils;
 import com.jenkin.common.utils.SimpleQuery;
 import com.jenkin.systemservice.dao.system.UserMapper;
@@ -32,8 +33,15 @@ public class UserServiceImpl extends BaseUserServiceImpl<UserMapper,UserPo> impl
      */
     @Override
     public Page<UserDto> listByPage(BaseQo<UserQo> user) {
+        UserQo data = user.getData();
         SimpleQuery<UserPo> simpleQuery = SimpleQuery.builder(user,this).sort();
         MyQueryWrapper<UserPo> query = simpleQuery.getQuery();
+        if (data!=null) {
+            query.like(StringUtils.isNotEmpty(data.getUserCode()),UserPo.Fields.userCode,data.getUserCode());
+            query.like(StringUtils.isNotEmpty(data.getUserName()),UserPo.Fields.userName,data.getUserName());
+            query.like(StringUtils.isNotEmpty(data.getUserEmail()),UserPo.Fields.userEmail,data.getUserEmail());
+
+        }
         return simpleQuery.page(UserDto.class);
     }
 

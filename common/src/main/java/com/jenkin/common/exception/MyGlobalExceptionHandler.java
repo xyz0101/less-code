@@ -1,4 +1,4 @@
-package com.jenkin.common.shiro.handler;
+package com.jenkin.common.exception;
 
 import com.jenkin.common.entity.Response;
 import org.apache.shiro.authc.AuthenticationException;
@@ -28,7 +28,11 @@ public class MyGlobalExceptionHandler {
         e.printStackTrace();
         return Response.error("登录失效，请重新登录");
     }
-
+    @ExceptionHandler(LscException.class)
+    public Response lscException(Exception e) {
+        e.printStackTrace();
+        return Response.error(e.getMessage());
+    }
 
 
 }

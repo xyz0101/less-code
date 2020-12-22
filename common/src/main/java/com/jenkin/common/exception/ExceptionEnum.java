@@ -8,8 +8,8 @@ public enum ExceptionEnum {
 
     ERROR_EXCEPTION("500","系统错误"),
 
-    SQL_ERROR_EXCEPTION("510","不合法的SQL语句，请检查配置项是否完成！");
-
+    SQL_ERROR_EXCEPTION("510","不合法的SQL语句，请检查配置项是否完成！"),
+    DELETE_TOOMUCH_EXCEPTION("511","删除参数不能为空");
 
     ExceptionEnum(String code, String desc) {
         this.code = code;
