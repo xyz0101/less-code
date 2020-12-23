@@ -10,6 +10,7 @@ import com.jenkin.common.entity.qos.system.MenuQo;
 import com.jenkin.common.shiro.service.BaseMenuService;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author jenkin
@@ -46,8 +47,34 @@ public interface MenuService extends BaseMenuService, IService<MenuPo> {
     List<MenuDto> listMenuTree();
 
     /**
+     * 获取所有的菜单
+     * @return
+     */
+    List<MenuDto> listMenus();
+
+    /**
+     * 获取菜单的map关系
+     * @return
+     */
+    Map<Integer,MenuDto> getMenuMap();
+
+    /**
      * 根据ID删除 数据
      * @param ids
      */
     void deleteMenuByIds(List<Integer> ids);
+
+    /**
+     * 根据用户获取菜单
+     * @param userCode
+     * @return
+     */
+    List<MenuDto> listMenuByUser(String userCode);
+
+    /**
+     * 获取当前父节点下面的子节点
+     * @param parent
+     * @return
+     */
+    List<MenuDto> listByParentId(Integer parent);
 }

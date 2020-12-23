@@ -40,12 +40,6 @@ public class MyShiroRealm extends AuthorizingRealm {
     @Autowired
     private BaseUserService baseUserService;
     @Autowired
-    BaseUserRoleService baseUserRoleService;
-    @Autowired
-    BaseMenuService baseMenuService;
-    @Autowired
-    BaseRoleService baseRoleService;
-    @Autowired
     BasePermissionService basePermissionService;
     @Autowired
     private Redis redis;
@@ -133,34 +127,7 @@ public class MyShiroRealm extends AuthorizingRealm {
     }
 
     private UserDto refreshUserInfo(String code) {
-        UserDto userDto = baseUserService.getByCode(code);
-        if (userDto==null) {
-            return null;
-        }
-        List<UserRolePo> allByUserId = baseUserRoleService.listByUserId(userDto.getId() );
-        List<Integer> collect = allByUserId.stream().map(UserRolePo::getRoleId).collect(Collectors.toList());
-//        if (CollectionUtils.isEmpty(collect)) {
-//            throw new LscException(ExceptionEnum.NO_AUTH_EXCEPTION);
-//        }
-        List<RolePo> allById = CollectionUtils.isEmpty(collect)?new ArrayList<>():baseRoleService.listByIds(collect);
-        List<RoleDto> roleDtos = new ArrayList<>(allById.size());
-        if (!CollectionUtils.isEmpty(allById)) {
-            for (RolePo role : allById) {
-                RoleDto roleDto = BeanUtils.map(role,RoleDto.class);
-                if (StringUtils.hasLength(role.getMenuStr())) {
-                    List<Integer> ids= new ArrayList<>();
-                    for (String s : role.getMenuStr().split(",")) {
-                        ids.add(Integer.parseInt(s));
-                    }
-                    List<MenuPo> allMenu = CollectionUtils.isEmpty(ids)?new ArrayList<>()
-                            :baseMenuService.listByIds(ids);
-                    roleDto.setMenus(allMenu);
-                    roleDtos.add(roleDto);
-                }
-            }
-        }
-        userDto.setRoles(roleDtos);
-        return userDto;
+       return baseUserService.getCurrentUserInfo(code);
     }
 
     /**

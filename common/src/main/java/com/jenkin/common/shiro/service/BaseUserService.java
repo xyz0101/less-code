@@ -22,6 +22,10 @@ public interface BaseUserService extends IService<UserPo> {
      */
     UserDto getByCode(String code);
 
-
-
+    /**
+     * 获取用户的详细信息
+     * @param code
+     * @return
+     */
+    UserDto getCurrentUserInfo(String code);
 }

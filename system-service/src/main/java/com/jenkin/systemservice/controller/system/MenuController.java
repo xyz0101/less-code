@@ -4,12 +4,17 @@ package com.jenkin.systemservice.controller.system;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.jenkin.common.entity.Response;
+import com.jenkin.common.entity.dtos.system.UserDto;
 import com.jenkin.common.entity.qos.system.MenuQo;
 import com.jenkin.common.entity.qos.BaseQo;
 import com.jenkin.common.entity.dtos.system.MenuDto;
 import com.jenkin.common.entity.pos.system.MenuPo;
 import com.jenkin.common.utils.BeanUtils;
+import com.jenkin.common.utils.ShiroUtils;
 import com.jenkin.systemservice.service.system.MenuService;
+import com.jenkin.systemservice.service.system.RoleService;
+import com.jenkin.systemservice.service.system.UserRoleService;
+import com.jenkin.systemservice.service.system.UserService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,6 +39,9 @@ public class MenuController {
 
     @Autowired
     private MenuService menuService;
+
+    @Autowired
+    private UserRoleService userRoleService;
 
     @GetMapping("/listAllData")
     @ApiOperation("获取所有信息，不分页")
@@ -79,6 +87,25 @@ public class MenuController {
     public Response deleteMenu(@RequestBody Integer[] ids){
         menuService.deleteMenuByIds(Arrays.asList(ids));
         return Response.ok();
+    }
+
+
+    @GetMapping("/listMenuByUser")
+    @ApiOperation("获取当前用户有权限的菜单")
+    public Response<List<MenuDto>> listMenuByUser(){
+        String userCode = ShiroUtils.getUserCode();
+        List<MenuDto> res = menuService.listMenuByUser(userCode);
+        return Response.ok(res);
+    }
+
+
+
+
+    @GetMapping("/getMaxOrder")
+    @ApiOperation("获取当前菜单下面最大的序号")
+    public Response<Integer> getMaxOrder(Integer menuId){
+        List<MenuDto> menuDtos = menuService.listByParentId(menuId);
+        return Response.ok(menuDtos.size()+1);
     }
 
 
