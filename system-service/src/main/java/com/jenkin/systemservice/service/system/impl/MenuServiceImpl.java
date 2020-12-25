@@ -148,6 +148,9 @@ public class MenuServiceImpl extends BaseMenuServiceImpl<MenuMapper, MenuPo> imp
         List<PermissionPo> permissionPos = CollectionUtils.isEmpty(ids)?new ArrayList<>(): permissionService.listByIds(ids);
         for (MenuDto menuDto : menuDtos) {
             List<Integer> perIds = idsMap.get(menuDto.getId());
+            if (perIds==null) {
+                continue;
+            }
             menuDto.setPermissionPos(permissionPos.stream().filter(item->perIds.contains(item.getId())).collect(Collectors.toList()));
         }
         List<MenuDto> parents =  menuDtos.stream()
@@ -179,10 +182,12 @@ public class MenuServiceImpl extends BaseMenuServiceImpl<MenuMapper, MenuPo> imp
     private void convertToTree(MenuDto menuDto, List<MenuDto> menuDtos) {
         List<MenuDto> parents =  menuDtos.stream()
                 .filter(item->item.getParent().equals(menuDto.getId())).collect(Collectors.toList());
-        if (!CollectionUtils.isEmpty(parents)) {
-            parents.sort(Comparator.comparingInt(MenuPo::getMenuOrder));
-            menuDto.setSubList(parents);
-            for (MenuDto parent : parents) {
+        Set<MenuDto> parentSets =new TreeSet<MenuDto>(Comparator.comparingInt(MenuPo::getMenuOrder));
+        parentSets.addAll(parents);
+
+        if (!CollectionUtils.isEmpty(parentSets)) {
+            menuDto.setSubList(new ArrayList<>(parentSets));
+            for (MenuDto parent : parentSets) {
                 convertToTree(parent,menuDtos);
             }
 
@@ -272,12 +277,18 @@ public class MenuServiceImpl extends BaseMenuServiceImpl<MenuMapper, MenuPo> imp
     @Override
     public List<MenuDto> listMenuByUser(String userCode) {
         List<MenuDto> res = getUserMenus(userCode);
+        if (CollectionUtils.isEmpty(res)) {
+            throw new LscException(ExceptionEnum.FORBIDDEN_ACCESS_EXCEPTION);
+        }
         res = resolveMenuParent(res);
         List<MenuDto> parents = res.stream().filter(item->item.getParent()<=0).collect(Collectors.toList());
-        for (MenuDto parent : parents) {
+        Set<MenuDto> parentSets =new TreeSet<MenuDto>(Comparator.comparingInt(MenuPo::getMenuOrder));
+        parentSets.addAll(parents);
+
+        for (MenuDto parent : parentSets) {
             convertToTree(parent,res);
         }
-        return parents;
+        return new ArrayList<>(parentSets);
     }
 
     /**

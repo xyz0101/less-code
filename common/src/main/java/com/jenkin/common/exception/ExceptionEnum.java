@@ -5,7 +5,7 @@ public enum ExceptionEnum {
 
     ERROR_PARAM_EXCEPTION("400","参数错误"),
     NO_AUTH_EXCEPTION("401","账户未授权"),
-
+    FORBIDDEN_ACCESS_EXCEPTION("403","禁止访问"),
     ERROR_EXCEPTION("500","系统错误"),
 
     SQL_ERROR_EXCEPTION("510","不合法的SQL语句，请检查配置项是否完成！"),

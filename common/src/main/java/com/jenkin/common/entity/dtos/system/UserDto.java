@@ -1,5 +1,6 @@
 package com.jenkin.common.entity.dtos.system;
 
+import com.jenkin.common.entity.pos.system.RolePo;
 import com.jenkin.common.entity.pos.system.UserPo;
 import lombok.Data;
 
@@ -20,4 +21,6 @@ public class UserDto extends UserPo implements Serializable {
      * 邮箱验证码
      */
     private String checkCode;
+
+
 }

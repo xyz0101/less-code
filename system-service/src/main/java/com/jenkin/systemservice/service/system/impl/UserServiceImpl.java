@@ -2,8 +2,11 @@ package com.jenkin.systemservice.service.system.impl;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.jenkin.common.config.MyQueryWrapper;
+import com.jenkin.common.entity.dtos.system.RoleDto;
 import com.jenkin.common.entity.dtos.system.UserDto;
+import com.jenkin.common.entity.pos.BasePo;
 import com.jenkin.common.entity.pos.system.UserPo;
+import com.jenkin.common.entity.pos.system.UserRolePo;
 import com.jenkin.common.entity.qos.BaseQo;
 import com.jenkin.common.entity.qos.system.UserQo;
 import com.jenkin.common.shiro.service.impl.BaseUserServiceImpl;
@@ -11,10 +14,19 @@ import com.jenkin.common.utils.BeanUtils;
 import com.jenkin.common.utils.ShiroUtils;
 import com.jenkin.common.utils.SimpleQuery;
 import com.jenkin.systemservice.dao.system.UserMapper;
+import com.jenkin.systemservice.service.system.UserRoleService;
 import com.jenkin.systemservice.service.system.UserService;
 import org.apache.commons.lang.RandomStringUtils;
 import org.apache.commons.lang.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * @author jenkin
@@ -25,6 +37,8 @@ import org.springframework.stereotype.Service;
 @Service()
 public class UserServiceImpl extends BaseUserServiceImpl<UserMapper,UserPo> implements UserService {
 
+    @Autowired
+    private UserRoleService userRoleService;
 
     /**
      * 分页获取用户
@@ -42,7 +56,17 @@ public class UserServiceImpl extends BaseUserServiceImpl<UserMapper,UserPo> impl
             query.like(StringUtils.isNotEmpty(data.getUserEmail()),UserPo.Fields.userEmail,data.getUserEmail());
 
         }
-        return simpleQuery.page(UserDto.class);
+        Page<UserDto> page = simpleQuery.page(UserDto.class);
+        if (!CollectionUtils.isEmpty(page.getRecords())) {
+            List<Integer> collect = page.getRecords().stream().map(BasePo::getId).collect(Collectors.toList());
+            Map<Integer, List<RoleDto>> rolesMap =
+                    userRoleService.listByUserIds(collect);
+            for (UserDto record : page.getRecords()) {
+                record.setRoles(rolesMap.get(record.getId()));
+            }
+
+        }
+        return page;
     }
 
     /**
@@ -52,6 +76,7 @@ public class UserServiceImpl extends BaseUserServiceImpl<UserMapper,UserPo> impl
      * @return
      */
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public UserDto saveUserInfo(UserDto user) {
         //sha256加密
         if (StringUtils.isNotEmpty(user.getPassword())&&user.getId()==null) {
@@ -60,7 +85,28 @@ public class UserServiceImpl extends BaseUserServiceImpl<UserMapper,UserPo> impl
             user.setPassword(ShiroUtils.sha256(user.getPassword(), user.getSalt()));
         }
         saveOrUpdate(user);
+        //修改角色关系
+        updateRole(user);
+
         return user;
+    }
+
+    private void updateRole(UserDto user) {
+        if (user.getId()!=null) {
+            MyQueryWrapper<UserRolePo> queryWrapper = new MyQueryWrapper<>();
+            queryWrapper.eq(UserRolePo.Fields.userId,user.getId());
+            userRoleService.remove(queryWrapper);
+            List<UserRolePo> userRolePos = new ArrayList<>();
+            for (RoleDto role : user.getRoles()) {
+                UserRolePo userRolePo = new UserRolePo();
+                userRolePo.setRoleId(role.getId());
+                userRolePo.setUserId(user.getId());
+                userRolePos.add(userRolePo);
+            }
+            userRoleService.saveBatch(userRolePos);
+        }
+
+
     }
 
     /**

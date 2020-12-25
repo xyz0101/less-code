@@ -11,7 +11,7 @@ spring:
         # 命名空间 常用场景之一是不同环境的配置的区分隔离，例如开发测试环境和生产环境的资源（如配置、服务）隔离等
         namespace:
         # 配置中心地址
-        server-addr: mall.jenkin.tech:7348
+        server-addr: nacos.jenkin.tech:8848
         # 配置对应的分组
         group: LESS_CODE_GROUP
         # 配置文件后缀
@@ -24,7 +24,7 @@ spring:
           refresh: false   # 是否动态刷新，默认为false
       discovery:
         namespace:
-        server-addr: mall.jenkin.tech:7348
+        server-addr: nacos.jenkin.tech:8848
         watch:
           enabled: false
   profiles:

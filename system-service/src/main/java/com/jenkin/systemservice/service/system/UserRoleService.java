@@ -1,10 +1,12 @@
 package com.jenkin.systemservice.service.system;
 
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.jenkin.common.entity.dtos.system.RoleDto;
 import com.jenkin.common.entity.pos.system.UserRolePo;
 import com.jenkin.common.shiro.service.BaseUserRoleService;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author jenkin
@@ -19,4 +21,11 @@ public interface UserRoleService extends BaseUserRoleService , IService<UserRole
      * @return
      */
     List<UserRolePo> listByUserId(Integer id);
+
+    /**
+     * 根据用户ID获取用户角色关系
+     * @param userIds
+     * @return
+     */
+    Map<Integer,List<RoleDto> > listByUserIds(List<Integer> userIds);
 }

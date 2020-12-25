@@ -36,5 +36,6 @@ public class RolePo extends BasePo implements Serializable {
     @ApiModelProperty("角色菜单")
     @Column(comment = "角色菜单",name = "menu_str",length = 500)
     private String menuStr;
-
+    @ApiModelProperty("角色菜单名称")
+    private String menuNames;
 }
