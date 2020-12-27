@@ -7,7 +7,14 @@ import java.util.List;
 /**
  * @author jenkin
  * @className Factorial
- * @description TODO
+ * @description  计算一个数组的元素排列组合
+ * 例如：[1,2,3] 会得到结果：
+ * [1, 2, 3]
+ * [1, 3, 2]
+ * [2, 1, 3]
+ * [2, 3, 1]
+ * [3, 1, 2]
+ * [3, 2, 1]
  * @date 2020/12/16 13:43
  */
 public class Factorial {
