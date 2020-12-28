@@ -25,7 +25,9 @@ public class FeignRequestConfig implements RequestInterceptor {
        HttpServletRequest request = attributes.getRequest();
        Enumeration<String> headerNames = request.getHeaderNames();
        String requestURI = request.getRequestURI();
-       template.header("User-Agent", "picasso,170,windows");
+       if(requestURI.endsWith("getAbzWallpaperWin")){
+           template.header("User-Agent", "picasso,170,windows");
+       }
        template.header("token", request.getHeader("token"));
 
        if (headerNames == null) {

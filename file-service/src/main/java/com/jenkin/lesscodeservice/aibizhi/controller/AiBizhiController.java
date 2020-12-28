@@ -39,4 +39,11 @@ public class AiBizhiController {
 
         return Response.ok(aibizhiService.getWallpaper(category,skip));
     }
+
+    @GetMapping("/getAbzWallpaperWin")
+    @ApiOperation("根据分类获取爱壁纸的壁纸信息(非网页版)")
+    public Response<AbzResponse<Wallpaper>> getAbzWallpaperWin(String category,Integer skip){
+
+        return Response.ok(aibizhiService.getWallpaper(category,skip));
+    }
 }
