@@ -17,7 +17,7 @@ public class Myers {
 
     public static void main(String[] args) {
         String str1 = "ABCDEF";
-        String str2 = "BASEDCFD";
+        String str2 = "GHIJK";
         myers(str1.toCharArray(),str2.toCharArray());
         /**
          * -A,B,-C,-D,+A,+S,E,+D,+C,F,+D
@@ -30,16 +30,14 @@ public class Myers {
         int n =arr2.length;
         //需要移动的步数d 最大的值就是m+n
         int maxD = m+n;
-        //k的最大取值范围
+        //k的最大取值范围 [—d ,+d]
         //k的计算公式 ： k=x-y  x=k+y   y=x-k
-        int kSize = maxD+1;
         //存储K值上面最大的X坐标
         Map<Integer,Integer> xPositionsInK = new HashMap<>();
-
         List<  Map<Integer,Integer>> dPosition = new ArrayList<>();
 //        List<String> temp = new ArrayList<>();
         //需要移动的步数
-       outloop: for (int d = 0; d < maxD; d++) {
+       outloop: for (int d = 0; d <= maxD; d++) {
            Map<Integer,Integer> temp = new HashMap<>();
 
             //移动当前步数下K的取值范围,这里面会记录下当前k上面最大的x坐标
@@ -56,8 +54,8 @@ public class Myers {
                 //那就只有可能是一直向下移动，不然就会导致步数不够，那么
                 // 1、向下移动过来的，那么上一个元素的k肯定是 k+1
                 //2、 向右移动过来的，那么k=k-1
-                //在一种情况就是当K不等于-d的时候 那么就判断上一个 k+1和k-1 的元素哪个大
-                //如果x+1大那么就是向下移动过来的，否则就是向右
+                //在一种情况就是当K不等于 d的时候 那么就判断上一个 k+1和k-1 的元素哪个大
+                //如果k+1大那么就是向下移动过来的，否则就是向右
                 //（我们默认遵循先删除后增加的原则，所以比较的是X坐标，X坐标越大代表走得越远）
                 boolean isDown = k==-d ||( k!=d&&up>right );
                 //如果是向下移动那么前一个的k就是k+1，否则就是k-1
@@ -65,19 +63,13 @@ public class Myers {
                 //根据公式k=x-y 得出 前一个的坐标是
                 int preX =xPositionsInK.get(preK)==null?0:xPositionsInK.get(preK);
                 int preY = preX-preK;
-
                 //既然得到了前一个的坐标，那么当前坐标就根据移动方向可以得来
                 int currentX = isDown?preX:preX+1;
                 int currentY = currentX-k;
-
                 int endX = currentX;
                 int endY = currentY;
-//              System.out.println(endX+","+preX+" "+isDown);
-
-
                 //这时候就需要判断当前点后面是有相等的节点，循环走斜线，直到遇到不相等的为止
                 while(endX<m&&endY<n&&(arr1[endX]==arr2[endY])){
-//                    res=res+arr2[endY];
                     endX++;endY++;
 
                 }
@@ -85,8 +77,6 @@ public class Myers {
 
                 xPositionsInK.put(k,endX);
                 temp.put(k,endX);
-//                String res = "k: "+k+",  x: "+endX+",  y: "+endY;
-
                  if(endX==m&&endY==n){
                      dPosition.add(temp);
                      break outloop;
@@ -105,16 +95,8 @@ public class Myers {
         }
 
 
-//      xPositionsInK.forEach((k,v)->{
-//          System.out.println(k+",     "+v+","+(v-k));
-//      });
-//
-//        List<Integer> collect = xPositionsInK.values().stream().sorted().collect(Collectors.toList());
-//        System.out.println(dPosition);
         List<Snake> snakes = generateSnake(dPosition, m, n);
         printSnake(arr1,arr2,snakes);
-//        List<Position> positions = getPosition(dPosition, m, n);
-//        printPosition(arr1,arr2,positions);
 
     }
 

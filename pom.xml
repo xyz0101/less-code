@@ -11,7 +11,7 @@
     <description>Demo project for Spring Boot</description>
     <modules>
         <module>common</module>
-        <module>less-code-service</module>
+        <module>file-service</module>
         <module>system-service</module>
         <module>code-generator</module>
     </modules>
@@ -82,6 +82,12 @@
             <artifactId>commons-lang</artifactId>
             <version>${common-lang.version}</version>
             <scope>compile</scope>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/org.springframework.cloud/spring-cloud-starter-openfeign -->
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-openfeign</artifactId>
+            <version>3.0.0</version>
         </dependency>
 
         <dependency>
