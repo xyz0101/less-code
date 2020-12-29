@@ -6,6 +6,7 @@ import com.jenkin.common.entity.vos.aibizhi.Category;
 import com.jenkin.common.entity.vos.aibizhi.Wallpaper;
 import feign.Headers;
 import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -23,4 +24,6 @@ public interface AibizhiService {
     @GetMapping("/category/{typeCode}/wallpaper")
     @Headers("{'User-Agent':picasso,170,windows}")
     AbzResponse<Wallpaper> getWallpaper(@RequestParam("typeCode") String typeCode,@RequestParam("skip") Integer skip);
+
+
 }

@@ -73,10 +73,17 @@ public class MenuServiceImpl extends BaseMenuServiceImpl<MenuMapper, MenuPo> imp
     @Override
     @Transactional(rollbackFor = Exception.class)
     public MenuDto saveMenuInfo(MenuDto  menu) {
+        checkIsLevel1(menu);
         setLevel(menu);
         setOrder(menu);
         saveOrUpdate( menu);
         return  menu;
+    }
+
+    private void checkIsLevel1(MenuDto menu) {
+        if (menu.getLevel1Flag()!=null&&menu.getLevel1Flag()){
+            menu.setParent(-1);
+        }
     }
 
     /**
@@ -85,15 +92,18 @@ public class MenuServiceImpl extends BaseMenuServiceImpl<MenuMapper, MenuPo> imp
      */
     private void setOrder(MenuDto menu) {
         List<MenuDto> subs = listByParentId(menu.getParent());
+
         int minOrder = 1;
         int maxOrder = menu.getId()==null?subs.size()+1:subs.size();
         int leftOrder = -1;
         int rightOrder = Integer.MAX_VALUE;
         int increment = 0;
         if(menu.getId()==null){
+            menu.setMenuOrder(menu.getMenuOrder()>subs.size()?subs.size():menu.getMenuOrder());
             leftOrder = menu.getMenuOrder();
             increment=1;
         }else{
+            menu.setMenuOrder(menu.getMenuOrder()>subs.size()?subs.size()+1:menu.getMenuOrder());
             Integer menuOrder = getById(menu.getId()).getMenuOrder();
             leftOrder = Math.min(menuOrder, menu.getMenuOrder());
             rightOrder =Math.max(menuOrder, menu.getMenuOrder());
@@ -167,7 +177,9 @@ public class MenuServiceImpl extends BaseMenuServiceImpl<MenuMapper, MenuPo> imp
     @Override
     public List<MenuDto> listMenus(){
         List<MenuPo> list = list();
-        return  BeanUtils.mapList(list, MenuDto.class);
+        List<MenuDto> menuDtos = BeanUtils.mapList(list, MenuDto.class);
+        menuDtos.forEach(item->item.setLevel1Flag(item.getParent()==-1));
+        return menuDtos;
     }
 
     @Override

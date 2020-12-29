@@ -3,6 +3,9 @@ package com.jenkin.common.entity.dtos.system;
 import com.jenkin.common.entity.pos.system.MenuPo;
 import com.jenkin.common.entity.pos.system.PermissionPo;
 
+import com.sun.org.apache.xpath.internal.operations.Bool;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -18,7 +21,11 @@ import java.util.Objects;
  */
 
 @Data
+@ApiModel("菜单")
 public class MenuDto extends MenuPo implements Serializable {
+    @ApiModelProperty("是否是一级菜单，如果是一级菜单那么不能选择父类，默认是根目录")
+    private Boolean level1Flag;
+
     /**
      * 桑倩菜单需要的权限
      */

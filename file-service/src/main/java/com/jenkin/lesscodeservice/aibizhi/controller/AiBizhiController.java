@@ -4,15 +4,19 @@ import com.jenkin.common.entity.Response;
 import com.jenkin.common.entity.vos.aibizhi.AbzResponse;
 import com.jenkin.common.entity.vos.aibizhi.Category;
 import com.jenkin.common.entity.vos.aibizhi.Wallpaper;
+import com.jenkin.common.utils.FileUtils;
+import com.jenkin.lesscodeservice.aibizhi.service.AibizhiDeskDownloadService;
 import com.jenkin.lesscodeservice.aibizhi.service.AibizhiService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
+
+import javax.servlet.http.HttpServletResponse;
+import java.io.ByteArrayInputStream;
+import java.util.List;
 
 /**
  * @author jenkin
@@ -27,7 +31,8 @@ import org.springframework.web.client.RestTemplate;
 public class AiBizhiController {
     @Autowired
     AibizhiService aibizhiService;
-
+    @Autowired
+    AibizhiDeskDownloadService deskDownloadService;
     @GetMapping("/getAbzCategory")
     @ApiOperation("获取爱壁纸的分类信息")
     public Response<AbzResponse<Category>> getAbzCategory(){
@@ -46,4 +51,19 @@ public class AiBizhiController {
 
         return Response.ok(aibizhiService.getWallpaper(category,skip));
     }
+
+
+    @GetMapping("/downloadWallpaper")
+    @ApiOperation("下载壁纸(非网页版)")
+    public void downloadWallpaper(@RequestParam("imgId") String imgId, HttpServletResponse response){
+        ResponseEntity<byte[]> responseEntity = deskDownloadService.downloadFile(imgId);
+        byte[] body = responseEntity.getBody();
+        List<String> contentType = responseEntity.getHeaders().get("Content-Type");
+        String type = contentType.get(0);
+        response.setHeader("Content-Type",type);
+        String name = "img." + type.substring(6 );
+        FileUtils.downloadFile(name,new ByteArrayInputStream(body),response);
+    }
+
+
 }
