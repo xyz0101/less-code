@@ -42,7 +42,7 @@ public class KeepRedisConnectBean {
             }finally {
                 run();
             }
-        },60, TimeUnit.SECONDS);
+        },120, TimeUnit.SECONDS);
     }
     @PostConstruct
     public void postConstruct(){
