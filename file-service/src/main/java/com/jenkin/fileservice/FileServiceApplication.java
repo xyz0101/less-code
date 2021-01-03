@@ -1,4 +1,4 @@
-package com.jenkin.lesscodeservice;
+package com.jenkin.fileservice;
 
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
@@ -10,7 +10,7 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 @MapperScan({"com.jenkin.*.dao"})
 @MapperScan({"com.jenkin.*.*.dao"})
 @SpringBootApplication(scanBasePackages = "com.jenkin")
-@EnableFeignClients(basePackages = "com.jenkin.lesscodeservice")
+@EnableFeignClients(basePackages = "com.jenkin.fileservice")
 public class FileServiceApplication {
 
     public static void main(String[] args) {

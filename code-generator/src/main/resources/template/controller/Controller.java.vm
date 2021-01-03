@@ -12,7 +12,8 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import com.jenkin.systemservice.service.system.${info.className}Service;
+import ${info.packageName}.service.${info.moduleName}.${info.className}Service;
+
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;

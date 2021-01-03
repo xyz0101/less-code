@@ -99,11 +99,11 @@ public class MenuServiceImpl extends BaseMenuServiceImpl<MenuMapper, MenuPo> imp
         int rightOrder = Integer.MAX_VALUE;
         int increment = 0;
         if(menu.getId()==null){
-            menu.setMenuOrder(menu.getMenuOrder()>subs.size()?subs.size():menu.getMenuOrder());
+            menu.setMenuOrder(menu.getMenuOrder()>subs.size()+1?subs.size()+1:menu.getMenuOrder());
             leftOrder = menu.getMenuOrder();
             increment=1;
         }else{
-            menu.setMenuOrder(menu.getMenuOrder()>subs.size()?subs.size()+1:menu.getMenuOrder());
+            menu.setMenuOrder(menu.getMenuOrder()>subs.size()+1?subs.size()+1:menu.getMenuOrder());
             Integer menuOrder = getById(menu.getId()).getMenuOrder();
             leftOrder = Math.min(menuOrder, menu.getMenuOrder());
             rightOrder =Math.max(menuOrder, menu.getMenuOrder());

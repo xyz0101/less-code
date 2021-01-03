@@ -1,0 +1,16 @@
+import { TestBed } from '@angular/core/testing';
+
+## import { ${info.className}Service } from './TODO.service.ts.vm';
+
+describe('${info.className}Service', () => {
+  let service: ${info.className}Service;
+
+  beforeEach(() => {
+    TestBed.configureTestingModule({});
+    service = TestBed.inject(${info.className}Service);
+  });
+
+  it('should be created', () => {
+    expect(service).toBeTruthy();
+  });
+});

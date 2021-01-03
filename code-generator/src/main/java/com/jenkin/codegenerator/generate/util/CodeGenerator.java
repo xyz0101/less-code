@@ -84,6 +84,10 @@ public class CodeGenerator {
         ctx.put("/template/entity/pos/system/Po.java.vm",info.getClassName()+"Po.java");
         ctx.put("/template/entity/qos/system/Qo.java.vm",info.getClassName()+"Qo.java");
         ctx.put("/template/entity/dtos/system/Dto.java.vm",info.getClassName()+"Dto.java");
+        ctx.put("/template/api/TemplateResponseBean.ts.vm",info.getClassName()+"Bean.ts");
+        ctx.put("/template/api/TemplateApiPath.ts.vm",info.getClassName()+"ApiPath.ts");
+        ctx.put("/template/fservice/template.service.spec.ts.vm",info.getClassName()+".service.spec.ts");
+        ctx.put("/template/fservice/template.service.ts.vm",info.getClassName()+".service.ts");
         try {
             generateFile(velocityEngine,ctx,outputStream);
         } catch (IOException e) {
@@ -151,6 +155,8 @@ public class CodeGenerator {
         List<Template> controller = Collections.singletonList(velocityEngine.getTemplate("/template/controller/Controller.java.vm","UTF-8"));
         List<Template> mapper = Collections.singletonList(velocityEngine.getTemplate("/template/dao/Mapper.java.vm","UTF-8"));
         List<Template> entity = new ArrayList<>();
+        List<Template> apis = new ArrayList<>();
+        List<Template> fservices = new ArrayList<>();
         Template dto = velocityEngine.getTemplate("/template/entity/dtos/system/Dto.java.vm","UTF-8");
         Template po = velocityEngine.getTemplate("/template/entity/pos/system/Po.java.vm","UTF-8");
         Template vo = velocityEngine.getTemplate("/template/entity/vos/system/Vo.java.vm","UTF-8");
@@ -164,10 +170,26 @@ public class CodeGenerator {
         Template serviceImplTemplate = velocityEngine.getTemplate("/template/service/impl/ServiceImpl.java.vm","UTF-8");
         service.add(serviceTemplate);
         service.add(serviceImplTemplate);
+        Template templateResponseBean = velocityEngine.getTemplate("/template/api/TemplateResponseBean.ts.vm","UTF-8");
+        Template templateApiPath = velocityEngine.getTemplate("/template/api/TemplateApiPath.ts.vm","UTF-8");
+        apis.add(templateResponseBean);
+        apis.add(templateApiPath);
+        Template serviceSpecTemplate = velocityEngine.getTemplate("/template/fservice/template.service.spec.ts.vm","UTF-8");
+        Template fserviceTemplate = velocityEngine.getTemplate("/template/fservice/template.service.ts.vm","UTF-8");
+        fservices.add(serviceSpecTemplate);
+        fservices.add(fserviceTemplate);
+
+
+
+
         templates.put("controller",controller);
         templates.put("mapper",mapper);
         templates.put("entity",entity);
         templates.put("service",service);
+        templates.put("api",apis);
+        templates.put("fservice",fservices);
+
+
         return templates;
     }
 
