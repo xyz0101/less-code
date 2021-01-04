@@ -72,7 +72,9 @@ public class FileUtils {
             contentType = ContentType.IMAGE_BMP;
         } else if ("gif".equals(suffix)) {
             contentType = ContentType.IMAGE_GIF;
-        } else {
+        }else if("docx".equals(suffix)) {
+            contentType=ContentType.create("application/vnd.openxmlformats-officedocument.wordprocessingml.document");
+        }else{
             contentType = ContentType.APPLICATION_OCTET_STREAM;
         }
         return contentType.toString();
