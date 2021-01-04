@@ -1,0 +1,9 @@
+export class ${info.className}Bean{
+    #foreach ($column in $info.tableInfo.columns)
+
+        /**
+         *  $column.comments
+          */
+        private $column.javaColName:any;
+    #end
+}

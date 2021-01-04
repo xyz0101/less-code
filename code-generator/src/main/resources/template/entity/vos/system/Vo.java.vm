@@ -3,7 +3,7 @@ import io.swagger.annotations.ApiModel;
 import java.lang.*;
 import java.math.BigDecimal;
 import java.util.Date;
-import {entityPackageName}.dtos.${info.moduleName}.${info.className}Dto;
+import ${info.entityPackageName}.dtos.${info.moduleName}.${info.className}Dto;
 /**
  * @author ：${info.author}
  * @date ：Created at ${info.createDate}

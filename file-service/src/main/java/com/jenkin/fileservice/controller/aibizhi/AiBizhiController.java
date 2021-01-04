@@ -1,18 +1,17 @@
-package com.jenkin.lesscodeservice.aibizhi.controller;
+package com.jenkin.fileservice.controller.aibizhi;
 
 import com.jenkin.common.entity.Response;
 import com.jenkin.common.entity.vos.aibizhi.AbzResponse;
 import com.jenkin.common.entity.vos.aibizhi.Category;
 import com.jenkin.common.entity.vos.aibizhi.Wallpaper;
 import com.jenkin.common.utils.FileUtils;
-import com.jenkin.lesscodeservice.aibizhi.service.AibizhiDeskDownloadService;
-import com.jenkin.lesscodeservice.aibizhi.service.AibizhiService;
+import com.jenkin.fileservice.service.aibizhi.AibizhiDeskDownloadService;
+import com.jenkin.fileservice.service.aibizhi.AibizhiService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.client.RestTemplate;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.ByteArrayInputStream;

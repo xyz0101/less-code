@@ -1,4 +1,4 @@
-package com.jenkin.lesscodeservice.aibizhi.service;
+package com.jenkin.fileservice.service.aibizhi;
 
 import com.jenkin.common.config.FeignRequestConfig;
 import org.springframework.cloud.openfeign.FeignClient;

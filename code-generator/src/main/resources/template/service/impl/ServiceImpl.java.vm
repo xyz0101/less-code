@@ -1,4 +1,4 @@
-package com.jenkin.men ${info.classNameLower}vice.template.service.impl;
+package ${info.packageName}.service.${info.moduleName}.impl;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -9,7 +9,8 @@ import ${info.entityPackageName}.qos.BaseQo;
 import ${info.entityPackageName}.qos.${info.moduleName}.${info.className}Qo;
 import com.jenkin.common.utils.BeanUtils;
 import com.jenkin.common.utils.SimpleQuery;
-
+import ${info.packageName}.dao.${info.moduleName}.${info.className}Mapper;
+import ${info.packageName}.service.${info.moduleName}.${info.className}Service;
 import org.springframework.stereotype.Service;
 
 
@@ -21,7 +22,7 @@ import org.springframework.stereotype.Service;
  * @version: 1.0
  */
 @Service
-public class ${info.className}ServiceImpl extends ServiceImpl<${info.className}Mapper, MenuPo> implements ${info.className}Service {
+public class ${info.className}ServiceImpl extends ServiceImpl<${info.className}Mapper, ${info.className}Po> implements ${info.className}Service {
 
     @Override
     public ${info.className}Dto getById(Integer id) {

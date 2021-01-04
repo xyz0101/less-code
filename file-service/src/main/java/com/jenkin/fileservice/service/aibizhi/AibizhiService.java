@@ -1,4 +1,4 @@
-package com.jenkin.lesscodeservice.aibizhi.service;
+package com.jenkin.fileservice.service.aibizhi;
 
 import com.jenkin.common.config.FeignRequestConfig;
 import com.jenkin.common.entity.vos.aibizhi.AbzResponse;
@@ -6,7 +6,6 @@ import com.jenkin.common.entity.vos.aibizhi.Category;
 import com.jenkin.common.entity.vos.aibizhi.Wallpaper;
 import feign.Headers;
 import org.springframework.cloud.openfeign.FeignClient;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
