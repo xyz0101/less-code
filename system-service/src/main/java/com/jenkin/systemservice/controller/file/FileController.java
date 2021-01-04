@@ -1,6 +1,7 @@
 package com.jenkin.systemservice.controller.file;
 
 import cn.hutool.core.io.FileUtil;
+import com.jenkin.common.anno.IgnoreCheck;
 import com.jenkin.common.entity.Response;
 import com.jenkin.common.files.fileservice.FileService;
 import com.jenkin.common.utils.FileUtils;

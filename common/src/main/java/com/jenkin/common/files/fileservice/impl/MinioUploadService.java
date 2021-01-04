@@ -65,7 +65,7 @@ public class MinioUploadService implements FileService {
         try {
             return minioClient.getObject(fileProperties.getBucketName(), objectName.replace(fileProperties.getBucketName(), ""));
         } catch (Exception e) {
-            throw new RuntimeException("获取文件失败");
+            throw new RuntimeException("获取文件失败: "+objectName);
         }
     }
 
