@@ -93,8 +93,10 @@ public class Myers {
             }
            dPosition.add(temp);
         }
-
-
+        for (int i = 0; i < dPosition.size(); i++) {
+            System.out.println(dPosition.get(i));
+        }
+//        System.out.println(dPosition);
         List<Snake> snakes = generateSnake(dPosition, m, n);
         printSnake(arr1,arr2,snakes);
 
