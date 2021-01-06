@@ -17,6 +17,7 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Base64;
 
 /**
  * @author jenkin
@@ -27,6 +28,7 @@ import java.io.InputStream;
 @RestController("/file")
 @Api(tags = "文件操作接口")
 public class FileController {
+    public static final String FILE_CODE_HEADER="FILE_";
 
     @Autowired
     private FileService fileService;
@@ -34,11 +36,13 @@ public class FileController {
     @ApiOperation(("文件上传"))
     public Response<String> uploadFile(MultipartFile file){
         String code = fileService.uploadFile(file);
-        return Response.ok(code);
+//        byte[] encode = Base64.getEncoder().encode(code.getBytes());
+        return Response.ok( code);
     }
     @DeleteMapping("/deleteFile")
     @ApiOperation(("文件删除"))
     public Response<String> deleteFile(String code){
+
         fileService.deleteFile(code);
         return Response.ok();
     }
