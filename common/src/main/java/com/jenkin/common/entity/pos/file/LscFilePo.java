@@ -37,5 +37,7 @@ public class LscFilePo extends BasePo implements Serializable {
     private String fileCategories;
     @ApiModelProperty(" 是否是最新版")
     private Boolean newFlag;
-    
+    @ApiModelProperty("MD5校验码")
+    private String md5Code;
+
 }
