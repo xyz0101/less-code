@@ -7,6 +7,8 @@ import com.jenkin.common.entity.pos.file.LscFilePo;
 import com.jenkin.common.entity.qos.BaseQo;
 import com.jenkin.common.entity.qos.file.LscFileQo;
 
+import java.io.InputStream;
+
 /**
  * @author ：jenkin
  * @date ：Created at 2021-01-03 19:41:08
@@ -35,5 +37,11 @@ public interface LscFileService extends IService<LscFilePo> {
          * @return
          */
         LscFileDto saveLscFileInfo(LscFileDto lscFileDto);
-    
+
+        /**
+         * 更新文件
+         * @param stream
+         * @param id
+         */
+        void updateFile(InputStream stream, int id);
 }

@@ -109,6 +109,14 @@ public class UserController {
         return Response.ok(publicKey );
     }
 
+    @GetMapping("/getLoginUser")
+    @ApiOperation("获取当前登录的用户")
+    public Response<UserDto> getLoginUser(){
+        String userCode = ShiroUtils.getUserCode();
+        return Response.ok(userService.getCurrentUserInfo(userCode));
+    }
+
+
     @GetMapping("/logOut")
     @IgnoreCheck
     public Response<String> logOut(){

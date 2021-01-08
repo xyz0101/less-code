@@ -37,5 +37,8 @@ public class LscFilePo extends BasePo implements Serializable {
     private String fileCategories;
     @ApiModelProperty(" 是否是最新版")
     private Boolean newFlag;
-    
+    @ApiModelProperty("文件版本号")
+    private Integer fileVersion;
+    @ApiModelProperty("源文件编号")
+    private String sourceFileCode;
 }
