@@ -41,4 +41,7 @@ public class LscFilePo extends BasePo implements Serializable {
     private Integer fileVersion;
     @ApiModelProperty("源文件编号")
     private String sourceFileCode;
+    @ApiModelProperty("MD5校验码")
+    private String md5Code;
+
 }

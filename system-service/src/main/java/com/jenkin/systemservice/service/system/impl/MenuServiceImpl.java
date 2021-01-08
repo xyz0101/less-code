@@ -91,10 +91,13 @@ public class MenuServiceImpl extends BaseMenuServiceImpl<MenuMapper, MenuPo> imp
      * @param menu
      */
     private void setOrder(MenuDto menu) {
+
         List<MenuDto> subs = listByParentId(menu.getParent());
 
+        MenuPo oldMenu = menu.getId()==null?null:getById(menu.getId());
+
         int minOrder = 1;
-        int maxOrder = menu.getId()==null?subs.size()+1:subs.size();
+        int maxOrder = menu.getId()==null?subs.size()+1:(oldMenu.getId().equals(menu.getId())? subs.size():subs.size()+1);
         int leftOrder = -1;
         int rightOrder = Integer.MAX_VALUE;
         int increment = 0;
