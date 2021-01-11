@@ -16,32 +16,22 @@ import lombok.Data;
 @ApiModel("查询条件实体")
 @Data
 public class LscFileQo {
-        @ApiModelProperty(" ")
-    private Integer tableId;
-    @ApiModelProperty(" ")
-    private Boolean idFlag;
-    @ApiModelProperty(" ")
-    private Boolean autoIncFlag;
-    @ApiModelProperty(" ")
-    private Boolean nullFlag;
-    @ApiModelProperty(" ")
-    private String name;
-    @ApiModelProperty(" ")
-    private Integer length;
-    @ApiModelProperty(" ")
-    private String type;
-    @ApiModelProperty(" ")
-    private Integer decimalLength;
-    @ApiModelProperty(" ")
-    private String defaultValue;
-    @ApiModelProperty(" ")
-    private String encode;
-    @ApiModelProperty(" ")
-    private String sort;
-    @ApiModelProperty(" ")
-    private String comments;
-    @ApiModelProperty(" ")
-    private String javaType;
-    @ApiModelProperty(" ")
-    private String javaColName;
+    @ApiModelProperty(" 文件类型，例如 image/jpeg")
+    private String fileType;
+    @ApiModelProperty(" 文件名称")
+    private String fileName;
+    @ApiModelProperty(" 文件编码")
+    private String fileCode;
+    @ApiModelProperty(" 文件大小，字节数")
+    private Double fileSize;
+    @ApiModelProperty(" 文件所归属的分类")
+    private String fileCategories;
+    @ApiModelProperty(" 是否是最新版")
+    private Boolean newFlag;
+    @ApiModelProperty(" MD5校验码")
+    private String md5Code;
+    @ApiModelProperty(" 文件版本号")
+    private Integer fileVersion;
+    @ApiModelProperty(" 出示文件编码")
+    private String sourceFileCode;
 }

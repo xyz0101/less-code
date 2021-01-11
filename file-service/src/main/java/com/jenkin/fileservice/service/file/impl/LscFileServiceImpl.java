@@ -7,6 +7,8 @@ import com.jenkin.common.entity.dtos.file.LscFileDto;
 import com.jenkin.common.entity.pos.file.LscFilePo;
 import com.jenkin.common.entity.qos.BaseQo;
 import com.jenkin.common.entity.qos.file.LscFileQo;
+import com.jenkin.common.exception.ExceptionEnum;
+import com.jenkin.common.exception.LscException;
 import com.jenkin.common.files.fileservice.FileService;
 import com.jenkin.common.utils.BeanUtils;
 import com.jenkin.common.utils.SimpleQuery;
@@ -15,8 +17,13 @@ import com.jenkin.fileservice.service.file.LscFileService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
+import org.springframework.util.StringUtils;
 
 import java.io.InputStream;
+import java.time.LocalDateTime;
+import java.util.*;
+import java.util.stream.Collectors;
 
 
 /**
@@ -44,7 +51,36 @@ public class LscFileServiceImpl extends ServiceImpl<LscFileMapper, LscFilePo> im
     public Page<LscFileDto> listByPage(BaseQo<LscFileQo>  lscFile) {
         SimpleQuery<LscFilePo> simpleQuery = SimpleQuery.builder( lscFile,this).sort();
         MyQueryWrapper<LscFilePo> query = simpleQuery.getQuery();
-        return simpleQuery.page(LscFileDto.class);
+        LscFileQo data = lscFile.getData();
+        query.like(!StringUtils.isEmpty(data.getFileName()),LscFilePo.Fields.fileName, data.getFileName());
+        query.eq(!StringUtils.isEmpty(data.getFileType()), LscFilePo.Fields.fileType, data.getFileType());
+        query.eq(LscFilePo.Fields.newFlag,true);
+        Page<LscFileDto> page = simpleQuery.page(LscFileDto.class);
+        Collection<String> collect = page.getRecords().stream().map(LscFilePo::getSourceFileCode).collect(Collectors.toList());
+        Map<String, List<LscFileDto>> historyMap = this.getHistoryMap(collect);
+        page.getRecords().forEach(item->item.setHistory(historyMap.get(item.getSourceFileCode())));
+
+        return page;
+    }
+
+    private Map<String, List<LscFileDto>> getHistoryMap(Collection<String> collect) {
+        Map<String, List<LscFileDto>> res = new HashMap<>();
+        if (CollectionUtils.isEmpty(collect)) {
+            return res;
+        }
+        MyQueryWrapper<LscFilePo> query = new MyQueryWrapper<>();
+        query.in(LscFilePo.Fields.sourceFileCode,collect);
+        query.eq(LscFilePo.Fields.newFlag,false);
+        List<LscFilePo> list = list(query);
+        list.forEach(item->{
+            List<LscFileDto> history = res.get(item.getSourceFileCode());
+            if (history==null) {
+                history = new ArrayList<>();
+            }
+            history.add(BeanUtils.map(item,LscFileDto.class));
+            res.put(item.getSourceFileCode(),history);
+        });
+        return res;
     }
 
     /**
@@ -68,19 +104,31 @@ public class LscFileServiceImpl extends ServiceImpl<LscFileMapper, LscFilePo> im
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void updateFile(InputStream stream, int id) {
-        String code = fileService.uploadFile(stream, "test.docx");
         LscFileDto byId = getById(id);
-        String sourceFileCode = byId.getSourceFileCode()==null?byId.getFileCode():byId.getSourceFileCode();
-        byId.setSourceFileCode(sourceFileCode);
-        byId.setNewFlag(false);
-        Integer version = byId.getFileVersion();
-        saveOrUpdate(byId);
-        byId.setCreationDate(null);
-        byId.setLastUpdateDate(null);
-        byId.setFileVersion(version+1);
-        byId.setId(null);
-        byId.setFileCode(code);
-        save(byId);
+        String code = fileService.uploadFile(stream, "test.docx");
+        if (byId==null) {
+            throw new LscException(ExceptionEnum.ERROR_PARAM_EXCEPTION);
+        }
+        if(byId.getNewFlag()) {
+            String sourceFileCode = byId.getSourceFileCode() == null ? byId.getFileCode() : byId.getSourceFileCode();
+            byId.setSourceFileCode(sourceFileCode);
+            byId.setNewFlag(false);
+            byId.setLastUpdateDate(LocalDateTime.now());
+            Integer version = byId.getFileVersion();
+            saveOrUpdate(byId);
+            byId.setCreationDate(null);
+            byId.setLastUpdateDate(null);
+            byId.setFileVersion(version + 1);
+            byId.setId(null);
+            byId.setNewFlag(true);
+            byId.setFileCode(code);
+            save(byId);
+        }else{
+            byId.setFileCode(code);
+            byId.setNewFlag(false);
+            byId.setLastUpdateDate(LocalDateTime.now());
+            saveOrUpdate(byId);
+        }
 
     }
 }

@@ -1,6 +1,7 @@
 package com.jenkin.common.entity.dtos.file;
 
 import com.jenkin.common.entity.pos.file.LscFilePo;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import io.swagger.annotations.ApiModel;
 import java.lang.*;
@@ -19,5 +20,6 @@ import java.util.List;
 @Data
 @ApiModel("文件表数据传输实体")
 public class LscFileDto extends LscFilePo implements Serializable {
-
+    @ApiModelProperty("历史记录")
+    private List<LscFileDto> history;
 }
