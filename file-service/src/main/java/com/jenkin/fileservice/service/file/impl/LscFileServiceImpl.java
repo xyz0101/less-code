@@ -32,7 +32,7 @@ public class LscFileServiceImpl extends ServiceImpl<LscFileMapper, LscFilePo> im
     private FileService fileService;
     @Override
     public LscFileDto getById(Integer id) {
-        return BeanUtils.map(getById(id),LscFileDto.class);
+        return BeanUtils.map(super.getById(id),LscFileDto.class);
     }
 
     /**
@@ -75,6 +75,8 @@ public class LscFileServiceImpl extends ServiceImpl<LscFileMapper, LscFilePo> im
         byId.setNewFlag(false);
         Integer version = byId.getFileVersion();
         saveOrUpdate(byId);
+        byId.setCreationDate(null);
+        byId.setLastUpdateDate(null);
         byId.setFileVersion(version+1);
         byId.setId(null);
         byId.setFileCode(code);

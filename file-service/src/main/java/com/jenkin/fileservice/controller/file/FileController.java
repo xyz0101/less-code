@@ -59,7 +59,6 @@ public class FileController {
         FileUtils.downloadFile(code,file,response);
     }
     @PostMapping(value = "/docx/save",
-
             produces = "application/json;charset=UTF-8")
     public void saveWord(HttpServletRequest request, HttpServletResponse response) {
 
@@ -72,7 +71,6 @@ public class FileController {
           writer=response.getWriter();
             String body = "";
             id = Integer.parseInt(fileId);
-
             try {
                 Scanner scanner = new Scanner(request.getInputStream());
                 scanner.useDelimiter("\\A");
@@ -83,7 +81,6 @@ public class FileController {
                 writer.write("get request.getInputStream error:" + ex.getMessage());
                 return;
             }
-
             if (body.isEmpty()) {
                 writer.write("empty request.getInputStream");
                 return;
