@@ -53,7 +53,7 @@ public class LscFileServiceImpl extends ServiceImpl<LscFileMapper, LscFilePo> im
         MyQueryWrapper<LscFilePo> query = simpleQuery.getQuery();
         LscFileQo data = lscFile.getData();
         query.like(!StringUtils.isEmpty(data.getFileName()),LscFilePo.Fields.fileName, data.getFileName());
-        query.eq(!StringUtils.isEmpty(data.getFileType()), LscFilePo.Fields.fileType, data.getFileType());
+        query.like(!StringUtils.isEmpty(data.getFileType()), LscFilePo.Fields.fileType, data.getFileType());
         query.eq(LscFilePo.Fields.newFlag,true);
         Page<LscFileDto> page = simpleQuery.page(LscFileDto.class);
         Collection<String> collect = page.getRecords().stream().map(LscFilePo::getSourceFileCode).collect(Collectors.toList());

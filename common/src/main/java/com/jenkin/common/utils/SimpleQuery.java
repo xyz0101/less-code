@@ -57,5 +57,12 @@ public class SimpleQuery<T> {
         pageR.setRecords(rs);
         return pageR;
     }
-
+    public static  <T,R> Page<R> page( Page<T> page, Class<R> rClass){
+        List<T> records = page.getRecords();
+        List<R> rs = BeanUtils.mapList(records, rClass);
+        Page<R> pageR = new Page<>();
+        pageR.setTotal(page.getTotal());
+        pageR.setRecords(rs);
+        return pageR;
+    }
 }

@@ -3,15 +3,12 @@ package com.jenkin.common.shiro;
 
 import com.jenkin.common.entity.dtos.system.RoleDto;
 import com.jenkin.common.entity.dtos.system.UserDto;
-import com.jenkin.common.entity.pos.system.MenuPo;
 import com.jenkin.common.entity.pos.system.PermissionPo;
-import com.jenkin.common.entity.pos.system.RolePo;
-import com.jenkin.common.entity.pos.system.UserRolePo;
 import com.jenkin.common.shiro.service.*;
 import com.jenkin.common.shiro.token.MyToken;
 import com.jenkin.common.utils.BeanUtils;
 import com.jenkin.common.utils.Redis;
-import com.jenkin.common.utils.ShiroUtils;
+import com.jenkin.common.shiro.utils.ShiroUtils;
 
 import org.apache.shiro.authc.*;
 import org.apache.shiro.authc.credential.CredentialsMatcher;

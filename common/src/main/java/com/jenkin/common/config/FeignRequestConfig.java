@@ -1,9 +1,7 @@
 package com.jenkin.common.config;
 
-import com.jenkin.common.utils.ShiroUtils;
 import feign.RequestInterceptor;
 import feign.RequestTemplate;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
@@ -27,6 +25,9 @@ public class FeignRequestConfig implements RequestInterceptor {
        String requestURI = request.getRequestURI();
        if(requestURI.endsWith("getAbzWallpaperWin")){
            template.header("User-Agent", "picasso,170,windows");
+       }
+       if(requestURI.contains("ssxx")){
+           template.header("authorization", request.getHeader("authorization"));
        }
        template.header("token", request.getHeader("token"));
 

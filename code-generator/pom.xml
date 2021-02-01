@@ -8,7 +8,7 @@
         <version>0.0.1-SNAPSHOT</version>
         <!--<relativePath/> &lt;!&ndash; lookup parent from repository &ndash;&gt;-->
     </parent>
-
+    <packaging>jar</packaging>
     <modelVersion>4.0.0</modelVersion>
     <artifactId>code-generator</artifactId>
     <version>0.0.1-SNAPSHOT</version>
@@ -36,6 +36,20 @@
 
     </dependencies>
 
-
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>repackage</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
 
 </project>

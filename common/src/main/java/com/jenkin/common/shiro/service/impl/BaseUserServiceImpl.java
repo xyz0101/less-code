@@ -1,6 +1,5 @@
 package com.jenkin.common.shiro.service.impl;
 
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.jenkin.common.config.MyQueryWrapper;
 import com.jenkin.common.entity.dtos.system.RoleDto;
@@ -9,17 +8,12 @@ import com.jenkin.common.entity.pos.system.MenuPo;
 import com.jenkin.common.entity.pos.system.RolePo;
 import com.jenkin.common.entity.pos.system.UserPo;
 import com.jenkin.common.entity.pos.system.UserRolePo;
-import com.jenkin.common.entity.qos.BaseQo;
-import com.jenkin.common.entity.qos.system.UserQo;
 import com.jenkin.common.shiro.dao.BaseUserMapper;
 import com.jenkin.common.shiro.service.BaseMenuService;
 import com.jenkin.common.shiro.service.BaseRoleService;
 import com.jenkin.common.shiro.service.BaseUserRoleService;
 import com.jenkin.common.shiro.service.BaseUserService;
 import com.jenkin.common.utils.BeanUtils;
-import com.jenkin.common.utils.ShiroUtils;
-import com.jenkin.common.utils.SimpleQuery;
-import org.apache.commons.lang.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;

@@ -5,7 +5,7 @@ import cn.hutool.core.util.ZipUtil;
 import com.jenkin.codegenerator.entity.CodeGenerateInfo;
 import com.jenkin.common.entity.dtos.generate.ColumnInfoDto;
 import com.jenkin.common.utils.FileUtils;
-import com.jenkin.common.utils.ShiroUtils;
+import com.jenkin.common.shiro.utils.ShiroUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;

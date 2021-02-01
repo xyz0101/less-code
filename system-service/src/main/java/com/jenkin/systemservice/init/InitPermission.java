@@ -4,7 +4,7 @@ import cn.hutool.core.util.ArrayUtil;
 import com.jenkin.common.entity.pos.system.PermissionPo;
 import com.jenkin.common.anno.MyPermission;
 import com.jenkin.common.utils.ProxyUtil;
-import com.jenkin.systemservice.service.system.PermissionService;
+import com.jenkin.systemservice.system.service.PermissionService;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextRefreshedEvent;

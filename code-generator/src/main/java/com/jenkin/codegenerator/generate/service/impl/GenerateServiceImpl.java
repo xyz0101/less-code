@@ -1,7 +1,5 @@
 package com.jenkin.codegenerator.generate.service.impl;
 
-import cn.hutool.core.map.MapUtil;
-import com.google.common.collect.Maps;
 import com.jenkin.codegenerator.entity.CodeGenerateInfo;
 import com.jenkin.codegenerator.entity.JavaToMysqlType;
 import com.jenkin.codegenerator.generate.service.ColumnInfoService;
@@ -19,7 +17,7 @@ import com.jenkin.common.exception.ExceptionEnum;
 import com.jenkin.common.exception.LscException;
 import com.jenkin.common.utils.BeanUtils;
 import com.jenkin.common.utils.Redis;
-import com.jenkin.common.utils.ShiroUtils;
+import com.jenkin.common.shiro.utils.ShiroUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
