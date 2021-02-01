@@ -26,6 +26,8 @@ import java.util.List;
 public interface HistoryService {
 
     public static final String ACTIVITY_ID="5f71e934bcdbf3a8c3ba5061";
+    public static final String MODE_ID="5f71e934bcdbf3a8c3ba51d5";
+    public static final int WAY=1;
 
 
     /**
@@ -44,7 +46,7 @@ public interface HistoryService {
      * 获取 用户
      * @return
      */
-    @GetMapping("/authorize/token/")
+    @GetMapping("/portal/user/")
     Response<UserInfo> getUser();
 
 
@@ -56,7 +58,7 @@ public interface HistoryService {
      * @return
      */
     @GetMapping("/race/beginning/")
-    QuestionsResponse  getQuestionList(@RequestParam("activity_id") String activity_id,@RequestParam("mode_id") String mode_id,@RequestParam("way") Integer way);
+    QuestionsResponse  getQuestionList(@RequestParam("activity_id") String activity_id,@RequestParam("mode_id") String mode_id,@RequestParam("way") String way);
 
     /**
      * 获取问题详情
@@ -66,8 +68,8 @@ public interface HistoryService {
      * @return
      */
     @GetMapping("/race/question/")
-    Question  getQuestionInfo(@RequestParam("activity_id") String activity_id, @RequestParam("question_id") String question_id,
-                                   @RequestParam("mode_id") String mode_id,@RequestParam("way") Integer way);
+    Response<Question>  getQuestionInfo(@RequestParam("activity_id") String activity_id, @RequestParam("question_id") String question_id,
+                                   @RequestParam("mode_id") String mode_id,@RequestParam("way") String way);
 
     /**
      * 答题
@@ -75,7 +77,7 @@ public interface HistoryService {
      * @return
      */
     @PostMapping("/race/answer/")
-    Answer answer(@RequestBody AnswerParam answerParam);
+    Response<Answer> answer(@RequestBody AnswerParam answerParam);
 
     /**
      * 交卷
@@ -108,10 +110,7 @@ public interface HistoryService {
         private String race_code;
         private String prev_qid;
         private List<String> question_ids;
-        private Date start_dt;
-        private String opponent;
-        private Integer time_limit;
-        private Date server_dt;
+
         private String mode_id;
         private String mode_title;
         private Integer mode;
@@ -197,7 +196,6 @@ public interface HistoryService {
         private int status;
         private int integral;
         private Owner owner;
-        private String opponent;
         private Mode mode;
         private boolean badge;
     }

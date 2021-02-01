@@ -1,5 +1,6 @@
 package com.jenkin.common.entity;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -12,6 +13,7 @@ import java.io.Serializable;
  * @version: 1.0
  */
 @Data
+
 public class Response<T> implements Serializable {
 
     private String code;
@@ -27,6 +29,9 @@ public class Response<T> implements Serializable {
         this.code = code;
         this.msg = msg;
         this.data = t;
+    }
+
+    public Response() {
     }
 
     public static  <T> Response<T> ok(){

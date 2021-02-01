@@ -20,4 +20,16 @@ public class MyUpdateWrapper<T> extends UpdateWrapper<T> {
     protected String columnToString(String column) {
         return StringUtils.camelToUnderline(column);
     }
+
+    /**
+     * ignore
+     *
+     * @param column
+     * @param val
+     */
+    @Override
+    public UpdateWrapper<T> set(String column, Object val) {
+         column = StringUtils.camelToUnderline(column);
+        return super.set(column,val);
+    }
 }

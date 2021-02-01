@@ -8,6 +8,9 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Enumeration;
+import java.util.Map;
+
+import static com.jenkin.common.constant.ThreadPoolConst.THREAD_HEADER;
 
 /**
 * @author jenkin
@@ -20,26 +23,28 @@ public class FeignRequestConfig implements RequestInterceptor {
    @Override
    public void apply(RequestTemplate template) {
        ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
-       HttpServletRequest request = attributes.getRequest();
-       Enumeration<String> headerNames = request.getHeaderNames();
-       String requestURI = request.getRequestURI();
-       if(requestURI.endsWith("getAbzWallpaperWin")){
-           template.header("User-Agent", "picasso,170,windows");
-       }
-       if(requestURI.contains("ssxx")){
-           template.header("authorization", request.getHeader("authorization"));
-       }
-       template.header("token", request.getHeader("token"));
 
-       if (headerNames == null) {
-           return;
+       if (attributes!=null) {
+           HttpServletRequest request = attributes.getRequest();
+           Enumeration<String> headerNames = request.getHeaderNames();
+
+           String requestURI = request.getRequestURI();
+           if(requestURI!=null&&requestURI.endsWith("getAbzWallpaperWin")){
+               template.header("User-Agent", "picasso,170,windows");
+           }
+           if(requestURI==null||requestURI.contains("history")){
+               template.header("authorization", request.getHeader("authorization"));
+           }
+           template.header("token", request.getHeader("token"));
+
+           if (headerNames == null) {
+               return;
+           }
+       }else if (THREAD_HEADER.get()!=null){
+           Map<String, String> map = THREAD_HEADER.get();
+           template.header("authorization",map.get("authorization"));
        }
-//       //处理上游请求头信息，传递时继续携带
-//       while (headerNames.hasMoreElements()) {
-//           String name = headerNames.nextElement();
-//           String values = request.getHeader(name);
-//           template.header(name, values);
-//       }
+
    }
 }
 

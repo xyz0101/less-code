@@ -36,12 +36,14 @@ import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
+import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
 import java.util.*;
 
-import static com.jenkin.common.constant.ThreadPoolConst.TASK_THREADS;
-import static com.jenkin.common.constant.ThreadPoolConst.THREAD_TOKEN;
+import static com.jenkin.common.constant.ThreadPoolConst.*;
 import static com.jenkin.common.enums.TaskStatusEnum.EXAMINING;
 import static com.jenkin.common.enums.TaskStatusEnum.UN_START;
 
@@ -101,6 +103,7 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper, LscTaskPo> implemen
         String user = ShiroUtils.getUserEntity().getUserName();
         String token = ShiroUtils.getToken();
 
+        Map<String, String> header = getHeader();
         for (String code : codes) {
             ThreadPoolConst.EXAM_TASK_JOBS_EXECUTORS.execute(() -> {
                 Thread thread = TASK_THREADS.get(code);
@@ -110,8 +113,12 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper, LscTaskPo> implemen
                     thread.interrupt();
                     TASK_THREADS.remove(code);
                 }
+
+//                RequestContextHolder.setRequestAttributes(attributes);
                 TASK_THREADS.put(code,Thread.currentThread());
                 THREAD_TOKEN.set(token);
+                THREAD_HEADER.set(header);
+
                 try {
                     logger.info("任务token{}", token);
 
@@ -122,6 +129,8 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper, LscTaskPo> implemen
 
                     //只运行等待状态的
                     if (task.getTaskStatus().intValue() == TaskStatusEnum.WAITING.getIntCode()) {
+                        sendTaskStatus(user ,codes, MessageSender.TASK_STATUS, TaskStatusEnum.RUNNING);
+
                         task.setTaskStatus(TaskStatusEnum.RUNNING.getIntCode());
                         task.setTaskStartTime(LocalDateTime.now());
                         this.updateTask(null, task, user);
@@ -136,6 +145,20 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper, LscTaskPo> implemen
 
 
 
+    }
+
+    private Map<String,String> getHeader( ) {
+        ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
+        HttpServletRequest request = attributes.getRequest();
+        Map<String, String> stringStringMap = new HashMap<>();
+        Enumeration<String> headerNames = request.getHeaderNames();
+        while (headerNames.hasMoreElements()) {
+            String element = headerNames.nextElement();
+            String header = request.getHeader(element);
+            stringStringMap.put(element,header);
+
+        }
+        return stringStringMap;
     }
 
     /**

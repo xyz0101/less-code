@@ -231,7 +231,19 @@ public class Redis {
     public Object get(String key) {
         return key == null ? null : redisTemplate.opsForValue().get(key);
     }
+    /**
+     * 普通缓存获取
+     * @param key 键
+     * @return 值
+     */
+    public <T> T getObject(String key,Class<T> c) {
 
+        Object o = key == null ? null : redisTemplate.opsForValue().get(key);
+        if (o==null) {
+            return null;
+        }
+        return JSON.parseObject(String.valueOf(o),c);
+    }
     /**
      * 普通缓存放入
      * @param key 键
@@ -241,6 +253,22 @@ public class Redis {
     public boolean set(String key, Object value) {
         try {
             redisTemplate.opsForValue().set(key, value);
+            return true;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+
+    }
+    /**
+     * 普通缓存放入
+     * @param key 键
+     * @param value 值
+     * @return true成功 false失败
+     */
+    public boolean setObject(String key, Object value) {
+        try {
+            redisTemplate.opsForValue().set(key, JSON.toJSONString(value));
             return true;
         } catch (Exception e) {
             e.printStackTrace();

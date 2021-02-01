@@ -55,7 +55,11 @@ public enum TaskStatusEnum {
     /**
      * 已完成但失败
      */
-    COMPLETE_FAIL("CompleteFail",7,"已完成但失败");
+    COMPLETE_FAIL("CompleteFail",7,"已完成但失败"),
+    /**
+     * 已完成且成功
+     */
+    PASS_TASK("pass",8,"暂停");
     private String code;
     private String name;
     private Integer intCode;

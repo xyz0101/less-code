@@ -2,6 +2,7 @@ package com.jenkin.common.constant;
 
 import cn.hutool.core.thread.ThreadFactoryBuilder;
 
+import java.util.Map;
 import java.util.concurrent.*;
 
 /**
@@ -30,6 +31,10 @@ public class ThreadPoolConst {
      * token线程变量
      */
     public static final ThreadLocal<String> THREAD_TOKEN = new ThreadLocal<>();
+    /**
+     * header 线程变量
+     */
+    public static final ThreadLocal<Map<String,String>> THREAD_HEADER = new ThreadLocal<>();
     /**
      * 正在运行的任务的线程
      */
