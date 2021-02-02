@@ -1,12 +1,17 @@
 package com.jenkin.systemservice.history.controller;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.TypeReference;
+import com.jenkin.common.anno.EnableErrorCatch;
 import com.jenkin.common.entity.Response;
 import com.jenkin.common.entity.dtos.tasks.LscTaskDto;
+import com.jenkin.common.entity.vos.aibizhi.Res;
+import com.jenkin.common.entity.vos.tasks.TriggerVO;
 import com.jenkin.common.enums.TaskStatusEnum;
 import com.jenkin.common.exception.ExceptionEnum;
 import com.jenkin.common.exception.LscException;
+import com.jenkin.common.shiro.utils.ShiroUtils;
 import com.jenkin.common.utils.Redis;
 import com.jenkin.systemservice.examine_task.service.TaskService;
 import com.jenkin.systemservice.examine_task.socket.MessageSender;
@@ -26,6 +31,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.atomic.AtomicReference;
 
 import static com.jenkin.systemservice.history.service.HistoryService.*;
 
@@ -39,6 +45,7 @@ import static com.jenkin.systemservice.history.service.HistoryService.*;
 @RequestMapping("/history")
 @CrossOrigin
 @Slf4j
+@EnableErrorCatch()
 @Api(tags = "四史答题相关接口")
 public class HistoryController {
 
@@ -75,16 +82,23 @@ public class HistoryController {
     @GetMapping("/checkLogin")
     @ApiOperation("检查是否登录")
     public Response<OAuthService.UserLoginData> checkLogin(String random){
-        Response<OAuthService.UserLoginData> comfirm = oAuthService.comfirm(random, true);
-        return Response.ok(comfirm.getData());
+        Response<Response<OAuthService.UserLoginData>> comfirm = oAuthService.comfirm(random, true);
+        return Response.ok(comfirm.getData().getData());
     }
 
 
     @GetMapping("/getUser")
     @ApiOperation("获取用户信息")
     public Response<HistoryService.UserInfo> getUserInfo(){
-        Response<HistoryService.UserInfo> user = historyService.getUser();
-        if (user.getCode().equals("0")) {
+        Response<HistoryService.UserInfo> user=null;
+        try {
+            user = historyService.getUser();
+        }catch (Exception e){
+            throw new LscException(ExceptionEnum.QRCODE_LOGIN_ERROR_EXCEPTION);
+
+        }
+
+        if (user!=null&user.getCode().equals("0")) {
             return Response.ok(user.getData());
         }
         throw new LscException(ExceptionEnum.QRCODE_LOGIN_ERROR_EXCEPTION);
@@ -92,8 +106,17 @@ public class HistoryController {
     @GetMapping("/getGradeInfo")
     @ApiOperation("获取积分信息")
     public Response<HistoryService.Person> getGradeInfo(String activityId){
-        Response<HistoryService.Person> grade = historyService.grade(activityId);
-        if (grade.getCode().equals("0")) {
+        if (StringUtils.isEmpty(activityId)) {
+            activityId = ACTIVITY_ID;
+        }
+        Response<HistoryService.Person> grade =null;
+        try {
+            grade = historyService.grade(activityId);
+        }catch (Exception e){
+            throw new LscException(ExceptionEnum.QRCODE_LOGIN_ERROR_EXCEPTION);
+
+        }
+        if (grade!=null&&grade.getCode().equals("0")) {
             return Response.ok(grade.getData());
         }
         throw new LscException(ExceptionEnum.QRCODE_LOGIN_ERROR_EXCEPTION);
@@ -103,16 +126,29 @@ public class HistoryController {
     public Response<OAuthService.QrCode> getQrCode(){
         return oAuthService.getQrCode(UUID.randomUUID().toString().substring(0,10),true,false);
     }
-    @GetMapping("/passTask")
-    @ApiOperation("暂停")
-    public Response passTask(String taskCode){
-        redis.set("history:task:process:"+taskCode,"N");
+    @GetMapping("/stopTask")
+    @ApiOperation("停止任务")
+    public Response stopTask(){
+        redis.set("history:task:status:"+ShiroUtils.getUserCode(),"N");
         return Response.ok();
     }
+
+    @GetMapping("/getUserTaskStatus")
+    @ApiOperation("获取用户任务状态")
+    public Response getUserTaskStatus(){
+        return Response.ok(redis.get("history:task:status:" + ShiroUtils.getUserCode()));
+    }
+
     @PostMapping("/startStudy")
     @ApiOperation("开始学习四史")
     public Response startStudy(@RequestBody TaskParam taskParam){
+
+        if ("Y".equals(redis.get("history:task:status:" + ShiroUtils.getUserCode()))) {
+            throw new LscException(ExceptionEnum.ERROR_START_EXCEPTION);
+        }
+
         TaskService.LscTaskInfo<TaskParam> taskInfo = new TaskService.LscTaskInfo<>();
+        AtomicReference<String> taskCodeRef = new AtomicReference<>();
         taskInfo.setTaskTitle("四史刷题");
         taskInfo.setTaskType("1");
         taskInfo.setTaskParam(taskParam);
@@ -122,10 +158,16 @@ public class HistoryController {
             });
         }else {
             taskService.createAndStartTask(taskInfo, (task, user) -> {
+                taskCodeRef.set(task.getTaskCode());
                 return runTask(task, user);
             });
         }
-        return Response.ok();
+        try {
+            Thread.sleep(2000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        return Response.ok(redis.get("history:task:status:" + ShiroUtils.getUserCode()));
     }
 
     private TaskService.TaskExecuteResult runTask(LscTaskDto task, String user) {
@@ -156,7 +198,7 @@ public class HistoryController {
             }
         }
             //开始接着处理任务
-        boolean b = dealTask(process, task_process_key, task_user_grade, activity_task_key, maxGrade, user);
+        boolean b = dealTask(process, task_process_key, task_user_grade, activity_task_key, maxGrade, user,task.getTaskCode());
         if (b){
             task.setTaskStatus(TaskStatusEnum.COMPLETE_SUCCESS.getIntCode());
         }else{
@@ -165,7 +207,8 @@ public class HistoryController {
         return result;
     }
 
-    private boolean dealTask(int process, String task_process_key, String task_user_grade, String activity_task_key, Integer maxGrade, String user) {
+    private boolean dealTask(int process, String task_process_key, String task_user_grade, String activity_task_key, Integer maxGrade, String user,String taskCode) {
+        redis.set("history:task:status:" + user,"Y");
         while (true) {
             QuestionsResponse questions = null;
             if (process >= 0) {
@@ -180,9 +223,7 @@ public class HistoryController {
             if (questions != null && questions.getQuestion_ids().size() > 0) {
                 log.info("问题总数：{}",questions.getQuestion_ids().size());
                 for (int i = process; i < questions.getQuestion_ids().size(); i++) {
-                    if ("Y".equals(redis.get(task_process_key + ":stop"))) {
-                        return false;
-                    }
+
 
                     Object o = questions.getQuestion_ids().get(i);
                     if (o != null) {
@@ -215,9 +256,10 @@ public class HistoryController {
                                         int g = Integer.parseInt(String.valueOf(grade));
                                         redis.set(task_user_grade, g + 1);
                                         log.info("答题成功：{}  当前积分：{}", code, g + 1);
-                                        sendGread(g + 1, user);
+                                        sendGread(g + 1, taskCode,user);
 
-                                        if (answer.getFinished() ||i==questions.getQuestion_ids().size()-1||maxGrade <= g + 1 ) {
+                                        if (answer.getFinished() ||i==questions.getQuestion_ids().size()-1||maxGrade <= g + 1
+                                                ||"N".equals(redis.get("history:task:status:" + user))) {
                                             Submit submit = new Submit();
                                             submit.setRace_code(questions.getRace_code());
                                             Response<SubmitEntiry> finish = historyService.finish(submit);
@@ -227,8 +269,13 @@ public class HistoryController {
 
                                                 redis.del(task_process_key, activity_task_key);
                                                 if (maxGrade <= g + 1) {
+                                                    redis.set("history:task:status:" + user,"N");
                                                     log.info("已到达阈值：max：：{}  current：：{}",maxGrade,g+1);
                                                     return true;
+                                                }
+                                                if("N".equals(redis.get("history:task:status:" + taskCode))){
+                                                    log.info("手动停止：max：：{}  current：：{}",maxGrade,g+1);
+                                                    return false;
                                                 }
                                             }else{
                                                 log.error("交卷失败");
@@ -240,7 +287,8 @@ public class HistoryController {
                                 }
                             }else{
                                 redis.del(task_process_key, activity_task_key);
-                                throw new LscException(ExceptionEnum.DELETE_TOOMUCH_EXCEPTION);
+                                redis.set("history:task:status:" + user,"N");
+                                throw new LscException(ExceptionEnum.QRCODE_LOGIN_ERROR_EXCEPTION);
                             }
                         } catch (NumberFormatException|InterruptedException e) {
                             e.printStackTrace();
@@ -276,10 +324,17 @@ public class HistoryController {
     }
 
 
-    private void sendGread(int gread,String user){
+    private void sendGread(int grade,String taskCode,String user){
+        TriggerVO triggerVO = new TriggerVO();
+        triggerVO.setTriggerUsers(new String[]{user});
+        triggerVO.setTriggerCode(MessageSender.TASK_SSXX_GRADE);
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("taskCode",taskCode);
+        jsonObject.put("grade",grade+"");
+        triggerVO.setTriggerMsg(JSON.toJSONString(jsonObject));
         MessageSender messageSender = MessageSender.getMessageSender(MessageSender.TASK_SSXX_GRADE);
         if (messageSender!=null) {
-            messageSender.sendMessage(gread+"",user);
+            messageSender.sendMessage(JSON.toJSONString(triggerVO),user);
         }
     }
 

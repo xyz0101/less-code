@@ -26,4 +26,11 @@ public class DateUtils {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         return sdf.format( Date.from(time.atZone(ZoneId.systemDefault()).toInstant()));
     }
+
+    public static void main(String[] args) {
+        LocalDateTime time = LocalDateTime.now();
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        String format = sdf.format(Date.from(time.atZone(ZoneId.systemDefault()).toInstant()));
+        System.out.println(format);
+    }
 }

@@ -142,8 +142,10 @@ public class ShiroConfig {
         Map<String,String> map = new HashMap<String, String>();
         //登出
         map.put("/user/logout","logout");
+
         //登录
         map.put("/user/login","anon");
+        map.put("/ws/**","anon");
         map.put("/shiro/needLogin","anon");
         map.put("/user/register","anon");
         map.put("/user/getPublicKey","anon");

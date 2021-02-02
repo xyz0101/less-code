@@ -22,7 +22,7 @@ public interface OAuthService {
     Response<QrCode> getQrCode(@RequestParam("random") String random, @RequestParam("useSelfWxapp") Boolean useSelfWxapp,
                        @RequestParam("enableFetchPhone") Boolean enableFetchPhone);
     @PostMapping("/confirm/qr")
-    Response<UserLoginData> comfirm(@RequestParam("random") String random, @RequestParam("useSelfWxapp") Boolean useSelfWxapp
+    Response<Response<UserLoginData>> comfirm(@RequestParam("random") String random, @RequestParam("useSelfWxapp") Boolean useSelfWxapp
                               );
 
 

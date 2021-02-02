@@ -59,7 +59,7 @@ public enum TaskStatusEnum {
     /**
      * 已完成且成功
      */
-    PASS_TASK("pass",8,"暂停");
+    PASS_TASK("stop",8,"停止");
     private String code;
     private String name;
     private Integer intCode;

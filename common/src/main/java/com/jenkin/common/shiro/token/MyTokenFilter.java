@@ -40,11 +40,15 @@ public class MyTokenFilter extends BasicHttpAuthenticationFilter {
         HttpServletRequest httpServletRequest = (HttpServletRequest) request;
             try {
                 String token = httpServletRequest.getHeader("token");
-                log.info("当前的token：{}", token);
+                log.info("当前的 token：{},url: {}", token,httpServletRequest.getRequestURL());
+                //websocket 不做校验
+                if(httpServletRequest.getRequestURL().indexOf("lsc/system/ws")>0){
+                    return true;
+                }
                 if(token==null){
                     token = httpServletRequest.getParameter("token");
                     token = new String(Base64.getDecoder().decode(token));
-                    log.info("当前的url token：{}", token);
+                    log.info("当前的url token：{},url: {}", token,httpServletRequest.getRequestURI());
                 }
                 UserDto userDto = JSON.parseObject(AESUtil.decrypt(token), UserDto.class);
                 String key = TOKEN_KEY + userDto.getUserCode();
