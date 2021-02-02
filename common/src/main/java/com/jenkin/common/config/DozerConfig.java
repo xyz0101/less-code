@@ -15,7 +15,7 @@ import org.springframework.context.annotation.Configuration;
 public class DozerConfig {
     @Bean
     public Mapper mapper(){
-        Mapper mapper = DozerBeanMapperBuilder.create().withMappingFiles("dozer-conveter.xml").build();
-        return mapper;
+//        Mapper mapper = DozerBeanMapperBuilder.create().withMappingFiles("dozer-conveter.xml").build();
+        return DozerBeanMapperBuilder.buildDefault();
     }
 }

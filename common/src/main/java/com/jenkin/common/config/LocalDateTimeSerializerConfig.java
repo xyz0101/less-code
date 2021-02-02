@@ -70,6 +70,7 @@ public class LocalDateTimeSerializerConfig {
         JavaTimeModule module = new JavaTimeModule();
         LocalDateTimeDeserializer localDateTimeDeserializer = new LocalDateTimeDeserializer(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
         module.addDeserializer(LocalDateTime.class, localDateTimeDeserializer);
+        module.addDeserializer(LocalDateTime.class, localDateTimeDeserializer);
         return builder -> {
             builder.simpleDateFormat(DATE_TIME_PATTERN);
             builder.serializers(new LocalDateSerializer(DateTimeFormatter.ofPattern(DATE_PATTERN)));

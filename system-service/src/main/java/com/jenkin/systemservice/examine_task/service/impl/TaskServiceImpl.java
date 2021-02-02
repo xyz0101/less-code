@@ -83,7 +83,7 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper, LscTaskPo> implemen
     }
 
     @Override
-    @Transactional(rollbackFor = Exception.class)
+//    @Transactional(rollbackFor = Exception.class)
     public void startTask(String[] codes,FunctionExecute execute) {
         if (ArrayUtil.isEmpty(codes)){
             return;
@@ -342,6 +342,7 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper, LscTaskPo> implemen
             queryWrapper.eq(NotEmptyUtils.allNotEmpty(data,data.getTaskStatus()),LscTaskPo.Fields.taskStatus,data.getTaskStatus());
             queryWrapper.eq(NotEmptyUtils.allNotEmpty(data,data.getTaskType()),LscTaskPo.Fields.taskType,data.getTaskType());
         }
+        queryWrapper.sort(baseQO.getSorts());
         Page<LscTaskPo> page = new Page<>(baseQO.getPage(),baseQO.getPageSize());
         Page<LscTaskPo> result = page(page, queryWrapper);
         return SimpleQuery.page(result, LscTaskDto.class);
