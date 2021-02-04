@@ -83,7 +83,7 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper, LscTaskPo> implemen
     }
 
     @Override
-    @Transactional(rollbackFor = Exception.class)
+//    @Transactional(rollbackFor = Exception.class)
     public void startTask(String[] codes,FunctionExecute execute) {
         if (ArrayUtil.isEmpty(codes)){
             return;
@@ -296,7 +296,7 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper, LscTaskPo> implemen
         taskPO.setTaskParamContent(JSON.toJSONString(taskInfo.getTaskParam()));
         taskPO.setTaskTitle(taskInfo.getTaskTitle());
         taskPO.setTaskType(taskInfo.getTaskType());
-        taskPO.setTaskUser(ShiroUtils.getUserEntity().getUserName());
+        taskPO.setTaskUser(ShiroUtils.getUserEntity().getUserCode());
         save(taskPO);
         startTask(new String[]{taskPO.getTaskCode()},execute);
     }
@@ -341,7 +341,9 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper, LscTaskPo> implemen
         if (data!=null) {
             queryWrapper.eq(NotEmptyUtils.allNotEmpty(data,data.getTaskStatus()),LscTaskPo.Fields.taskStatus,data.getTaskStatus());
             queryWrapper.eq(NotEmptyUtils.allNotEmpty(data,data.getTaskType()),LscTaskPo.Fields.taskType,data.getTaskType());
+            queryWrapper.eq(LscTaskPo.Fields.taskUser,ShiroUtils.getUserCode());
         }
+        queryWrapper.sort(baseQO.getSorts());
         Page<LscTaskPo> page = new Page<>(baseQO.getPage(),baseQO.getPageSize());
         Page<LscTaskPo> result = page(page, queryWrapper);
         return SimpleQuery.page(result, LscTaskDto.class);
@@ -378,14 +380,14 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper, LscTaskPo> implemen
         }
         //修改状态为等待中
         List<String> updateCodes = updateStatusWaiting(codes, true);
-        sendTaskStatus(ShiroUtils.getUserEntity().getUserName(),updateCodes, MessageSender.TASK_STATUS,TaskStatusEnum.WAITING);
+        sendTaskStatus(ShiroUtils.getUserEntity().getUserCode(),updateCodes, MessageSender.TASK_STATUS,TaskStatusEnum.WAITING);
         //执行任务
         runTask(updateCodes,execute);
     }
 
     @Override
     public void cancelAllTask() {
-        String currentUserName = ShiroUtils.getUserEntity().getUserName();
+        String currentUserName = ShiroUtils.getUserEntity().getUserCode();
         MyQueryWrapper<LscTaskPo> queryWrapper = new MyQueryWrapper<>();
         queryWrapper.eq(LscTaskPo.Fields.taskUser,currentUserName);
         queryWrapper.between(LscTaskPo.Fields.taskStatus, UN_START.getIntCode(), EXAMINING.getIntCode());
@@ -405,7 +407,7 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper, LscTaskPo> implemen
             return;
         }
         MyQueryWrapper<LscTaskPo> queryWrapper = new MyQueryWrapper<>();
-        queryWrapper.in(LscTaskPo.Fields.taskCode,codes).eq(LscTaskPo.Fields.taskUser,ShiroUtils.getUserEntity().getUserName());
+        queryWrapper.in(LscTaskPo.Fields.taskCode,codes).eq(LscTaskPo.Fields.taskUser,ShiroUtils.getUserEntity().getUserCode());
         remove(queryWrapper);
     }
 

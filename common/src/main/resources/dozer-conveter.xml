@@ -1,15 +1,15 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<mappings xmlns="http://dozermapper.github.io/schema/bean-mapping"
-          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-          xsi:schemaLocation="http://dozermapper.github.io/schema/bean-mapping http://dozermapper.github.io/schema/bean-mapping.xsd">
+<!--<?xml version="1.0" encoding="UTF-8"?>-->
+<!--<mappings xmlns="http://dozermapper.github.io/schema/bean-mapping"-->
+          <!--xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"-->
+          <!--xsi:schemaLocation="http://dozermapper.github.io/schema/bean-mapping http://dozermapper.github.io/schema/bean-mapping.xsd">-->
 
-    <configuration>
-        <custom-converters> <!-- these are always bi-directional -->
-            <converter type="com.jenkin.common.config.LocalDateTimeConverter" >
-                <class-a>java.time.LocalDateTime</class-a>
-                <class-b>java.time.LocalDateTime</class-b>
-            </converter>
-        </custom-converters>
-    </configuration>
+    <!--<configuration>-->
+        <!--<custom-converters> &lt;!&ndash; these are always bi-directional &ndash;&gt;-->
+            <!--<converter type="com.jenkin.common.config.LocalDateTimeConverter" >-->
+                <!--<class-a>java.time.LocalDateTime</class-a>-->
+                <!--<class-b>java.time.LocalDateTime</class-b>-->
+            <!--</converter>-->
+        <!--</custom-converters>-->
+    <!--</configuration>-->
 
-</mappings>
+<!--</mappings>-->
