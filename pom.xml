@@ -185,7 +185,7 @@
         </dependencies>
     </dependencyManagement>
     <build>
-        <defaultGoal>compile</defaultGoal>
+        <defaultGoal>jar:jar</defaultGoal>
         <plugins>
             <plugin>
                 <groupId>org.springframework.boot</groupId>
