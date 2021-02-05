@@ -1,6 +1,7 @@
 package com.jenkin.common.files;
 
 import com.aliyun.oss.OSS;
+import com.jenkin.common.files.fileservice.FileService;
 import com.jenkin.common.files.fileservice.impl.AliyunOssUpload;
 import com.jenkin.common.files.fileservice.impl.MinioUploadService;
 import com.jenkin.common.files.fileservice.impl.QcloudCosUpload;
@@ -29,7 +30,7 @@ public class FileUploadAutoConfiguration {
     @Bean
     @ConditionalOnProperty(prefix = "file-store", name = "type", havingValue = "oss")
     @ConditionalOnBean(OSS.class)
-    public AliyunOssUpload aliyunOssUpload(OSS ossClient){
+    public FileService aliyunOssUpload(OSS ossClient){
         log.info("初始化oss service ");
         final AliyunOssUpload ossUpload = new AliyunOssUpload();
         ossUpload.setFileProperties(fileProperties);
@@ -41,7 +42,7 @@ public class FileUploadAutoConfiguration {
     @ConditionalOnProperty(prefix = "file-store", name = "type", havingValue = "minio")
     @ConditionalOnBean(MinioClient.class)
     @Primary
-    public MinioUploadService minioUpload(MinioClient minioClient){
+    public FileService minioUpload(MinioClient minioClient){
         log.info("初始化 minio service ");
         final MinioUploadService ossUpload = new MinioUploadService();
         ossUpload.setFileProperties(fileProperties);
@@ -52,7 +53,7 @@ public class FileUploadAutoConfiguration {
     @Bean
     @ConditionalOnProperty(prefix = "file-store", name = "type", havingValue = "cos")
     @ConditionalOnBean(COSClient.class)
-    public QcloudCosUpload qcloudCosUpload(COSClient cosClient){
+    public FileService qcloudCosUpload(COSClient cosClient){
         log.info("初始化cos service ");
         final QcloudCosUpload ossUpload = new QcloudCosUpload();
         ossUpload.setFileProperties(fileProperties);

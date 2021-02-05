@@ -20,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
+import javax.annotation.Resource;
 import java.io.InputStream;
 import java.time.LocalDateTime;
 import java.util.*;
@@ -35,7 +36,7 @@ import java.util.stream.Collectors;
  */
 @Service
 public class LscFileServiceImpl extends ServiceImpl<LscFileMapper, LscFilePo> implements LscFileService {
-    @Autowired
+    @Resource
     private FileService fileService;
     @Override
     public LscFileDto getById(Integer id) {
