@@ -10,6 +10,7 @@ import com.jenkin.fileservice.service.file.LscFileService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -30,9 +31,11 @@ import java.util.Scanner;
 @RestController()
 @RequestMapping("/file")
 @Api(tags = "文件操作接口")
+@Lazy
 public class FileController {
 
     @Autowired
+    @Lazy
     private FileService fileService;
     @Autowired
     private LscFileService lscFileService;
