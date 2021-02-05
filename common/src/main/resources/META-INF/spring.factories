@@ -1,0 +1,3 @@
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+com.jenkin.common.files.FileClientConfiguration,\
+com.jenkin.common.files.FileUploadAutoConfiguration
