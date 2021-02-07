@@ -1,5 +1,6 @@
 package com.jenkin.systemservice.history.controller;
 
+import cn.hutool.crypto.asymmetric.RSA;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.TypeReference;
@@ -23,11 +24,21 @@ import io.swagger.annotations.ApiModelProperty;
 import io.swagger.annotations.ApiOperation;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.tomcat.util.codec.binary.Base64;
 import org.checkerframework.checker.units.qual.A;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
+import sun.security.rsa.RSAPublicKeyImpl;
 
+import javax.crypto.Cipher;
+import java.io.ByteArrayOutputStream;
+import java.math.BigInteger;
+import java.security.Key;
+import java.security.KeyFactory;
+import java.security.PublicKey;
+import java.security.interfaces.RSAPublicKey;
+import java.security.spec.X509EncodedKeySpec;
 import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
@@ -231,6 +242,8 @@ public class HistoryController {
                         try {
                             Response<Question> questionInfo = historyService.getQuestionInfo(ACTIVITY_ID, code, MODE_ID, WAY + "");
                             if (questionInfo != null && questionInfo.getData() != null) {
+                                this.checkCode();
+
                                 String answerCode = questionInfo.getData().getOptions().get(0).getCode();
                                 HistoryService.AnswerParam answerParam = new HistoryService.AnswerParam();
                                 answerParam.setActivity_id(ACTIVITY_ID);
@@ -306,7 +319,82 @@ public class HistoryController {
 
 
     }
+    @GetMapping("/test")
+    public Response test(){
+        checkCode();
+        return Response.ok();
+    }
+    private void checkCode() {
 
+        String code = "sqng";
+        Response<MyPublicKey> publicKey = historyService.getPublicKey();
+        String public_key = publicKey.getData().getPublic_key();
+        public_key=public_key.replaceAll("\n","");
+//        public_key=public_key.replaceAll("-----BEGIN PUBLIC KEY-----","-----BEGIN PUBLIC KEY-----\n");
+        public_key=public_key.replaceAll("-----BEGIN PUBLIC KEY-----","");
+//        public_key=public_key.replaceAll("-----END PUBLIC KEY-----","\n-----END PUBLIC KEY-----");
+        public_key=public_key.replaceAll("-----END PUBLIC KEY-----","");
+        System.out.println(public_key);
+        try {
+            byte[] encrypt = encryptByPublicKey(code.getBytes(),public_key);
+            String codeStr = new String(Base64.encodeBase64(encrypt));
+            log.info(codeStr);
+            CodeParam codeParam = new CodeParam();
+            codeParam.setActivity_id(ACTIVITY_ID);
+            codeParam.setCode(codeStr);
+            codeParam.setMode_id(MODE_ID);
+            codeParam.setWay(WAY+"");
+            historyService.saveCode(codeParam);
+            CheckStatus checkStatus = historyService.checkCode(codeParam);
+            log.info("校验结果 ：{}",JSON.toJSONString(checkStatus));
+
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+    }
+    private static byte[] encryptByPublicKey(byte[] data, String publicKey) throws Exception {
+        byte[] keyBytes = Base64.decodeBase64(publicKey);
+        X509EncodedKeySpec x509KeySpec = new X509EncodedKeySpec(keyBytes);
+        KeyFactory keyFactory = KeyFactory.getInstance("RSA");
+        Key publicK = keyFactory.generatePublic(x509KeySpec);
+        // 对数据加密
+        Cipher cipher = Cipher.getInstance("RSA/ECB/PKCS1Padding");
+        cipher.init(Cipher.ENCRYPT_MODE, publicK);
+        int inputLen = data.length;
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        int offSet = 0;
+        byte[] cache;
+        int i = 0;
+        // 对数据分段加密
+        while (inputLen - offSet > 0) {
+            if (inputLen - offSet > 256) {
+                cache = cipher.doFinal(data, offSet, 256);
+            } else {
+                cache = cipher.doFinal(data, offSet, inputLen - offSet);
+            }
+            out.write(cache, 0, cache.length);
+            i++;
+            offSet = i * 256;
+        }
+        byte[] encryptedData = out.toByteArray();
+        out.close();
+        return encryptedData;
+
+    }
+    //加密，需要公钥
+    public byte[] encrypt(byte[] ptext, PublicKey pbkey) throws Exception {
+        // 获取公钥及参数e,n
+        RSAPublicKey pbk = (RSAPublicKey)pbkey;
+        BigInteger e = pbk.getPublicExponent();
+        BigInteger n = pbk.getModulus();
+        // 获取明文m
+        BigInteger m = new BigInteger(ptext);
+        // 计算密文c
+        BigInteger c = m.modPow(e, n);
+        return c.toByteArray();
+    }
 
     @Data
     @ApiModel("刷题任务参数")

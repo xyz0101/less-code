@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.security.PrivateKey;
 import java.util.Date;
 import java.util.List;
 
@@ -41,6 +42,12 @@ public interface HistoryService {
     TokenResponse  getToken(@RequestParam("uid") String uid,@RequestParam("avatar") String avatar,@RequestParam("activity_id") String activity_id);
 
 
+    /**
+     * 获取公钥
+     * @return
+     */
+    @GetMapping("/base/public/key/")
+    Response<MyPublicKey>  getPublicKey();
 
     /**
      * 获取 用户
@@ -78,6 +85,29 @@ public interface HistoryService {
      */
     @PostMapping("/race/answer/")
     Response<Answer> answer(@RequestBody AnswerParam answerParam);
+
+
+    /**
+     * 答题
+     * @param codeParam
+     * @return
+     */
+    @PostMapping("/save/verification/code/")
+    CheckStatus saveCode(@RequestBody CodeParam codeParam);
+
+
+
+    /**
+     * 答题
+     * @param codeParam
+     * @return
+     */
+    @PostMapping("/check/verification/code/")
+    CheckStatus checkCode(@RequestBody CodeParam codeParam);
+
+
+
+
 
     /**
      * 交卷
@@ -217,5 +247,26 @@ public interface HistoryService {
         private int correct_amount;
         private int consume_time;
     }
+    @Data
+    static class MyPublicKey{
+        private String public_key;
+    }
+
+
+    @Data
+    static class  CheckStatus{
+        private Integer code;
+        private Integer status_code;
+        private Boolean status;
+    }
+
+    @Data
+    static class CodeParam{
+        private String activity_id;
+        private String way;
+        private String mode_id;
+        private String code;
+    }
+
 
 }
