@@ -15,11 +15,13 @@ import com.jenkin.common.utils.SimpleQuery;
 import com.jenkin.fileservice.dao.file.LscFileMapper;
 import com.jenkin.fileservice.service.file.LscFileService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
+import javax.annotation.Resource;
 import java.io.InputStream;
 import java.time.LocalDateTime;
 import java.util.*;
@@ -34,8 +36,10 @@ import java.util.stream.Collectors;
  * @version: 1.0
  */
 @Service
+@Lazy
 public class LscFileServiceImpl extends ServiceImpl<LscFileMapper, LscFilePo> implements LscFileService {
-    @Autowired
+    @Resource
+    @Lazy
     private FileService fileService;
     @Override
     public LscFileDto getById(Integer id) {

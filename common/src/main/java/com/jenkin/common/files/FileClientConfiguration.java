@@ -35,6 +35,7 @@ public class FileClientConfiguration {
         log.info("初始化Minio");
         MinioClient minioClient = new MinioClient(fileProperties.getEndpoint(), fileProperties.getAccessKey(), fileProperties.getSecretKey());
         if (!minioClient.bucketExists(fileProperties.getBucketName())) {
+            log.info("初始化Minio成功");
             // 创建一个存储桶 Bucket
             minioClient.makeBucket(fileProperties.getBucketName());
         }
