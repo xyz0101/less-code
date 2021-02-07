@@ -232,6 +232,7 @@ public class HistoryController {
                 process = 0;
             }
             if (questions != null && questions.getQuestion_ids().size() > 0) {
+                this.checkCode();
                 log.info("问题总数：{}",questions.getQuestion_ids().size());
                 for (int i = process; i < questions.getQuestion_ids().size(); i++) {
 
@@ -242,7 +243,7 @@ public class HistoryController {
                         try {
                             Response<Question> questionInfo = historyService.getQuestionInfo(ACTIVITY_ID, code, MODE_ID, WAY + "");
                             if (questionInfo != null && questionInfo.getData() != null) {
-                                this.checkCode();
+
 
                                 String answerCode = questionInfo.getData().getOptions().get(0).getCode();
                                 HistoryService.AnswerParam answerParam = new HistoryService.AnswerParam();
