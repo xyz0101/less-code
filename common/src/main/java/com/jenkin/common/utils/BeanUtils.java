@@ -46,6 +46,9 @@ public class BeanUtils {
      * @return
      */
     public static <T> T map(Object var1, Class<T> var2,String... ignores) {
+        if (var1==null) {
+            return null;
+        }
         T map = mappers.map(var1, var2);
         removeFields(map,var2,ignores);
         return map;
