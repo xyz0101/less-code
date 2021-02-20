@@ -14,8 +14,10 @@ public enum ExceptionEnum {
     DELETE_TOOMUCH_EXCEPTION("511","删除参数不能为空"),
     QRCODE_LOGIN_ERROR_EXCEPTION("512","授权过期，需要重新扫描二维码"),
     ERROR_QUESTION_EXCEPTION("513","问题有误，请重新开始任务"),
-    ERROR_START_EXCEPTION("514","正在答题ing，请勿重复点击")
-            ;
+    ERROR_START_EXCEPTION("514","正在答题ing，请勿重复点击"),
+    EXIST_USER_EXCEPTION("515","用户编号已存在")
+
+    ;
     ExceptionEnum(String code, String desc) {
         this.code = code;
         this.desc = desc;

@@ -129,6 +129,8 @@ public class HistoryController {
         }
         if (grade!=null&&grade.getCode().equals("0")) {
             return Response.ok(grade.getData());
+        }else{
+            log.info("grade 结果：{}",JSON.toJSONString(grade));
         }
         throw new LscException(ExceptionEnum.QRCODE_LOGIN_ERROR_EXCEPTION);
     }
@@ -253,10 +255,12 @@ public class HistoryController {
                                 answerParam.setQuestion_id(code);
                                 answerParam.setAnswer(Collections.singletonList(answerCode));
                                 Answer answer = historyService.answer(answerParam).getData();
+                                log.info("第一次回答 答案：{}",JSON.toJSONString(answer));
                                 Thread.sleep(500);
                                 if (answer.getCorrect() == null || !answer.getCorrect()) {
                                     answerParam.setAnswer(answer.getCorrect_ids());
                                     answer = historyService.answer(answerParam).getData();
+                                    log.info("第二次回答 答案：{}",JSON.toJSONString(answer));
                                     Thread.sleep(600);
                                     if (answer.getCorrect() != null && answer.getCorrect()) {
                                         redis.set(task_process_key, process + 1);
@@ -292,7 +296,7 @@ public class HistoryController {
                                                     return false;
                                                 }
                                             }else{
-                                                log.error("交卷失败");
+                                                log.error("交卷失败 原因：{}",JSON.toJSONString(finish));
                                             }
                                         }
 

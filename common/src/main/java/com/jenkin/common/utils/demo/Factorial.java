@@ -19,7 +19,7 @@ import java.util.List;
  */
 public class Factorial {
     public static void main(String[] args) {
-        int[] arr = new int[]{1,2,3
+        int[] arr = new int[]{1,2,3,4
         };
         List<Integer> parent = new ArrayList<>();
         getFactorial(parent,arr);

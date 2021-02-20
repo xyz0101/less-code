@@ -9,6 +9,8 @@ import com.jenkin.common.entity.pos.system.UserPo;
 import com.jenkin.common.entity.pos.system.UserRolePo;
 import com.jenkin.common.entity.qos.BaseQo;
 import com.jenkin.common.entity.qos.system.UserQo;
+import com.jenkin.common.exception.ExceptionEnum;
+import com.jenkin.common.exception.LscException;
 import com.jenkin.common.shiro.service.impl.BaseUserServiceImpl;
 import com.jenkin.common.shiro.utils.ShiroUtils;
 import com.jenkin.common.utils.SimpleQuery;
@@ -82,6 +84,10 @@ public class UserServiceImpl extends BaseUserServiceImpl<UserMapper,UserPo> impl
             String salt = RandomStringUtils.randomAlphanumeric(20);
             user.setSalt(salt);
             user.setPassword(ShiroUtils.sha256(user.getPassword(), user.getSalt()));
+            UserDto byCode = getByCode(user.getUserCode());
+            if (byCode!=null) {
+                throw new LscException(ExceptionEnum.EXIST_USER_EXCEPTION);
+            }
         }
         saveOrUpdate(user);
         //修改角色关系
