@@ -6,6 +6,7 @@ import org.springframework.util.CollectionUtils;
 
 import java.lang.reflect.Field;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 /**
@@ -98,10 +99,11 @@ public class BeanUtils {
     private static Field[] getAllFields(Class tempClass){
 
         List<Field> fieldList = new ArrayList<>() ;
-
-        while (tempClass != null) {//当父类为null的时候说明到达了最上层的父类(Object类).
+        //当父类为null的时候说明到达了最上层的父类(Object类).
+        while (tempClass != null) {
             fieldList.addAll(Arrays.asList(tempClass .getDeclaredFields()));
-            tempClass = tempClass.getSuperclass(); //得到父类,然后赋给自己
+            //得到父类,然后赋给自己
+            tempClass = tempClass.getSuperclass();
         }
         Field[] fields = new Field[fieldList.size()];
         return fieldList.toArray(fields);
