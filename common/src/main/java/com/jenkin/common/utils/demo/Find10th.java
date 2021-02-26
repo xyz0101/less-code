@@ -2,10 +2,7 @@ package com.jenkin.common.utils.demo;
 
 import io.swagger.models.auth.In;
 
-import java.util.Comparator;
-import java.util.Iterator;
-import java.util.TreeMap;
-import java.util.TreeSet;
+import java.util.*;
 
 /**
  * @author jenkin
@@ -26,6 +23,11 @@ public class Find10th {
                 ,5,6,7,4,3,1,3,4,5,5,6,7,4,3,1,3,4,5,5,6,7,4,3,1,3,4,5,5,6,7,4,3,1,3,4,5,5,6,7,4,3,1,3,4,5,5,6,7,4,3,1,3,4,5}));
     }
 
+    /**
+     * 找出第十大的数，不含重复
+     * @param ints
+     * @return
+     */
     private int find10th(int[] ints) {
 
         TreeSet<Integer> ts = new TreeSet<>(Comparator.comparingInt(o -> o));
@@ -37,6 +39,28 @@ public class Find10th {
         while(iterator.hasNext()){
             Integer next = iterator.next();
             if (i==9) {
+                return next;
+            }
+            i++;
+        }
+        return -1;
+    }
+
+    /**
+     * 找出第4最大的数字，含重复
+     * @param ints
+     * @return
+     */
+    private int findMax4Big(int[] ints) {
+
+        PriorityQueue<Integer> ts = new PriorityQueue<>((o1, o2) -> Integer.compare(o2 - o1, 0));
+        for (int anInt : ints) {
+            ts.offer(anInt);
+        }
+        int i=0;
+        while(ts.peek()!=null){
+            Integer next = ts.poll();
+            if (i==4-1) {
                 return next;
             }
             i++;
