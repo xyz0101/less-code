@@ -1,4 +1,4 @@
-package com.jenkin.common.utils.demo;
+package com.jenkin.common.utils.demo.sorts;
 
 import java.util.Arrays;
 
@@ -18,7 +18,7 @@ public class QuickSort {
     }
 
 
-    private void sort(int[] arr) {
+    public void sort(int[] arr) {
         quickSort(arr,0,arr.length-1);
 
     }

@@ -1,7 +1,6 @@
-package com.jenkin.common.utils.demo;
+package com.jenkin.common.utils.demo.sorts;
 
 import java.util.Arrays;
-import java.util.Spliterator;
 
 /**
  * @author jenkin
@@ -18,7 +17,7 @@ public class ShellSort {
         System.out.println(Arrays.toString(arr));
     }
 
-    private void sort(int[] arr) {
+    public void sort(int[] arr) {
         int base = arr.length/2;
         shellSort(base,arr);
 

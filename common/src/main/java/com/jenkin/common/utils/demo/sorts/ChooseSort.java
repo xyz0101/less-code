@@ -1,4 +1,4 @@
-package com.jenkin.common.utils.demo;
+package com.jenkin.common.utils.demo.sorts;
 
 import java.util.Arrays;
 
@@ -17,7 +17,11 @@ public class ChooseSort {
         System.out.println(Arrays.toString(arr));
     }
 
-    private void sort(int[] arr) {
+    /**
+     * 选择排序，每次从数组中选择一个最小的放在最左侧
+     * @param arr
+     */
+    public void sort(int[] arr) {
 
 
         for (int i = 0; i < arr.length; i++) {

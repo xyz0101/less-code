@@ -1,4 +1,4 @@
-package com.jenkin.common.utils.demo;
+package com.jenkin.common.utils.demo.sorts;
 
 import java.util.Arrays;
 
@@ -16,7 +16,11 @@ public class MaoPao {
         System.out.println(Arrays.toString(arr));
     }
 
-    private void maopao(int[] arr) {
+    /**
+     * 冒泡排序，两两比较，只要比他小就交换位置
+     * @param arr
+     */
+    public void maopao(int[] arr) {
 
         for (int i = 0; i < arr.length-1; i++) {
             for (int j = 0; j < arr.length-1; j++) {

@@ -21,6 +21,7 @@ import java.io.InputStream;
 import java.io.PrintWriter;
 import java.net.URL;
 import java.util.Scanner;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * @author jenkin
@@ -51,6 +52,8 @@ public class FileController {
     @ApiOperation(("文件删除"))
     public Response<String> deleteFile(String code){
         fileService.deleteFile(code);
+        AtomicInteger atomicInteger = new AtomicInteger();
+        atomicInteger.incrementAndGet();
         return Response.ok();
     }
 

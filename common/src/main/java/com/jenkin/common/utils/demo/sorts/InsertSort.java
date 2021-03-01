@@ -1,4 +1,4 @@
-package com.jenkin.common.utils.demo;
+package com.jenkin.common.utils.demo.sorts;
 
 import java.util.Arrays;
 
@@ -17,6 +17,10 @@ public class InsertSort {
         System.out.println(Arrays.toString(arr));
     }
 
+    /**
+     * 插入排序，假定一个有序的数组（比如最左侧），每次从后面找到比它小的数和他交换位置
+     * @param arr
+     */
     private void sort(int[] arr) {
         for (int i = 0; i < arr.length; i++) {
             for (int j = i; j > 0; j--) {
