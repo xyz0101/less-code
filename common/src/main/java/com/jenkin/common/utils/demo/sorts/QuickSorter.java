@@ -18,18 +18,9 @@ public class QuickSorter {
     }
 
     public void sort(int[] arr) {
-
         int start = 0;
         int end = arr.length-1;
-
-
         quickSort(arr,start,end);
-
-
-
-
-
-
 
     }
 
