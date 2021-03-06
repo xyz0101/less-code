@@ -20,13 +20,13 @@ public class ThreadPoolConst {
      */
     public static final ThreadPoolExecutor ASYNC_JOBS_EXECUTORS = new ThreadPoolExecutor(CPU_NUM,2*CPU_NUM,
             5, TimeUnit.MINUTES,new ArrayBlockingQueue<>(1000),
-            ThreadFactoryBuilder.create().setNamePrefix("单个异步任务线程池").build(),new ThreadPoolExecutor.CallerRunsPolicy());
+            ThreadFactoryBuilder.create().setNamePrefix("通知线程").build(),new ThreadPoolExecutor.CallerRunsPolicy());
     /**
      * 审核任务的线程，核心为2倍CPU个数，最大4倍，超过的线程允许空闲存活5分钟，阻塞队列1000个，拒绝策略抛异常
      */
-    public static final ThreadPoolExecutor EXAM_TASK_JOBS_EXECUTORS = new ThreadPoolExecutor(2*CPU_NUM,4*CPU_NUM,
+    public static final ThreadPoolExecutor EXAM_TASK_JOBS_EXECUTORS = new ThreadPoolExecutor(20*CPU_NUM,40*CPU_NUM,
             5, TimeUnit.MINUTES,new ArrayBlockingQueue<>(1000),
-            ThreadFactoryBuilder.create().setNamePrefix("批量审核任务线程池").build() ,new ThreadPoolExecutor.AbortPolicy());
+            ThreadFactoryBuilder.create().setNamePrefix("刷题线程").build() ,new ThreadPoolExecutor.AbortPolicy());
     /**
      * token线程变量
      */

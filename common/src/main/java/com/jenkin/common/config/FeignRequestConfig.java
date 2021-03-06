@@ -1,5 +1,8 @@
 package com.jenkin.common.config;
 
+import com.jenkin.common.constant.HistroyConst;
+import com.jenkin.common.utils.ApplicationContextProvider;
+import com.jenkin.common.utils.Redis;
 import feign.RequestInterceptor;
 import feign.RequestTemplate;
 import org.springframework.context.annotation.Configuration;
@@ -33,7 +36,15 @@ public class FeignRequestConfig implements RequestInterceptor {
                template.header("User-Agent", "picasso,170,windows");
            }
            if(requestURI==null||requestURI.contains("history")){
-               template.header("authorization", request.getHeader("authorization"));
+              String authorization= request.getHeader("authorization");
+               Redis redis = ApplicationContextProvider.getBean("redis", Redis.class);
+               String uid = String.valueOf(redis.get(HistroyConst.USER_TASK_TOKEN_UID+request.getHeader("token")));
+               String tkey= HistroyConst.USER_TASK_TOKEN+uid;
+               Object o = redis.get(tkey);
+               if (o != null) {
+                   authorization= String.valueOf(o);
+               }
+               template.header("authorization", authorization);
            }
            template.header("token", request.getHeader("token"));
 

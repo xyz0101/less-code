@@ -5,6 +5,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.TypeReference;
 import com.jenkin.common.anno.EnableErrorCatch;
+import com.jenkin.common.constant.HistroyConst;
 import com.jenkin.common.entity.Response;
 import com.jenkin.common.entity.dtos.tasks.LscTaskDto;
 import com.jenkin.common.entity.vos.aibizhi.Res;
@@ -44,6 +45,7 @@ import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicReference;
 
+import static com.jenkin.common.constant.ThreadPoolConst.THREAD_HEADER;
 import static com.jenkin.systemservice.history.service.HistoryService.*;
 
 /**
@@ -67,7 +69,6 @@ public class HistoryController {
     @Autowired
     private TaskService taskService;
 
-    private String USER_TASK_IS_RUNNING="task:user:running:";
 
     @Autowired
     private Redis redis;
@@ -75,18 +76,30 @@ public class HistoryController {
     @GetMapping("/getToken")
     @ApiOperation("获取token")
     public Response<String> getToken(String uid){
+
+    String token = getUserToken(uid);
+    return Response.ok(token);
+    }
+
+    private String getUserToken(String uid) {
         if (StringUtils.isEmpty(uid)){
             throw new LscException(ExceptionEnum.ERROR_PARAM_EXCEPTION);
+
+        }
+        String tkey= HistroyConst.USER_TASK_TOKEN+uid;
+        Object o = redis.get(tkey);
+        if (o != null) {
+            return String.valueOf(o);
         }
         try {
-            return Response.ok(historyService.getToken(uid,
-                    "https:%2F%2Fnode2d-public.hep.com.cn%2Favatar-5fb278bff18a2c12929f495f-1605531839324",ACTIVITY_ID).getToken());
+            String token = historyService.getToken(uid,
+                    null, ACTIVITY_ID).getToken();
+            redis.set(tkey,token);
+            return token;
         }catch (Exception e){
             e.printStackTrace();
             throw new LscException(ExceptionEnum.QRCODE_LOGIN_ERROR_EXCEPTION);
         }
-
-
     }
 
 
@@ -110,6 +123,7 @@ public class HistoryController {
         }
 
         if (user!=null&user.getCode().equals("0")) {
+            redis.set(HistroyConst.USER_TASK_TOKEN_UID+ShiroUtils.getToken(),user.getData().getId());
             return Response.ok(user.getData());
         }
         throw new LscException(ExceptionEnum.QRCODE_LOGIN_ERROR_EXCEPTION);
@@ -221,6 +235,9 @@ public class HistoryController {
     }
 
     private boolean dealTask(int process, String task_process_key, String task_user_grade, String activity_task_key, Integer maxGrade, String user,String taskCode) {
+      String uid = getUserInfo().getData().getId();
+       String retry=task_process_key+":retry";
+        redis.set(retry,0);
         redis.set("history:task:status:" + user,"Y");
         while (true) {
             QuestionsResponse questions = null;
@@ -245,8 +262,6 @@ public class HistoryController {
                         try {
                             Response<Question> questionInfo = historyService.getQuestionInfo(ACTIVITY_ID, code, MODE_ID, WAY + "");
                             if (questionInfo != null && questionInfo.getData() != null) {
-
-
                                 String answerCode = questionInfo.getData().getOptions().get(0).getCode();
                                 HistoryService.AnswerParam answerParam = new HistoryService.AnswerParam();
                                 answerParam.setActivity_id(ACTIVITY_ID);
@@ -256,12 +271,15 @@ public class HistoryController {
                                 answerParam.setAnswer(Collections.singletonList(answerCode));
                                 Answer answer = historyService.answer(answerParam).getData();
                                 log.info("第一次回答 答案：{}",JSON.toJSONString(answer));
-                                Thread.sleep(500);
-                                if (answer.getCorrect() == null || !answer.getCorrect()) {
+                                Thread.sleep(5);
+                                if (answer!=null&&answer.getCorrect() == null || !answer.getCorrect()) {
                                     answerParam.setAnswer(answer.getCorrect_ids());
                                     answer = historyService.answer(answerParam).getData();
+                                    if (answer==null) {
+                                        continue;
+                                    }
                                     log.info("第二次回答 答案：{}",JSON.toJSONString(answer));
-                                    Thread.sleep(600);
+                                    Thread.sleep(5);
                                     if (answer.getCorrect() != null && answer.getCorrect()) {
                                         redis.set(task_process_key, process + 1);
                                         Object grade = redis.get(task_user_grade);
@@ -281,9 +299,9 @@ public class HistoryController {
                                             Submit submit = new Submit();
                                             submit.setRace_code(questions.getRace_code());
                                             Response<SubmitEntiry> finish = historyService.finish(submit);
-                                            Thread.sleep(3000);
+                                            Thread.sleep(100);
                                             if (finish.getCode().equals("0")) {
-                                                log.info("交卷成功, {} ",JSON.toJSONString(finish));
+                                                log.info("{} 交卷成功, {} ",uid,JSON.toJSONString(finish));
 
                                                 redis.del(task_process_key, activity_task_key);
                                                 if (maxGrade <= g + 1) {
@@ -302,11 +320,23 @@ public class HistoryController {
 
 
                                     }
+                                }else{
+                                    log.warn("答案有误");
                                 }
                             }else{
-                                redis.del(task_process_key, activity_task_key);
-                                redis.set("history:task:status:" + user,"N");
-                                throw new LscException(ExceptionEnum.QRCODE_LOGIN_ERROR_EXCEPTION);
+                                Integer count = redis.getObject(retry, Integer.class);
+                                if (count >10) {
+                                    redis.set(retry,0);
+                                    redis.del(task_process_key, activity_task_key);
+                                    redis.set("history:task:status:" + user, "N");
+                                    log.info("用户 {} token失效，{}",uid+"("+user+")",JSON.toJSONString(questionInfo));
+                                    throw new LscException(ExceptionEnum.QRCODE_LOGIN_ERROR_EXCEPTION);
+                                }else{
+                                    log.info("token失效 重试 第 {} 次",count+1);
+                                    String token = getUserToken(uid);
+                                    THREAD_HEADER.get().put("authorization","Bearer "+token);
+                                    redis.set(retry,count+1);
+                                }
                             }
                         } catch (NumberFormatException|InterruptedException e) {
                             e.printStackTrace();
@@ -331,7 +361,7 @@ public class HistoryController {
     }
     private void checkCode() {
 
-        String code = "sqng";
+        String code = UUID.randomUUID().toString().substring(0,4);
         Response<MyPublicKey> publicKey = historyService.getPublicKey();
         String public_key = publicKey.getData().getPublic_key();
         public_key=public_key.replaceAll("\n","");

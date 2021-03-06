@@ -2,6 +2,7 @@ package com.jenkin.common;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * @author jenkin
@@ -11,6 +12,8 @@ import java.util.concurrent.Executors;
  */
 public class Test {
     public static void main(String[] args) throws InterruptedException {
+
+        ReentrantLock lock = new ReentrantLock();
 
         ThreadLocal<String> threadLocal = new ThreadLocal<>();
         ExecutorService executorService = Executors.newFixedThreadPool(10);
