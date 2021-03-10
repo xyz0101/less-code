@@ -14,6 +14,7 @@
         <module>file-service</module>
         <module>system-service</module>
         <module>code-generator</module>
+        <module>some-tools</module>
     </modules>
 
     <properties>
