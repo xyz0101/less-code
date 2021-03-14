@@ -1,5 +1,10 @@
 package com.jenkin.common.utils.demo.doublesplit;
 
+import java.util.Deque;
+import java.util.LinkedList;
+import java.util.Queue;
+import java.util.Stack;
+
 /**
  * @author ：jenkin
  * @date ：Created at 2021/3/8 17:21
@@ -41,6 +46,9 @@ public class MountainArr {
     public static void main(String[] args) {
         int[] arr = {3,5,3,2,0};
         int arrIndex = getArrIndex(arr, 0, arr.length - 1);
+
+        Stack<Integer> tmp = new Stack<>();
+        tmp.clear();
         System.out.println(arrIndex);
     }
 
