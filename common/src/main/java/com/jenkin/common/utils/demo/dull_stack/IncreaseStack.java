@@ -29,6 +29,7 @@ public class IncreaseStack {
                 System.out.print(pop+",");
             }
 
+            String s = "";
 
             System.out.println();
             stack.push(arr[i]);
