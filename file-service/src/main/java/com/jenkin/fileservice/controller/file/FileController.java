@@ -67,8 +67,6 @@ public class FileController {
     @PostMapping(value = "/docx/save",
             produces = "application/json;charset=UTF-8")
     public void saveWord(HttpServletRequest request, HttpServletResponse response) {
-
-
         String fileId = request.getParameter("fileId");
         int id = -1;
         java.net.HttpURLConnection connection =null;

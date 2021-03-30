@@ -16,6 +16,7 @@ import javax.annotation.Resource;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Deque;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -64,9 +65,11 @@ public class InitPermission implements ApplicationListener<ContextRefreshedEvent
                             MyPermission annotation = method.getAnnotation(MyPermission.class);
                             String[] value = annotation.value();
                             names.addAll(Arrays.asList(value));
+
                         }
 
                     }
+
                 }
             }
         }
