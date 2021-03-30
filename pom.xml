@@ -15,6 +15,7 @@
         <module>system-service</module>
         <module>code-generator</module>
         <module>some-tools</module>
+        <module>my-proxy</module>
     </modules>
 
     <properties>
