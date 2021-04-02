@@ -1,15 +1,18 @@
 package com.jenkin.proxy.server.bio;
 
 import cn.hutool.core.io.IoUtil;
+import cn.hutool.core.util.ArrayUtil;
+import cn.hutool.http.HttpResponse;
+import cn.hutool.http.HttpUtil;
+import sun.net.www.http.HttpClient;
 
 import javax.net.ServerSocketFactory;
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Scanner;
+import java.util.*;
 import java.util.concurrent.*;
+import java.util.stream.Collectors;
 
 /**
  * @author ：jenkin
@@ -19,7 +22,14 @@ import java.util.concurrent.*;
  * @version: 1.0
  */
 public class Server {
-
+    /**
+     * 换行
+      */
+    private static final String ENTER = "\r\n";
+    /**
+     * 空格
+      */
+    private static final String SPACE = " ";
     public static final int CORE_SIZE = Runtime.getRuntime().availableProcessors()*2;
     public static final int MAX_SIZE = Runtime.getRuntime().availableProcessors()*4;
     public static final int QUEUE_SIZE = 1000;
@@ -66,12 +76,23 @@ public class Server {
     }
     private void writeSth(Socket socket,String sth) {
         try {
+            //输出描述内容
+            StringBuilder content = new StringBuilder();
+            content.append("HTTP/1.1").append(SPACE).append(200).append(SPACE);
+            content.append("OK").append(ENTER);
+//            content.append("Server:zyl").append(SPACE).append("0.0.1v").append(ENTER);
+            content.append("Date:Sat,"+SPACE).append(new Date()).append(ENTER);
+            content.append("Content-Type:text/html;charset=UTF-8").append(ENTER);
+            content.append("Content-Length:").append((sth+ENTER).getBytes().length).append(ENTER);
+            content.append("Access-Control-Allow-Origin:").append("*").append(ENTER);
+            content.append(ENTER);
+            content.append(sth);
+//            content.append(ENTER);
+            System.out.println("响应数据 : \n"+sth );
             OutputStream outputStream = socket.getOutputStream();
-            OutputStreamWriter outputStreamWriter = new OutputStreamWriter(outputStream);
-            PrintWriter bw = new PrintWriter(outputStreamWriter);
-            bw.println("服务端回应了："+sth);
-            bw.flush();
-        } catch (IOException e) {
+            outputStream.write(content.toString().getBytes());
+            outputStream.flush();
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
@@ -82,41 +103,80 @@ public class Server {
         InputStreamReader inputStreamReader=null;
         BufferedReader br=null;
         try {
-
-
-
+            Map<String,String> header = new HashMap<>();
+            String body = "测试输出";
             inputStream = socket.getInputStream();
+            System.out.println("开始读数据");
             inputStreamReader = new InputStreamReader(inputStream);
             br = new BufferedReader(inputStreamReader);
-            String s =null;
-            StringBuilder sb = new StringBuilder();
-            int count =0;
-            Map<String,String> header = new HashMap<>();
-            boolean readContent = false;
-            String s1 = IoUtil.readUtf8(inputStream);
-            System.out.println(Thread.currentThread().getId()+"::"+"接收到客户端消息：\n"+s1);
-            writeSth(socket,"HTTP/1.1 200 OK\n" +
-                    "Content-Type: text/html;charset=UTF-8\n" +
-                    "Content-Length: 101\n" +
-                    "Date: Wed, 06 Jun 2018 07:08:42 GMT\n" +
-                    "\n" +
-                    "<html>\n" +
-                    "\n" +
-                    "  <head>\n" +
-                    "    <title>$Title$</title>\n" +
-                    "  </head>\n" +
-                    "\n" +
-                    "  <body>\n" +
-                    "  hello , response\n" +
-                    "  </body>\n" +
-                    "</html>");
-        } catch (IOException e) {
+            String s = null;
+            while (((s=br.readLine())!=null)){
+                System.out.println(s);
+                if("".equals(s)){
+                    System.out.println("header读取完成");
+                    String contentLen = header.get("content-length");
+                    contentLen=contentLen==null?"0":contentLen;
+                    int len = Integer.parseInt(contentLen);
+                    char[] res = new char[len];
+                    br.read(res);
+                    String resVal = new String(res);
+                    System.out.println("结果：\n"+ resVal);
+
+
+
+                    body= resVal;
+                    break;
+                }else{
+                    if(s.contains(": ")) {
+                        String[] split = s.split(": ");
+                        header.put(split[0], split[1]);
+                    }
+                }
+            }
+            testRequestUrl(socket,body);
+//            writeSth(socket,body);
+
+
+
+        } catch (Exception e) {
             e.printStackTrace();
         }finally {
             IoUtil.close(socket);
             IoUtil.close(inputStream);
             IoUtil.close(inputStreamReader);
             IoUtil.close(br);
+        }
+    }
+
+    private void testRequestUrl(Socket socket,String url) {
+        HttpResponse execute = HttpUtil.createGet(url).execute().sync();
+        Map<String, List<String>> headers = execute.headers();
+        byte[] bytes = execute.bodyBytes();
+        try {
+            //输出描述内容
+            StringBuilder content = new StringBuilder();
+            content.append("HTTP/1.1").append(SPACE).append(200).append(SPACE);
+            content.append("OK").append(ENTER);
+
+            headers.forEach((k,v)->{
+                if (k!=null/*&&!"Content-Length".equalsIgnoreCase(k)*/  ){
+                    content.append(k).append(":").append(v.stream().collect(Collectors.joining(","))).append(ENTER);
+
+                }
+            });
+//            content.append("Content-Length").append(":").append( bytes.length).append(ENTER);
+
+             content.append(ENTER);
+            byte[] headBytes = content.toString().getBytes();
+
+            byte[] res = ArrayUtil.addAll(headBytes, bytes);
+
+            OutputStream outputStream = socket.getOutputStream();
+            System.out.println("响应数据： \n"+new String(res));
+            outputStream.write(res);
+            outputStream.flush();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
