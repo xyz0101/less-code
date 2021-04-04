@@ -16,6 +16,9 @@ public class Test {
         int ck077 = new Test().getNumberOfBacklogOrders(new int[][]{
                 {23,8,0},{28,29,1},{11,30,1},{30,25,0},{26,9,0},{3,21,0},{28,19,1},{19,30,0},{20,9,1},{17,6,0}
         });
+        int i = 1000000000;
+        int j = 1000000000;
+        System.out.println(i+j);
         System.out.println(ck077);
     }
     public int getNumberOfBacklogOrders(int[][] orders) {
