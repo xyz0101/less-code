@@ -94,16 +94,40 @@ public class SocketRequestToHttpRequestUtils {
      * @return
      * @throws IOException
      */
-    private static byte[] readBytesByLength(InputStream inputStream,int len) throws IOException {
+    public static byte[] readBytesByLength(InputStream inputStream,int len) throws IOException {
         byte[] body = new byte[len];
+        readBytesByArr(inputStream,len,body);
+        return body;
+    }
+    /**
+     * 读取输入流，避免tcp半包
+     * @param inputStream
+     * @param len
+     * @return
+     * @throws IOException
+     */
+    public static byte[] readBytesByArr(InputStream inputStream,int len,byte[] body) throws IOException {
         int count = 0;
         do {
             count += inputStream.read(body, count, len - count);
         } while (count < len);
-        System.out.println("不是chunk ,contentLength：："+len+"  已读："+count);
         return body;
     }
-
+    /**
+     * 读取输入流，避免tcp半包
+     * @param inputStream
+     * @param len
+     * @return
+     * @throws IOException
+     */
+    public static byte[] readBytesByArr(InputStream inputStream,int len,byte[] body,int start) throws IOException {
+        int count = start;
+        len+=start;
+        do {
+            count += inputStream.read(body, count, len - count);
+        } while (count < len);
+        return body;
+    }
     private static byte[] readChunkBody(InputStream inputStream) throws IOException {
         int separatorCount = 0;
         byte[] buffer = new byte[BUFFER_SIZE];

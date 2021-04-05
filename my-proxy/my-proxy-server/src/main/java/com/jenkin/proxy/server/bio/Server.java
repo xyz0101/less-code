@@ -31,7 +31,7 @@ import static com.jenkin.proxy.server.utils.SocketRequestToHttpRequestUtils.SPAC
 public class Server {
 
     public static final int CORE_SIZE = Runtime.getRuntime().availableProcessors()*20;
-    public static final int MAX_SIZE = Runtime.getRuntime().availableProcessors()*40;
+    public static final int MAX_SIZE = Runtime.getRuntime().availableProcessors()*100;
     public static final int QUEUE_SIZE = 1000;
     public static final int ALIVE_TIME = 10;
 
@@ -118,13 +118,35 @@ public class Server {
                     try {
                         proxySocketOutputStream.write(socket.getInputStream().read());
                     } catch (Exception e) {
-                        e.printStackTrace();
+
                         break;
                     }
                 }
             });
-            while(socket.isConnected()&&proxySocket.isConnected()){
-                socket.getOutputStream().write(proxySocket.getInputStream().read());
+//            commonPart = SocketRequestToHttpRequestUtils.readHeader(proxySocket.getInputStream());
+//            System.out.println(commonPart.getHeader());
+//            socket.getOutputStream().write(commonPart.getTotalBody());
+            byte[] buffer  = new byte[65535000];
+            int temp = 0;
+             while(socket.isConnected()&&!proxySocket.isInputShutdown()){
+                try {
+                    int available = proxySocket.getInputStream().available();
+
+                    if (available!=0){
+                        SocketRequestToHttpRequestUtils.readBytesByArr(proxySocket.getInputStream(),available,buffer,temp);
+                    }
+                    if(((available==0&&temp>0)||temp>6553500)){
+                        System.out.println("写数据:"+temp);
+                        socket.getOutputStream().write(buffer,0,temp);
+                        temp=0;
+                    }else{
+                        temp+=available;
+                    }
+
+
+                }catch (Exception e){
+
+                }
             }
 
 
