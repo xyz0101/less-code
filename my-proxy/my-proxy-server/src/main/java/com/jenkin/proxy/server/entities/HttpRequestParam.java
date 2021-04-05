@@ -20,6 +20,12 @@ public class HttpRequestParam extends HttpRequestResponseCommonPart{
 
     }
 
+    public boolean isHttps(){
+        return "CONNECT".equalsIgnoreCase(getRequestType())||getUrl().startsWith("https:");
+    }
+    public boolean isConnectType(){
+        return "CONNECT".equalsIgnoreCase(getRequestType());
+    }
 
     public String getRequestType(){
         if(this.requestType!=null) return this.requestType;
@@ -32,6 +38,7 @@ public class HttpRequestParam extends HttpRequestResponseCommonPart{
         String firstLine = this.getStatusLine();
         String[] arr = firstLine.split(" ");
         this.setRequestType(arr[0]);
+//        this.setUrl(isConnectType()?"https://"+arr[1]:arr[1]);
         this.setUrl(arr[1]);
         super.setProtocolVersion(arr[2]);
 
@@ -51,21 +58,22 @@ public class HttpRequestParam extends HttpRequestResponseCommonPart{
 
 
     public String getPath(){
-        return URLUtil.getPath(this.getUrl());
+        String path = URLUtil.getPath(this.getUrl());
+        return path==null?"":path;
     }
 
 
     public URI getHost() throws MalformedURLException, URISyntaxException {
-        String u = this.getUrl();
+        String host = getHeader().getValue("host");
+        System.out.println("当前解析host："+host);
         try {
-            System.out.println("解析URL："+u);
-            URL url = new URL(u);
+            URL url = new URL(host);
             return url.toURI();
         }catch (Exception e){
 
 
         }
-       return u.endsWith(":443")?new URL("https://"+u).toURI():new URL("http://"+u).toURI();
+       return host.endsWith(":443")?new URL("https://"+host).toURI():new URL("http://"+host).toURI();
 
     }
 

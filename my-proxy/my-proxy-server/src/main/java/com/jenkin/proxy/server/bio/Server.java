@@ -1,13 +1,11 @@
 package com.jenkin.proxy.server.bio;
 
+import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.io.IoUtil;
 import cn.hutool.core.util.ArrayUtil;
 import cn.hutool.http.HttpResponse;
 import cn.hutool.http.HttpUtil;
-import com.jenkin.proxy.server.entities.HeaderContent;
-import com.jenkin.proxy.server.entities.HttpRequestParam;
-import com.jenkin.proxy.server.entities.HttpResponseContent;
-import com.jenkin.proxy.server.entities.SocketConnectResponse;
+import com.jenkin.proxy.server.entities.*;
 import com.jenkin.proxy.server.utils.HttpUtils;
 import com.jenkin.proxy.server.utils.SocketRequestToHttpRequestUtils;
 import sun.net.www.http.HttpClient;
@@ -32,8 +30,8 @@ import static com.jenkin.proxy.server.utils.SocketRequestToHttpRequestUtils.SPAC
  */
 public class Server {
 
-    public static final int CORE_SIZE = Runtime.getRuntime().availableProcessors()*2;
-    public static final int MAX_SIZE = Runtime.getRuntime().availableProcessors()*4;
+    public static final int CORE_SIZE = Runtime.getRuntime().availableProcessors()*20;
+    public static final int MAX_SIZE = Runtime.getRuntime().availableProcessors()*40;
     public static final int QUEUE_SIZE = 1000;
     public static final int ALIVE_TIME = 10;
 
@@ -101,16 +99,66 @@ public class Server {
 
             inputStream = socket.getInputStream();
             System.out.println("开始读数据");
-
-            HttpRequestParam requestParam =  SocketRequestToHttpRequestUtils.convertSocketRequestToRequestParam(inputStream);
-            socketConnectResponse = HttpUtils.requestBySocket(requestParam);
-            if (socketConnectResponse!=null) {
-                byte[] bytes = SocketRequestToHttpRequestUtils.convertSocketInputStreamResponseBodyToBytes(socketConnectResponse).getTotalBody();
-                System.out.println("响应体：\n"+new String(bytes));
-                writeBytes(socket,bytes);
-
+            HttpRequestResponseCommonPart commonPart = SocketRequestToHttpRequestUtils.readHeader(inputStream);
+            HttpRequestParam requestParam = BeanUtil.copyProperties(commonPart, HttpRequestParam.class);
+            Socket proxySocket =HttpUtils.getSocket(requestParam);
+            socketConnectResponse = HttpUtils.requestBySocket(requestParam,proxySocket);
+            OutputStream proxySocketOutputStream = proxySocket.getOutputStream();
+            if (requestParam.isConnectType()){
+                    writeBytes(socket,"HTTP/1.1 200 Connection Established\r\n\r\n".getBytes());
+                    System.out.println("回复HTTPS的CONNECT");
+            }else{
+                proxySocketOutputStream.write(requestParam.getTotalBody());
 
             }
+
+
+            executorService.execute(()->{
+                while(socket.isConnected()){
+                    try {
+                        proxySocketOutputStream.write(socket.getInputStream().read());
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        break;
+                    }
+                }
+            });
+            while(socket.isConnected()&&proxySocket.isConnected()){
+                socket.getOutputStream().write(proxySocket.getInputStream().read());
+            }
+
+
+
+
+
+
+
+
+
+//            HttpRequestParam requestParam =  SocketRequestToHttpRequestUtils.convertSocketRequestToRequestParam(inputStream);
+//            Socket proxySocket =HttpUtils.getSocket(requestParam);
+//            socketConnectResponse = HttpUtils.requestBySocket(requestParam,proxySocket);
+            //这里为什么要while true？因为如果是keepalive的长连接是不能关闭连接的，可能还会继续发送
+//            while(true){
+//                socketConnectResponse = HttpUtils.requestBySocket(requestParam,proxySocket);
+//                if (requestParam.isConnectType()){
+//                    writeBytes(socket,"HTTP/1.1 200 Connection Established\r\n\r\n".getBytes());
+//                    System.out.println("回复HTTPS的CONNECT");
+//                    socketConnectResponse.setConnectRequest(false);
+//
+//                }else{
+//                    HttpResponseContent responseContent = SocketRequestToHttpRequestUtils.convertSocketInputStreamResponseBodyToBytes(socketConnectResponse);
+//                    byte[] bytes = responseContent.getTotalBody();
+//                    System.out.println("响应体：\n"+new String(bytes));
+//                    writeBytes(socket,bytes);
+//                    if ("close".equals(responseContent.getHeader().getValue("Connection"))||socket.isClosed()){
+//                        System.out.println("连接关闭");
+//                        break;
+//                    }
+//                }
+////                requestParam =  SocketRequestToHttpRequestUtils.convertSocketRequestToRequestParam(inputStream);
+//            }
+
 
 
 

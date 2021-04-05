@@ -17,6 +17,9 @@ import org.apache.http.entity.BasicHttpEntity;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.message.BasicHeader;
 
+import javax.net.SocketFactory;
+import javax.net.ssl.SSLSocket;
+import javax.net.ssl.SSLSocketFactory;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -51,20 +54,32 @@ public class HttpUtils {
 
     }
 
-    public static SocketConnectResponse requestBySocket(HttpRequestParam requestParam) throws IOException, URISyntaxException {
-        System.out.println("请求参数首部："+requestParam.getHeader());
-        Socket socket = new Socket();
-        URI host = requestParam.getHost();
-        socket.connect(new InetSocketAddress(host.getHost(), host.getPort()==-1?80:host.getPort()));
+    public static SocketConnectResponse requestBySocket(HttpRequestParam requestParam,Socket socket) throws IOException, URISyntaxException {
+        System.out.println("请求参数首部：\n"+new String(requestParam.getTotalBody()));
+        SocketConnectResponse socketConnectResponse = new SocketConnectResponse();
         InputStream inputStream = socket.getInputStream();
         OutputStream outputStream = socket.getOutputStream();
-        outputStream.write(requestParam.getTotalBody());
-        outputStream.flush();
-        SocketConnectResponse socketConnectResponse = new SocketConnectResponse();
+        if (!requestParam.isConnectType()){
+            System.out.println("不是connect，要请求数据");
+            outputStream.write(requestParam.getTotalBody());
+            outputStream.flush();
+        }
         socketConnectResponse.setInputStream(inputStream);
         socketConnectResponse.setOutputStream(outputStream);
         socketConnectResponse.setSocket(socket);
         return socketConnectResponse;
+
+    }
+
+    public static Socket getSocket(HttpRequestParam requestParam) throws IOException, URISyntaxException {
+        URI host = requestParam.getHost();
+        if (requestParam.isHttps()) {
+            System.out.println("当前是HTTPS请求");
+            return SocketFactory.getDefault().createSocket(host.getHost(), host.getPort() == -1 ? (443) : host.getPort());
+        }
+        Socket socket = new Socket();
+        socket.connect(new InetSocketAddress(host.getHost(), host.getPort()==-1?80:host.getPort()));
+        return socket;
 
     }
 

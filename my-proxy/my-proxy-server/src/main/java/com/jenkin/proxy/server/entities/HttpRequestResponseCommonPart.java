@@ -19,7 +19,14 @@ public class HttpRequestResponseCommonPart {
     private byte[] body;
     private HeaderContent header;
 
+    /**
+     * 获取整个http请求或者响应的字节数组数据
+     * @return
+     */
     public byte[] getTotalBody(){
+        if(ArrayUtil.isEmpty(getBody())){
+            return ArrayUtil.addAll((getStatusLine()+ENTER).getBytes() ,getHeader().toString().getBytes() );
+        }
         return ArrayUtil.addAll((getStatusLine()+ENTER).getBytes() ,getHeader().toString().getBytes(),getBody());
     }
 

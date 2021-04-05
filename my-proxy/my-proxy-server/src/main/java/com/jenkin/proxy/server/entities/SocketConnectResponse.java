@@ -21,17 +21,13 @@ public class SocketConnectResponse {
     private InputStream inputStream;
     private Socket socket;
     private OutputStream outputStream;
+    private boolean isConnectRequest;
 
     public void closeAll(){
 
-        try {
-            socket.shutdownOutput();
-            IoUtil.close(inputStream);
-            IoUtil.close(socket);
-            IoUtil.close(outputStream);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        IoUtil.close(inputStream);
+        IoUtil.close(socket);
+        IoUtil.close(outputStream);
 
     }
 }

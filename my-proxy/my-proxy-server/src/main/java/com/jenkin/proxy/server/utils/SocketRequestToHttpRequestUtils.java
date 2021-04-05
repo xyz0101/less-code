@@ -51,12 +51,13 @@ public class SocketRequestToHttpRequestUtils {
             httpRequestParam.setBody(readBytesByLength(inputStream,Integer.parseInt(value)));
             return httpRequestParam;
         }else{
-            System.out.println("是chunk 请求头：\n"+ headerContent);
-            byte[] body=new byte[0];
+
             if(headerContent.getValue(TRANSFER_ENCODING)!=null){
-                body=readChunkBody(inputStream);
+                System.out.println("是chunk 请求头：\n"+ headerContent);
+                byte[] body=readChunkBody(inputStream);
+                httpRequestParam.setBody(body);
             }
-            httpRequestParam.setBody(body);
+
             return httpRequestParam;
         }
     }
@@ -144,7 +145,7 @@ public class SocketRequestToHttpRequestUtils {
     }
 
 
-    private static HttpRequestResponseCommonPart readHeader(InputStream inputStream) throws IOException {
+    public static HttpRequestResponseCommonPart readHeader(InputStream inputStream) throws IOException {
         int separatorCount = 0;
         byte[] buffer = new byte[BUFFER_SIZE];
         int bytesRead = 0;
