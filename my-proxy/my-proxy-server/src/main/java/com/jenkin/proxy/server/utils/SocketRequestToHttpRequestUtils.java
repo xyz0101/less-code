@@ -38,8 +38,10 @@ public class SocketRequestToHttpRequestUtils {
      */
     public static final String CONTENT_LENGTH="Content-Length";
     public static final String TRANSFER_ENCODING="Transfer-Encoding";
-
-    private static final int BUFFER_SIZE=1024*1024*10;
+    /**
+     * 1MB缓冲区
+     */
+    private static final int BUFFER_SIZE=1024;
 
     public static HttpRequestParam convertSocketRequestToRequestParam(InputStream inputStream) throws IOException {
 
@@ -128,6 +130,40 @@ public class SocketRequestToHttpRequestUtils {
         } while (count < len);
         return body;
     }
+
+    public static void writeInputStreamByCounter(InputStream inputStream,OutputStream outputStream,ByteEndCounter endCounter) throws IOException {
+        int separatorCount = 0;
+        byte[] buffer = new byte[BUFFER_SIZE];
+            int bytesRead = 0;
+            int tmp = -2;
+            while (bytesRead < BUFFER_SIZE&& (tmp = inputStream.read()) != -1 ) {
+//&& (tmp = inputStream.read()) != -1
+//                tmp = inputStream.read();
+                buffer[bytesRead++] = (byte) tmp;
+                System.out.println(tmp);
+//                outputStream.write(tmp);
+                if (endCounter.countCaseIndex(separatorCount,(byte) tmp)) {
+                    separatorCount++;
+                } else {
+                    separatorCount = 0;
+                }
+                if (separatorCount == endCounter.getEndCount()) {
+                    System.out.println("终止");
+                    break;
+                }
+                if (bytesRead == BUFFER_SIZE) {
+                    outputStream.write(buffer, 0, bytesRead);
+//                    outputStream.flush();
+                    bytesRead = 0;
+                    System.out.println("缓冲区满，写入");
+                }
+            }
+        System.out.println("读取完成："+bytesRead);
+            outputStream.write(buffer, 0, bytesRead);
+////            outputStream.flush();
+//            buffer = null;
+    }
+
     private static byte[] readChunkBody(InputStream inputStream) throws IOException {
         int separatorCount = 0;
         byte[] buffer = new byte[BUFFER_SIZE];

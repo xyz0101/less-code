@@ -3,6 +3,7 @@ package com.jenkin.common.utils.demo.everyday;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
+import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * @author jenkin
@@ -16,6 +17,9 @@ public class DeleteRepeatInNode {
         DeleteRepeatInNode deleteRepeatInNode = new DeleteRepeatInNode();
 //        ListNode node = deleteRepeatInNode.deleteDuplicates(deleteRepeatInNode.getNode(new int[]{1, 2, 3,3}));
         ListNode node = deleteRepeatInNode.deleteDuplicates1(deleteRepeatInNode.getNode(new int[]{1,1,2,3 }));
+
+        ReentrantLock lock = new ReentrantLock();
+        lock.lock();
 
         while (node!=null){
             System.out.println(node.val);

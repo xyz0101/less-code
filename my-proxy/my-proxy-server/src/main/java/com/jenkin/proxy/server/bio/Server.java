@@ -7,6 +7,7 @@ import cn.hutool.http.HttpResponse;
 import cn.hutool.http.HttpUtil;
 import com.jenkin.proxy.server.entities.*;
 import com.jenkin.proxy.server.utils.HttpUtils;
+import com.jenkin.proxy.server.utils.HttpsResponseEndCounter;
 import com.jenkin.proxy.server.utils.SocketRequestToHttpRequestUtils;
 import sun.net.www.http.HttpClient;
 
@@ -116,38 +117,63 @@ public class Server {
             executorService.execute(()->{
                 while(socket.isConnected()){
                     try {
-                        proxySocketOutputStream.write(socket.getInputStream().read());
+                        byte[] buffer  = new byte[65535];
+                        int temp = 0;
+                        while(true){
+                            InputStream socketInputStream = socket.getInputStream();
+                            try {
+                                int available = socketInputStream.available();
+                                if (available!=0){
+                                    SocketRequestToHttpRequestUtils.readBytesByArr(socketInputStream,available,buffer);
+                                }else{
+                                    int read = socketInputStream.read();
+                                    if (read==-1) {
+                                        break;
+                                    }else{
+                                        System.out.println("写出代理端-1");
+                                        proxySocketOutputStream.write(read);
+                                    }
+                                }
+                                System.out.println("写出代理端-2");
+                                proxySocketOutputStream.write(buffer,0,available);
+                            }catch (Exception e){
+                            }
+                        }
+                        buffer=null;
+
                     } catch (Exception e) {
 
                         break;
                     }
                 }
             });
-//            commonPart = SocketRequestToHttpRequestUtils.readHeader(proxySocket.getInputStream());
-//            System.out.println(commonPart.getHeader());
-//            socket.getOutputStream().write(commonPart.getTotalBody());
-            byte[] buffer  = new byte[65535000];
+
+//            SocketRequestToHttpRequestUtils.writeInputStreamByCounter(proxySocket.getInputStream(),socket.getOutputStream(),new HttpsResponseEndCounter());
+
+
+            byte[] buffer  = new byte[65535];
             int temp = 0;
              while(socket.isConnected()&&!proxySocket.isInputShutdown()){
-                try {
-                    int available = proxySocket.getInputStream().available();
-
+                 InputStream proxySocketInputStream = proxySocket.getInputStream();
+                 try {
+                    int available = proxySocketInputStream.available();
                     if (available!=0){
-                        SocketRequestToHttpRequestUtils.readBytesByArr(proxySocket.getInputStream(),available,buffer,temp);
-                    }
-                    if(((available==0&&temp>0)||temp>6553500)){
-                        System.out.println("写数据:"+temp);
-                        socket.getOutputStream().write(buffer,0,temp);
-                        temp=0;
+                        SocketRequestToHttpRequestUtils.readBytesByArr(proxySocketInputStream,available,buffer);
                     }else{
-                        temp+=available;
+                        int read = proxySocketInputStream.read();
+                        if (read==-1) {
+                            break;
+                        }else{
+                            System.out.println("写出客户端");
+                            socket.getOutputStream().write(read);
+                        }
                     }
-
-
+//                     System.out.println("写出客户端");
+                    socket.getOutputStream().write(buffer,0,available);
                 }catch (Exception e){
-
                 }
             }
+            buffer=null;
 
 
 
