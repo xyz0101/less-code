@@ -19,6 +19,7 @@ import java.util.*;
 import java.util.concurrent.*;
 import java.util.stream.Collectors;
 
+import static com.jenkin.proxy.server.constant.Const.*;
 import static com.jenkin.proxy.server.utils.SocketRequestToHttpRequestUtils.ENTER;
 import static com.jenkin.proxy.server.utils.SocketRequestToHttpRequestUtils.SPACE;
 
@@ -29,18 +30,15 @@ import static com.jenkin.proxy.server.utils.SocketRequestToHttpRequestUtils.SPAC
  * @modified By：
  * @version: 1.0
  */
-public class Server {
-
-    public static final int CORE_SIZE = Runtime.getRuntime().availableProcessors()*20;
-    public static final int MAX_SIZE = Runtime.getRuntime().availableProcessors()*100;
-    public static final int QUEUE_SIZE = 1000;
-    public static final int ALIVE_TIME = 10;
+public class BioServer {
 
 
-    private  static final ExecutorService executorService = new ThreadPoolExecutor(CORE_SIZE,MAX_SIZE,ALIVE_TIME, TimeUnit.MINUTES,new ArrayBlockingQueue<>(QUEUE_SIZE),new ThreadPoolExecutor.AbortPolicy());
+
+    private  static final ExecutorService CONNECT_SERVICE = new ThreadPoolExecutor(CORE_SIZE,MAX_SIZE,ALIVE_TIME, TimeUnit.MINUTES,new ArrayBlockingQueue<>(QUEUE_SIZE),new ThreadPoolExecutor.AbortPolicy());
+    private  static final ExecutorService REQUEST_SERVICE = new ThreadPoolExecutor(CORE_SIZE,MAX_SIZE,ALIVE_TIME, TimeUnit.MINUTES,new ArrayBlockingQueue<>(QUEUE_SIZE),new ThreadPoolExecutor.AbortPolicy());
 
     public static void main(String[] args) {
-        new Server().startServer(15555);
+        new BioServer().startServer(15555);
     }
 
 
@@ -48,19 +46,14 @@ public class Server {
         ServerSocket serverSocket=null;
         try {
             serverSocket = ServerSocketFactory.getDefault().createServerSocket(port);
-
             while (true){
                 Socket accept = serverSocket.accept();
                 System.out.println("服务端接受连接："+ accept.getInetAddress().getHostAddress());
-                executorService.submit(new Worker(accept,"服务端连接线程"));
+                CONNECT_SERVICE.submit(new Worker(accept,"服务端连接线程"));
             }
-
         } catch (IOException e) {
             e.printStackTrace();
         }
-
-
-
     }
 
     class Worker extends Thread{
@@ -89,7 +82,6 @@ public class Server {
     }
 
 
-
     private void readSthUseSocket(Socket socket) {
         InputStream inputStream=null;
         InputStreamReader inputStreamReader=null;
@@ -97,7 +89,7 @@ public class Server {
         SocketConnectResponse socketConnectResponse=null;
         try {
 
-
+            //-------------------请求头的读取部分-----start-----------------------------------------
             inputStream = socket.getInputStream();
             System.out.println("开始读数据");
             HttpRequestResponseCommonPart commonPart = SocketRequestToHttpRequestUtils.readHeader(inputStream);
@@ -105,6 +97,7 @@ public class Server {
             Socket proxySocket =HttpUtils.getSocket(requestParam);
             socketConnectResponse = HttpUtils.requestBySocket(requestParam,proxySocket);
             OutputStream proxySocketOutputStream = proxySocket.getOutputStream();
+            //----------------------响应HTTPS的CONNECT请求-------------------------------
             if (requestParam.isConnectType()){
                     writeBytes(socket,"HTTP/1.1 200 Connection Established\r\n\r\n".getBytes());
                     System.out.println("回复HTTPS的CONNECT");
@@ -112,9 +105,10 @@ public class Server {
                 proxySocketOutputStream.write(requestParam.getTotalBody());
 
             }
+            //-------------------请求头的读取部分-----end-----------------------------------------
 
-
-            executorService.execute(()->{
+            //--------------------读取客户端的请求，写给代理请求-------start------------------------------
+            REQUEST_SERVICE.execute(()->{
                 while(socket.isConnected()){
                     try {
                         byte[] buffer  = new byte[65535];
@@ -147,9 +141,11 @@ public class Server {
                     }
                 }
             });
+            //--------------------读取客户端的请求，写给代理请求-------end------------------------------
 
 //            SocketRequestToHttpRequestUtils.writeInputStreamByCounter(proxySocket.getInputStream(),socket.getOutputStream(),new HttpsResponseEndCounter());
 
+            //--------------------读取代理请求的响应，写给客户端求-------start------------------------------
 
             byte[] buffer  = new byte[65535];
             int temp = 0;
@@ -174,42 +170,7 @@ public class Server {
                 }
             }
             buffer=null;
-
-
-
-
-
-
-
-
-
-//            HttpRequestParam requestParam =  SocketRequestToHttpRequestUtils.convertSocketRequestToRequestParam(inputStream);
-//            Socket proxySocket =HttpUtils.getSocket(requestParam);
-//            socketConnectResponse = HttpUtils.requestBySocket(requestParam,proxySocket);
-            //这里为什么要while true？因为如果是keepalive的长连接是不能关闭连接的，可能还会继续发送
-//            while(true){
-//                socketConnectResponse = HttpUtils.requestBySocket(requestParam,proxySocket);
-//                if (requestParam.isConnectType()){
-//                    writeBytes(socket,"HTTP/1.1 200 Connection Established\r\n\r\n".getBytes());
-//                    System.out.println("回复HTTPS的CONNECT");
-//                    socketConnectResponse.setConnectRequest(false);
-//
-//                }else{
-//                    HttpResponseContent responseContent = SocketRequestToHttpRequestUtils.convertSocketInputStreamResponseBodyToBytes(socketConnectResponse);
-//                    byte[] bytes = responseContent.getTotalBody();
-//                    System.out.println("响应体：\n"+new String(bytes));
-//                    writeBytes(socket,bytes);
-//                    if ("close".equals(responseContent.getHeader().getValue("Connection"))||socket.isClosed()){
-//                        System.out.println("连接关闭");
-//                        break;
-//                    }
-//                }
-////                requestParam =  SocketRequestToHttpRequestUtils.convertSocketRequestToRequestParam(inputStream);
-//            }
-
-
-
-
+            //--------------------读取代理请求的响应，写给客户端求-------end------------------------------
 
         } catch (Exception e) {
             e.printStackTrace();
