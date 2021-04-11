@@ -83,17 +83,18 @@ public class HttpRequestParam extends HttpRequestResponseCommonPart{
     @Override
     public String toString() {
         StringBuilder content = new StringBuilder();
-        content.append(getRequestType()).append(SPACE).append(getPath());
-        try {
-
-            String query = getHost().getQuery();
-            if (query!=null&&query.length()>0){
-                content.append("?").append(query);
-            }
-        } catch (MalformedURLException | URISyntaxException e) {
-            e.printStackTrace();
-        }
-        content.append(SPACE).append(getProtocolVersion()).append(ENTER);
+        content.append(getStatusLine()).append(ENTER);
+//        content.append(getRequestType()).append(SPACE).append(getPath());
+////        try {
+////
+////            String query = getHost().getQuery();
+////            if (query!=null&&query.length()>0){
+////                content.append("?").append(query);
+////            }
+////        } catch (MalformedURLException | URISyntaxException e) {
+////            e.printStackTrace();
+////        }
+//        content.append(SPACE).append(getProtocolVersion()).append(ENTER);
         content.append(getHeader().toString());
         if (getBody()!=null)
         content.append(new String(getBody()));

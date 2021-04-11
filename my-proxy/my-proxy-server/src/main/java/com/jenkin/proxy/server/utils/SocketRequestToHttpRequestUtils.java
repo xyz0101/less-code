@@ -9,6 +9,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.io.*;
+import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -39,9 +40,9 @@ public class SocketRequestToHttpRequestUtils {
     public static final String CONTENT_LENGTH="Content-Length";
     public static final String TRANSFER_ENCODING="Transfer-Encoding";
     /**
-     * 1MB缓冲区
+     * 8K缓冲区
      */
-    private static final int BUFFER_SIZE=1024;
+    private static final int BUFFER_SIZE=1024*8;
 
     public static HttpRequestParam convertSocketRequestToRequestParam(InputStream inputStream) throws IOException {
 
@@ -204,7 +205,27 @@ public class SocketRequestToHttpRequestUtils {
 
     }
 
-
+    public static HttpRequestResponseCommonPart readHeaderInByteBuffer(ByteBuffer byteBuffer,int realLen) throws IOException {
+        if(realLen<0) return null;
+        int separatorCount = 0;
+        byte[] buffer = new byte[BUFFER_SIZE];
+        int bytesRead = 0;
+        //TODO 如果缓冲区太小会不会出现header未读完的情况
+        while(bytesRead<realLen){
+            byte tmp = byteBuffer.get();
+            buffer[bytesRead++] = tmp;
+            //当连续读取到4个\r或\n，说明已经读到header的最后了，否则重置计数器
+            if(tmp == '\r' || tmp == '\n'){
+                separatorCount++;
+            }else{
+                separatorCount = 0;
+            }
+            if(separatorCount == 4){
+                break;
+            }
+        }
+        return resolveHeader(buffer,bytesRead);
+    }
     public static HttpRequestResponseCommonPart readHeader(InputStream inputStream) throws IOException {
         int separatorCount = 0;
         byte[] buffer = new byte[BUFFER_SIZE];
@@ -223,7 +244,6 @@ public class SocketRequestToHttpRequestUtils {
                 break;
             }
         }
-
         return resolveHeader(buffer,bytesRead);
     }
 
@@ -244,7 +264,9 @@ public class SocketRequestToHttpRequestUtils {
                 break;
             }
             if(lineNum==1){
+
                 //首行为状态行
+                if(currentLine.split(" ").length==3)
                 responseContent.setStatusLine(currentLine);
             }else {
                 headerContent.head(currentLine.substring(0, currentLine.indexOf(':')), currentLine.substring(currentLine.indexOf(':') + 2));

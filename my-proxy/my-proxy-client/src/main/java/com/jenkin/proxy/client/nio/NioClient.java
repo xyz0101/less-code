@@ -75,10 +75,12 @@ public class NioClient {
         SocketChannel channel = (SocketChannel) selectionKey.channel();
         String write = scanner.nextLine();
         System.out.println("我发送："+write);
-        writeBuffer.clear();
-        writeBuffer.put(write.getBytes());
-        writeBuffer.flip();//反转，由写变为读
-        channel.write(writeBuffer);
+
+            writeBuffer.clear();
+            writeBuffer.put(write.getBytes());
+            writeBuffer.flip();//反转，由写变为读
+            channel.write(writeBuffer);
+
         //注册读操作 下一次进行读
         channel.register(selector,SelectionKey.OP_WRITE | SelectionKey.OP_READ);
     }
