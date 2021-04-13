@@ -11,6 +11,10 @@ import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.sctp.nio.NioSctpServerChannel;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
+import io.netty.handler.codec.http.HttpObjectAggregator;
+import io.netty.handler.codec.http.HttpRequestDecoder;
+import io.netty.handler.codec.http.HttpServerCodec;
+import io.netty.handler.codec.http.websocketx.WebSocketServerProtocolHandler;
 
 /**
  * @author ：jenkin
@@ -34,7 +38,13 @@ public class NettyServer {
 
                     @Override
                     protected void initChannel(SocketChannel socketChannel) throws Exception {
-                        socketChannel.pipeline().addLast("server-handler",new ServerHandler());
+                        //http请求解码
+                        socketChannel.pipeline().addLast("http-handler",new HttpRequestDecoder());
+                        //http请求体的解码（post）
+                        socketChannel.pipeline().addLast("full-http-handler",new HttpObjectAggregator(1*1024*1024));
+                        // 添加WebSocket解编码
+                        socketChannel.pipeline().addLast(new WebSocketServerProtocolHandler("/"));
+                        socketChannel.pipeline().addLast("my-server-handler",new ServerHandler());
                     }
                 });
         try {

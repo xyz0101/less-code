@@ -11,9 +11,25 @@ import org.apache.logging.log4j.Logger;
  * @version: 1.0
  */
 public class Main {
+    static Object o = new Object();
     private static Logger logger= LogManager.getLogger(LogManager.ROOT_LOGGER_NAME);
-    public static void main(String[] args) {
+    public static void main(String[] args) throws InterruptedException {
 
-        logger.info("22222");
+        synchronized (o){
+            logger.info("开始进入锁");
+            new Thread(()->{
+                try {
+                    Thread.sleep(3000);
+                    synchronized (o){
+                        o.notify();
+                    }
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }).start();
+            o.wait();
+            logger.info("锁被唤醒");
+        }
+
     }
 }

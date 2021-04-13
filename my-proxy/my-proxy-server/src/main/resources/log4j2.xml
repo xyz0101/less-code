@@ -1,13 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<configuration status="error">
+<configuration  >
+    <Properties>
+        <!-- 格式化输出：%date表示日期，%thread表示线程名，%-5level：级别从左显示5个字符宽度 %msg：日志消息，%n是换行符-->
+        <property name="LOG_PATTERN_CONSOLE"
+                  value="%style{%d{yyyy-MM-dd HH:mm:ss,SSS}}{bright,black} [%style{%t}{bright,blue}] [%highlight{%-5level}] [%style{%l}{bright,yellow}] - %msg%n%style{%throwable}{red}" />
+        <!--文件输出的时候不用颜色-->
+        <property name="LOG_PATTERN"
+                  value="%d{yyyy-MM-dd HH:mm:ss,SSS} [%t] [%-5level] [%l] - %msg%n" />
+        <!-- 定义日志存储的路径 -->
+        <property name="FILE_PATH" value="logs" />
+        <property name="FILE_NAME" value="service1" /> </Properties>
     <!--先定义所有的appender -->
     <appenders>
         <!--这个输出控制台的配置 -->
         <Console name="Console" target="SYSTEM_OUT">
             <!--             控制台只输出level及以上级别的信息（onMatch），其他的直接拒绝（onMismatch） -->
-            <ThresholdFilter level="info" onMatch="ACCEPT" onMismatch="DENY"/>
+            <ThresholdFilter level="debug" onMatch="ACCEPT" onMismatch="DENY"/>
             <!--             这个都知道是输出日志的格式 -->
-            <PatternLayout pattern="%d{HH:mm:ss.SSS} %-5level %class{36} %L %M - %msg%xEx%n"/>
+            <PatternLayout pattern="${LOG_PATTERN_CONSOLE}"/>
         </Console>
 
 
@@ -16,7 +26,7 @@
 
     <!--然后定义logger，只有定义了logger并引入的appender，appender才会生效 -->
     <loggers>
-        <root level="info">
+        <root level="debug">
 
             <appender-ref ref="Console"/>
 

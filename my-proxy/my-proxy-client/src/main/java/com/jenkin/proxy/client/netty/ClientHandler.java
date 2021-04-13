@@ -11,6 +11,8 @@ import io.netty.util.concurrent.EventExecutorGroup;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.util.Scanner;
+
 
 /**
  * @author ：jenkin
@@ -26,10 +28,15 @@ public class ClientHandler extends ChannelInboundHandlerAdapter {
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
         logger.info("客户端激活，开始连接");
+        new Thread(()->{
+            Scanner scan = new Scanner(System.in);
+            while (scan.hasNext()) {
+                String msg = scan.next();
+                ByteBuf byteBuf= Unpooled.wrappedBuffer(msg.getBytes());
+                ctx.writeAndFlush(byteBuf);
+            }
+        }).start();
 
-        String msg = "你好 netty";
-        ByteBuf byteBuf= Unpooled.wrappedBuffer(msg.getBytes());
-        ctx.writeAndFlush(byteBuf);
      }
 
     @Override
