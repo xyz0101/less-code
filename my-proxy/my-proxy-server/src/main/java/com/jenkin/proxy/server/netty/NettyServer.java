@@ -1,6 +1,7 @@
 package com.jenkin.proxy.server.netty;
 
 import com.jenkin.proxy.server.netty.hanlders.ServerHandler;
+import com.jenkin.proxy.server.netty.hanlders.ServerProxyHandler;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.Channel;
@@ -13,6 +14,7 @@ import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.handler.codec.http.HttpObjectAggregator;
 import io.netty.handler.codec.http.HttpRequestDecoder;
+import io.netty.handler.codec.http.HttpResponseEncoder;
 import io.netty.handler.codec.http.HttpServerCodec;
 import io.netty.handler.codec.http.websocketx.WebSocketServerProtocolHandler;
 
@@ -38,6 +40,8 @@ public class NettyServer {
 
                     @Override
                     protected void initChannel(SocketChannel socketChannel) throws Exception {
+
+                        socketChannel.pipeline().addLast("my-proxy-handler",new ServerProxyHandler());
                         //http请求解码
                         socketChannel.pipeline().addLast("http-handler",new HttpRequestDecoder());
                         //http请求体的解码（post）
@@ -45,6 +49,10 @@ public class NettyServer {
                         // 添加WebSocket解编码
                         socketChannel.pipeline().addLast(new WebSocketServerProtocolHandler("/"));
                         socketChannel.pipeline().addLast("my-server-handler",new ServerHandler());
+                        // server端发送的是httpResponse，所以要使用HttpResponseEncoder进行编码
+                        socketChannel.pipeline().addLast(
+                                new HttpResponseEncoder());
+
                     }
                 });
         try {

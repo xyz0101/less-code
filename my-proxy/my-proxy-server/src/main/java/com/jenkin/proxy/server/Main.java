@@ -27,7 +27,6 @@ public class Main {
 
 
 
-        new ProxyClient(key).getProxyChannel();
     }
 }
 

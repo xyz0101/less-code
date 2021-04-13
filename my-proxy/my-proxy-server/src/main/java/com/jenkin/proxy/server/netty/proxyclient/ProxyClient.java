@@ -1,7 +1,9 @@
 package com.jenkin.proxy.server.netty.proxyclient;
 
+import com.jenkin.proxy.server.entities.NettyProxyChannels;
 import com.jenkin.proxy.server.netty.constant.NettyConst;
 import com.jenkin.proxy.server.netty.proxyclient.handlers.ProxyClientHandler;
+import com.jenkin.proxy.server.netty.proxyclient.handlers.ProxyClientResponseHandler;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoop;
@@ -43,21 +45,23 @@ public class ProxyClient {
 
     }
 
-    public ChannelHandlerContext getProxyChannel() throws InterruptedException {
+    public ChannelHandlerContext getProxyChannel(ChannelHandlerContext ctx) throws InterruptedException {
         String key = this.host+":"+this.port;
         NettyConst.LOCK_MAP.put(key,new Object());
-        ChannelHandlerContext context = NettyConst.CHANNEL_MAP.get(key);
-        if(context==null){
+        NettyProxyChannels nettyProxyChannels = NettyConst.CHANNEL_MAP.get(key);
+        if(nettyProxyChannels==null||nettyProxyChannels.getProxyChannel()==null){
             Object o = NettyConst.LOCK_MAP.get(key);
             synchronized (o){
                 log.info("准备代理客户端连接");
                 NettyConst.PROXY_CLIENT_EXECUTORS.execute(this::startClient);
                 log.info("等待代理客户端连接");
                 o.wait();
-                return  NettyConst.CHANNEL_MAP.get(key);
+                NettyProxyChannels proxyChannels = NettyConst.CHANNEL_MAP.get(key);
+                proxyChannels.setServerChannel(ctx);
+                return proxyChannels.getProxyChannel();
             }
         }else{
-            return context;
+            return nettyProxyChannels.getProxyChannel();
         }
     }
 
@@ -71,11 +75,14 @@ public class ProxyClient {
                 .handler(new ChannelInitializer<SocketChannel>() {
                     @Override
                     protected void initChannel(SocketChannel ch) {
+                        ch.pipeline().addLast(new ProxyClientHandler());
+
+
                         ch.pipeline().addLast(new HttpResponseDecoder());
                         ch.pipeline().addLast(new HttpRequestEncoder());
                         ch.pipeline().addLast(new HttpObjectAggregator(1*1024*1024));
+                        ch.pipeline().addLast(new ProxyClientResponseHandler());
 
-                        ch.pipeline().addLast(new ProxyClientHandler());
                     }
                 });
 

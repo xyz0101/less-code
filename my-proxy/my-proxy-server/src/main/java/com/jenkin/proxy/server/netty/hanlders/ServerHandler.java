@@ -1,5 +1,6 @@
 package com.jenkin.proxy.server.netty.hanlders;
 
+import com.jenkin.proxy.server.netty.constant.NettyConst;
 import com.jenkin.proxy.server.netty.proxyclient.ProxyClient;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufUtil;
@@ -8,9 +9,13 @@ import io.netty.channel.*;
 import io.netty.handler.codec.http.DefaultHttpRequest;
 import io.netty.handler.codec.http.FullHttpRequest;
 import io.netty.handler.codec.http.HttpMethod;
+import io.netty.util.Attribute;
+import io.netty.util.AttributeKey;
 import io.netty.util.CharsetUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
+import java.util.UUID;
 
 /**
  * @author ：jenkin
@@ -27,13 +32,28 @@ public class ServerHandler extends SimpleChannelInboundHandler<FullHttpRequest> 
         HttpMethod method = msg.method();
         ByteBuf content = msg.content();
         String host = msg.headers().get("host");
+        Attribute<byte[]> attr = ctx.channel().attr(NettyConst.REQUEST_INFO_ATTR);
+        byte[] bytes = attr.getAndSet(null);
 
-        logger.info("请求参数：{}", new String(content.array()));
+         logger.info("准备代理请求：{}", new String(bytes) );
         if("CONNECT".equals(method.name())){
             ctx.writeAndFlush("HTTP/1.1 200 Connection Established\r\n\r\n".getBytes());
         }
+        String key = UUID.randomUUID().toString();
+        Object o = new Object();
+        NettyConst.LOCK_MAP.put(key, o);
+        synchronized (o){
+            ChannelHandlerContext proxyChannel = new ProxyClient(host).getProxyChannel(ctx);
+            proxyChannel.channel().attr(NettyConst.RESPONSE_WAIT_KEY_ATTR).set(key);
+            proxyChannel.writeAndFlush(Unpooled.wrappedBuffer(bytes));
+            o.wait();
+
+
+        }
 
     }
+
+
 
 
 }
