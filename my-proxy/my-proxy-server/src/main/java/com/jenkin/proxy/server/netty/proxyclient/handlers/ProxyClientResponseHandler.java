@@ -4,7 +4,9 @@ import com.jenkin.proxy.server.entities.NettyProxyChannels;
 import com.jenkin.proxy.server.netty.constant.NettyConst;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufUtil;
+import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
+import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.handler.codec.http.FullHttpResponse;
 import lombok.extern.slf4j.Slf4j;
@@ -19,7 +21,7 @@ import java.net.InetSocketAddress;
  * @date 2021/4/13 13:50
  */
 @Slf4j
-public class ProxyClientResponseHandler extends SimpleChannelInboundHandler<FullHttpResponse> {
+public class ProxyClientResponseHandler extends ChannelInboundHandlerAdapter {
     /**
      * 读事件
      * @param ctx
@@ -27,19 +29,19 @@ public class ProxyClientResponseHandler extends SimpleChannelInboundHandler<Full
      * @throws Exception
      */
     @Override
-    protected void channelRead0(ChannelHandlerContext ctx, FullHttpResponse msg) throws Exception {
-            String key = ctx.channel().attr(NettyConst.RESPONSE_WAIT_KEY_ATTR).get();
-            Object o = NettyConst.LOCK_MAP.get(key);
-            synchronized (o){
+    public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
+
                 InetSocketAddress socketAddress = (InetSocketAddress) ctx.channel().remoteAddress();
                 String channelKey =socketAddress.getHostString()+":"+socketAddress.getPort();
                 NettyProxyChannels nettyProxyChannels = NettyConst.CHANNEL_MAP.get(channelKey);
-//                nettyProxyChannels.getServerChannel().writeAndFlush(msg);
-                nettyProxyChannels.getServerChannel().fireChannelRead(msg);
-                o.notify();
-            }
+                log.info("收到整个响应，写给服务端:{}",msg);
+                nettyProxyChannels.getServerChannel().writeAndFlush(msg ).addListener((ChannelFutureListener) future -> {
+                    if(future.isSuccess())
+                        log.info("向客户端写入数据成功.");
+                    else
+                        log.info("向客户端写入数据失败.e:{}",future.cause().getMessage(),future.cause());
+                });
 
-        log.info("代理客户端收到返回消息：{}", msg.status());
     }
 
 

@@ -1,5 +1,6 @@
 package com.jenkin.proxy.server.entities;
 
+import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import lombok.Data;
 
@@ -13,7 +14,7 @@ import lombok.Data;
 @Data
 public class NettyProxyChannels {
 
-    private ChannelHandlerContext proxyChannel;
+    private Channel proxyChannel;
     private ChannelHandlerContext serverChannel;
 
 }

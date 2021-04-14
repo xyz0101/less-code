@@ -2,7 +2,6 @@ package com.jenkin.proxy.server.netty.proxyclient;
 
 import com.jenkin.proxy.server.entities.NettyProxyChannels;
 import com.jenkin.proxy.server.netty.constant.NettyConst;
-import com.jenkin.proxy.server.netty.proxyclient.handlers.ProxyClientHandler;
 import com.jenkin.proxy.server.netty.proxyclient.handlers.ProxyClientResponseHandler;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.*;
@@ -45,7 +44,7 @@ public class ProxyClient {
 
     }
 
-    public ChannelHandlerContext getProxyChannel(ChannelHandlerContext ctx) throws InterruptedException {
+    public Channel getProxyChannel(ChannelHandlerContext ctx) throws InterruptedException {
         String key = this.host+":"+this.port;
         NettyConst.LOCK_MAP.put(key,new Object());
         NettyProxyChannels nettyProxyChannels = NettyConst.CHANNEL_MAP.get(key);
@@ -75,11 +74,9 @@ public class ProxyClient {
                 .handler(new ChannelInitializer<SocketChannel>() {
                     @Override
                     protected void initChannel(SocketChannel ch) {
-                        ch.pipeline().addLast(new ProxyClientHandler());
 
 
-                        ch.pipeline().addLast(new HttpResponseDecoder());
-                        ch.pipeline().addLast(new HttpRequestEncoder());
+                        ch.pipeline().addLast(new HttpClientCodec());
                         ch.pipeline().addLast(new HttpObjectAggregator(1*1024*1024));
                         ch.pipeline().addLast(new ProxyClientResponseHandler());
 
@@ -88,8 +85,25 @@ public class ProxyClient {
 
         try {
             ChannelFuture sync = bootstrap.connect(new InetSocketAddress(this.host, this.port)).sync();
+            Channel channel = sync.channel();
+            log.info("代理主机连接成功");
+            InetSocketAddress socketAddress = (InetSocketAddress) channel.remoteAddress();
+            String key =socketAddress.getHostString()+":"+socketAddress.getPort();
+            log.info("代理连接激活,地址{}",key);
+            NettyProxyChannels nettyProxyChannels = new NettyProxyChannels();
+            nettyProxyChannels.setProxyChannel(channel);
+            NettyConst.CHANNEL_MAP.put(key,nettyProxyChannels);
+            Object o = NettyConst.LOCK_MAP.get(key);
+            if (o!=null){
+                synchronized (o){
+                    o.notify();
+                    log.info("唤醒代理启动锁");
+                }
 
-            sync.channel().closeFuture().sync();
+            }else{
+                log.error("锁为空");
+            }
+            channel.closeFuture().sync();
         } catch (InterruptedException e) {
             e.printStackTrace();
         }finally {

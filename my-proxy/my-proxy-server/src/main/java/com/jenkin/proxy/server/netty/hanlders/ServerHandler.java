@@ -24,32 +24,31 @@ import java.util.UUID;
  * @modified By：
  * @version: 1.0
  */
-public class ServerHandler extends SimpleChannelInboundHandler<FullHttpRequest> {
+public class ServerHandler extends ChannelInboundHandlerAdapter  {
     Logger logger = LogManager.getLogger(ServerHandler.class);
 
     @Override
-    protected void channelRead0(ChannelHandlerContext ctx, FullHttpRequest msg) throws Exception {
-        HttpMethod method = msg.method();
-        ByteBuf content = msg.content();
-        String host = msg.headers().get("host");
-        Attribute<byte[]> attr = ctx.channel().attr(NettyConst.REQUEST_INFO_ATTR);
-        byte[] bytes = attr.getAndSet(null);
-
-         logger.info("准备代理请求：{}", new String(bytes) );
-        if("CONNECT".equals(method.name())){
-            ctx.writeAndFlush("HTTP/1.1 200 Connection Established\r\n\r\n".getBytes());
-        }
-        String key = UUID.randomUUID().toString();
-        Object o = new Object();
-        NettyConst.LOCK_MAP.put(key, o);
-        synchronized (o){
-            ChannelHandlerContext proxyChannel = new ProxyClient(host).getProxyChannel(ctx);
-            proxyChannel.channel().attr(NettyConst.RESPONSE_WAIT_KEY_ATTR).set(key);
-            proxyChannel.writeAndFlush(Unpooled.wrappedBuffer(bytes));
-            o.wait();
-
+    public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
+        FullHttpRequest request=null;
+        if (msg instanceof FullHttpRequest) {
+            request = (FullHttpRequest) msg;
+            HttpMethod method = request.method();
+            String host = request.headers().get("host");
+            if("CONNECT".equals(method.name())){
+                ctx.writeAndFlush("HTTP/1.1 200 Connection Established\r\n\r\n".getBytes());
+            }
+            Channel proxyChannel = new ProxyClient(host).getProxyChannel(ctx);
+            logger.info("发送给代理客户端");
+            proxyChannel.writeAndFlush(msg).addListener(future -> {
+                if(future.isSuccess())
+                    logger.info("发送给代理客户端数据成功.");
+                else
+                    logger.info("发送给代理客户端数据失败.e:{}",future.cause().getMessage(),future.cause());
+            });
 
         }
+
+
 
     }
 
