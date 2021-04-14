@@ -2,6 +2,7 @@ package com.jenkin.proxy.server.netty.proxyclient.handlers;
 
 import com.jenkin.proxy.server.entities.NettyProxyChannels;
 import com.jenkin.proxy.server.netty.constant.NettyConst;
+import com.jenkin.proxy.server.utils.NettyUtils;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufUtil;
 import io.netty.channel.ChannelFutureListener;
@@ -31,16 +32,18 @@ public class ProxyClientResponseHandler extends ChannelInboundHandlerAdapter {
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
 
-                InetSocketAddress socketAddress = (InetSocketAddress) ctx.channel().remoteAddress();
-                String channelKey =socketAddress.getHostString()+":"+socketAddress.getPort();
-                NettyProxyChannels nettyProxyChannels = NettyConst.CHANNEL_MAP.get(channelKey);
-                log.info("收到整个响应，写给服务端:{}",msg);
-                nettyProxyChannels.getServerChannel().writeAndFlush(msg ).addListener((ChannelFutureListener) future -> {
-                    if(future.isSuccess())
-                        log.info("向客户端写入数据成功.");
-                    else
-                        log.info("向客户端写入数据失败.e:{}",future.cause().getMessage(),future.cause());
-                });
+                String channelKey =  ctx.channel().attr(NettyConst.PROXY_CHANNEL_KEY_ATTR).get();
+                log.info("代理客户端server CHANEL ID {}",channelKey);
+                if (channelKey!=null) {
+                    NettyProxyChannels nettyProxyChannels = NettyConst.CHANNEL_MAP.get(channelKey);
+                    log.info("收到整个响应，写给服务端:{}", msg);
+                    nettyProxyChannels.getServerChannel().writeAndFlush(msg).addListener((ChannelFutureListener) future -> {
+                        if (future.isSuccess())
+                            log.info("向客户端写入数据成功.");
+                        else
+                            log.info("向客户端写入数据失败.e:{}", future.cause().getMessage(), future.cause());
+                    });
+                }
 
     }
 
@@ -65,7 +68,9 @@ public class ProxyClientResponseHandler extends ChannelInboundHandlerAdapter {
      */
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
-        super.exceptionCaught(ctx, cause);
+//        NettyUtils.closeAndRemoveChannel(ctx);
+        ctx.close();
+        cause.printStackTrace();
     }
 
     /**
@@ -76,6 +81,14 @@ public class ProxyClientResponseHandler extends ChannelInboundHandlerAdapter {
     @Override
     public void channelInactive(ChannelHandlerContext ctx) throws Exception {
         log.info("代理连接关闭！");
-        super.channelInactive(ctx);
+        ctx.close();
+//        NettyUtils.closeAndRemoveChannel(ctx);
+
+    }
+
+    @Override
+    public void channelUnregistered(ChannelHandlerContext ctx) throws Exception {
+        log.info("代理取消注册！");
+        super.channelUnregistered(ctx);
     }
 }

@@ -1,19 +1,15 @@
 package com.jenkin.proxy.server.netty;
 
+import com.jenkin.proxy.server.netty.constant.NettyConst;
 import com.jenkin.proxy.server.netty.hanlders.ServerHandler;
-import com.jenkin.proxy.server.netty.hanlders.ServerProxyHandler;
-import io.netty.bootstrap.Bootstrap;
 import io.netty.bootstrap.ServerBootstrap;
-import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelOption;
 import io.netty.channel.nio.NioEventLoopGroup;
-import io.netty.channel.sctp.nio.NioSctpServerChannel;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.handler.codec.http.*;
-import io.netty.handler.codec.http.websocketx.WebSocketServerProtocolHandler;
 
 /**
  * @author ：jenkin
@@ -40,11 +36,11 @@ public class NettyServer {
 
 //                        socketChannel.pipeline().addLast("my-proxy-handler",new ServerProxyHandler());
                         //http请求解码
-                        socketChannel.pipeline().addLast( new HttpRequestDecoder());
-                        socketChannel.pipeline().addLast( new HttpResponseEncoder());
+                        socketChannel.pipeline().addLast(NettyConst.HTTP_REQUEST_DECODER, new HttpRequestDecoder());
+                        socketChannel.pipeline().addLast(NettyConst.HTTP_RESPONSE_ENCODER, new HttpResponseEncoder());
                         //http请求体的解码（post）
-                        socketChannel.pipeline().addLast("full-http-handler",new HttpObjectAggregator(1*1024*1024));
-                        socketChannel.pipeline().addLast("my-server-handler",new ServerHandler());
+                        socketChannel.pipeline().addLast(NettyConst.HTTP_OBJECT_AGGERATOR,new HttpObjectAggregator(1*1024*1024));
+                        socketChannel.pipeline().addLast(NettyConst.MY_SERVER_HANDLER,new ServerHandler());
 
 
                     }
