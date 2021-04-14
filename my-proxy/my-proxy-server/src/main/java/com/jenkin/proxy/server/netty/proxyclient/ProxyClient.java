@@ -48,7 +48,7 @@ public class ProxyClient {
         String key = this.host+":"+this.port;
         NettyConst.LOCK_MAP.put(key,new Object());
         NettyProxyChannels nettyProxyChannels = NettyConst.CHANNEL_MAP.get(key);
-        if(nettyProxyChannels==null||nettyProxyChannels.getProxyChannel()==null){
+        if(nettyProxyChannels==null||nettyProxyChannels.getProxyChannel()==null||!nettyProxyChannels.getProxyChannel().isActive()){
             Object o = NettyConst.LOCK_MAP.get(key);
             synchronized (o){
                 log.info("准备代理客户端连接");
