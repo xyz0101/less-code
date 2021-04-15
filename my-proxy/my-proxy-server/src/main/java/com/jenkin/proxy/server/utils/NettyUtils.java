@@ -32,4 +32,14 @@ public class NettyUtils {
         NettyConst.CHANNEL_MAP.remove(key);
     }
 
+    public static void notifyKey(String key) {
+        Object o = NettyConst.LOCK_MAP.get(key);
+        if (o!=null) {
+            synchronized (o) {
+                o.notify();
+            }
+        }else{
+            log.error("当前key：{} 的锁为空",key);
+        }
+    }
 }

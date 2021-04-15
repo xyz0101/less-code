@@ -3,6 +3,7 @@ package com.jenkin.proxy.server.netty.proxyclient;
 import com.jenkin.proxy.server.entities.NettyProxyChannels;
 import com.jenkin.proxy.server.netty.constant.NettyConst;
 import com.jenkin.proxy.server.netty.proxyclient.handlers.ProxyClientResponseHandler;
+import com.jenkin.proxy.server.utils.NettyUtils;
 import com.sun.org.apache.xpath.internal.operations.Bool;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.*;
@@ -54,6 +55,7 @@ public class ProxyClient {
         if (serverAndProxyChannel==null){
             throw new RuntimeException("代理连接失败，主机 :"+host+":"+port);
         }
+        log.info("与主机：{} 建立连接成功。",host);
         return  serverAndProxyChannel.getProxyChannel();
     }
 
@@ -70,15 +72,13 @@ public class ProxyClient {
         if(nettyProxyChannels==null||nettyProxyChannels.getProxyChannel()==null||!nettyProxyChannels.getProxyChannel().isActive()){
             Object o = NettyConst.LOCK_MAP.get(key);
             synchronized (o){
-                log.info("准备代理客户端连接");
+                log.info("准备代理客户端连接, host: {}",host);
                 NettyConst.PROXY_CLIENT_EXECUTORS.execute(()->startClient(key));
-
-                log.info("等待代理客户端连接:{} ,已使用线程数量：{}",host,NettyConst.PROXY_CLIENT_EXECUTORS.getActiveCount());
+                log.info("等待代理客户端连接,已使用线程数量：{}",NettyConst.PROXY_CLIENT_EXECUTORS.getActiveCount());
                 o.wait();
                 NettyProxyChannels proxyChannels = NettyConst.CHANNEL_MAP.get(key);
                 if(proxyChannels!=null) {
                     proxyChannels.setServerChannel(ctx);
-
                     return proxyChannels;
                 }
                 return null;
@@ -92,65 +92,63 @@ public class ProxyClient {
         log.info("开始连接代理 host:{}，port：{}",host,port);
         Bootstrap bootstrap = new Bootstrap();
         EventLoopGroup group = new NioEventLoopGroup();
+        try {
+            //初始化bootstrap
+            initClientBootStrap(bootstrap,group);
+            //连接目标主机
+            connectToTargetHost(bootstrap,key);
+        }finally {
+            group.shutdownGracefully();
+        }
+
+    }
+
+    /**
+     * 代理客户端连接到目标主机
+     * @param bootstrap
+     * @param key
+     */
+    private void connectToTargetHost(Bootstrap bootstrap, String key) {
+        try {
+            ChannelFuture sync = bootstrap.connect(new InetSocketAddress(this.host, this.port)).sync();
+            Channel channel = sync.channel();
+            if (sync.isSuccess()) {
+                log.info("代理连接成功，主机：{} ,channelId {}",host,key);
+                NettyProxyChannels nettyProxyChannels = new NettyProxyChannels();
+                nettyProxyChannels.setProxyChannel(channel);
+                NettyConst.CHANNEL_MAP.put(key,nettyProxyChannels);
+                NettyUtils.notifyKey(key);
+            }else{
+                NettyUtils.notifyKey(key);
+                log.error("代理主机连接失败，e:{}", sync.cause().getMessage(), sync.cause());
+            }
+            channel.closeFuture().sync();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * 初始化代理客户端，在https的情况下不熏醋解码器 和聚合器
+     * @param bootstrap
+     * @param group
+     */
+    private void initClientBootStrap(Bootstrap bootstrap,EventLoopGroup group) {
         bootstrap.group(group)
                 .option(ChannelOption.TCP_NODELAY,true)
-                .option(ChannelOption.CONNECT_TIMEOUT_MILLIS,5000)
+                .option(ChannelOption.CONNECT_TIMEOUT_MILLIS,NettyConst.CONNECT_TIME_OUT)
                 .channel(NioSocketChannel.class)
                 .handler(new ChannelInitializer<SocketChannel>() {
                     @Override
                     protected void initChannel(SocketChannel ch) {
                         if (isHttps==null||!isHttps) {
                             ch.pipeline().addLast(new HttpClientCodec());
-                            ch.pipeline().addLast(new HttpObjectAggregator(1*1024*1024));
+                            ch.pipeline().addLast(new HttpObjectAggregator(NettyConst.AGGREGATR_MAX_LENGTH));
                         }
                         ch.pipeline().addLast(new ProxyClientResponseHandler());
-
                     }
                 });
-
-        try {
-            ChannelFuture sync = bootstrap.connect(new InetSocketAddress(this.host, this.port)).addListener(future -> {
-                if (!future.isSuccess()){
-                    Object o = NettyConst.LOCK_MAP.get(key);
-                    synchronized (o){
-                        o.notify();
-                        log.error("代理主机连接失败，e:{}", future.cause().getMessage(), future.cause());
-
-                    }
-                }else{
-                    log.info("代理主机连接成功");
-                }
-            }).sync();
-            Channel channel = sync.channel();
-
-            log.info("代理连接激活,channelId {}",key);
-            NettyProxyChannels nettyProxyChannels = new NettyProxyChannels();
-            nettyProxyChannels.setProxyChannel(channel);
-            NettyConst.CHANNEL_MAP.put(key,nettyProxyChannels);
-            Object o = NettyConst.LOCK_MAP.get(key);
-            if (o!=null){
-                synchronized (o){
-                    o.notify();
-                    log.info("唤醒代理启动锁");
-                }
-
-            }else{
-                log.error("锁为空");
-            }
-            channel.closeFuture().sync();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }finally {
-            group.shutdownGracefully();
-        }
-
-
     }
-
-
-
-
-
 
 
 }

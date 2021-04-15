@@ -15,14 +15,16 @@ import java.util.concurrent.*;
  * @date 2021/4/13 14:23
  */
 public class NettyConst {
-
+    /**
+     * 保存代理服务channel和代理连接channel的关系
+     */
     public static final ConcurrentHashMap<String, NettyProxyChannels> CHANNEL_MAP = new ConcurrentHashMap<>();
+    /**
+     * 锁集合
+     */
     public static final ConcurrentHashMap<String, Object> LOCK_MAP = new ConcurrentHashMap<>();
 
 
-    public static final AttributeKey<byte[]> REQUEST_INFO_ATTR = AttributeKey.newInstance("request");
-    public static final AttributeKey<String> RESPONSE_WAIT_KEY_ATTR = AttributeKey.newInstance("wait-response");
-    public static final AttributeKey<byte[]> RESPONSE_INFO_ATTR = AttributeKey.newInstance("response");
     /**
      * 判断当前channel是不是https
      */
@@ -55,12 +57,29 @@ public class NettyConst {
     public static final String MY_SERVER_HANDLER = "my-server-handler";
 
 
-
+    /**
+     * 连接目标主机的线程池
+     */
     public static final ThreadPoolExecutor PROXY_CLIENT_EXECUTORS = new ThreadPoolExecutor(
             Const.CORE_SIZE, Const.MAX_SIZE,
             Const.ALIVE_TIME, TimeUnit.MINUTES,
-            new ArrayBlockingQueue<>(Const.QUEUE_SIZE),
-            new ThreadPoolExecutor.AbortPolicy()
+            new ArrayBlockingQueue<>(Const.PROXY_CLIENT_QUEUE_SIZE),
+            new ThreadPoolExecutor.CallerRunsPolicy()
     );
-
+    /**
+     * 端口号
+     */
+    public static final int SERVER_PORT = 15557;
+    /**
+     * http聚合器的最大报文长度
+     */
+    public static final int AGGREGATR_MAX_LENGTH = 1 * 1024 * 1024;
+    /**
+     * 与目标主机连接超时的时间 ms
+     */
+    public static final Integer CONNECT_TIME_OUT = 5000;
+    /**
+     * 半连接队列的大小
+     */
+    public static final Integer BACK_LOG_SIZE = 2048;
 }

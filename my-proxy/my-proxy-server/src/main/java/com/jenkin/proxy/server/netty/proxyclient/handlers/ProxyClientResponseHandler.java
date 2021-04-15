@@ -25,23 +25,22 @@ import java.net.InetSocketAddress;
 public class ProxyClientResponseHandler extends ChannelInboundHandlerAdapter {
     /**
      * 读事件
+     * 根据key 拿到真实客户端，然后把响应写入给真实客户端
      * @param ctx
      * @param msg
      * @throws Exception
      */
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
-
                 String channelKey =  ctx.channel().attr(NettyConst.PROXY_CHANNEL_KEY_ATTR).get();
-                log.info("代理客户端server CHANEL ID {}",channelKey);
+                log.info("代理客户端读取响应，准备写入给实际客户端 CHANEL ID {}",channelKey);
                 if (channelKey!=null) {
                     NettyProxyChannels nettyProxyChannels = NettyConst.CHANNEL_MAP.get(channelKey);
-                    log.info("收到整个响应，写给服务端:{}", msg);
                     nettyProxyChannels.getServerChannel().writeAndFlush(msg).addListener((ChannelFutureListener) future -> {
                         if (future.isSuccess())
-                            log.info("向客户端写入数据成功.");
+                            log.info("向实际客户端写入数据成功.");
                         else
-                            log.info("向客户端写入数据失败.e:{}", future.cause().getMessage(), future.cause());
+                            log.error("向实际客户端写入数据失败.e:{}", future.cause().getMessage(), future.cause());
                     });
                 }
 
@@ -68,7 +67,6 @@ public class ProxyClientResponseHandler extends ChannelInboundHandlerAdapter {
      */
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
-//        NettyUtils.closeAndRemoveChannel(ctx);
         ctx.close();
         cause.printStackTrace();
     }
@@ -82,7 +80,6 @@ public class ProxyClientResponseHandler extends ChannelInboundHandlerAdapter {
     public void channelInactive(ChannelHandlerContext ctx) throws Exception {
         log.info("代理连接关闭！");
         ctx.close();
-//        NettyUtils.closeAndRemoveChannel(ctx);
 
     }
 

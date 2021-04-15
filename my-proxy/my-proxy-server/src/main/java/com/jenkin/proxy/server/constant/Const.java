@@ -12,6 +12,7 @@ public class Const {
     public static final int MAX_SIZE = Runtime.getRuntime().availableProcessors()*20;
     public static final int QUEUE_SIZE = 1000;
     public static final int ALIVE_TIME = 10;
+    public static final int PROXY_CLIENT_QUEUE_SIZE = 1000;
 
     public static final int DEFAULT_BUFFER_SIZE = 8096;
 
