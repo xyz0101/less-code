@@ -25,11 +25,13 @@ public class NettyServer {
 
     public static void main(String[] args) {
         NioEventLoopGroup connectors = new NioEventLoopGroup();
+
         NioEventLoopGroup handlers = new NioEventLoopGroup();
         ServerBootstrap serverBootstrap = new ServerBootstrap();
         serverBootstrap.group(connectors,handlers)
                 .channel(NioServerSocketChannel.class)
                 .option(ChannelOption.SO_BACKLOG,NettyConst.BACK_LOG_SIZE)
+                .option(ChannelOption.CONNECT_TIMEOUT_MILLIS,NettyConst.CONNECT_TIME_OUT*2)
                 .childHandler(new ChannelInitializer<SocketChannel>() {
 
                     @Override

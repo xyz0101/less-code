@@ -36,7 +36,7 @@ public class NettyUtils {
         Object o = NettyConst.LOCK_MAP.get(key);
         if (o!=null) {
             synchronized (o) {
-                o.notify();
+                o.notifyAll();
             }
         }else{
             log.error("当前key：{} 的锁为空",key);

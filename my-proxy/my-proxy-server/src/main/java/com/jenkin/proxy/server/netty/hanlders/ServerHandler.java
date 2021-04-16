@@ -143,13 +143,14 @@ public class ServerHandler extends ChannelInboundHandlerAdapter  {
         logger.error("server 异常");
 //        NettyUtils.closeAndRemoveChannel(ctx);
         cause.printStackTrace();
-        ctx.close();
+//        ctx.close();
     }
 
     @Override
     public void channelInactive(ChannelHandlerContext ctx) throws Exception {
 //        NettyUtils.closeAndRemoveChannel(ctx);
+        //为什么服务端会主动关闭与客户端的连接？？ TODO
         logger.warn("代理服务端连接关闭");
-        ctx.close();
+//        ctx.close();
     }
 }

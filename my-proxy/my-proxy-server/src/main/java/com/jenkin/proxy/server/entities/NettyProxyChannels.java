@@ -1,6 +1,7 @@
 package com.jenkin.proxy.server.entities;
 
 import cn.hutool.core.io.IoUtil;
+import com.jenkin.proxy.server.constant.ProxyConnectStatusEnum;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import lombok.Data;
@@ -19,10 +20,10 @@ public class NettyProxyChannels {
 
     private Channel proxyChannel;
     private ChannelHandlerContext serverChannel;
-
+    private ProxyConnectStatusEnum connectStatus;
     public void closeAll(){
         try {
-            proxyChannel.closeFuture().sync();
+            proxyChannel.close().sync();
             serverChannel.close();
             log.warn("服务端和代理连接关闭");
         } catch (InterruptedException e) {

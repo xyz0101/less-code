@@ -39,8 +39,11 @@ public class ProxyClientResponseHandler extends ChannelInboundHandlerAdapter {
                     nettyProxyChannels.getServerChannel().writeAndFlush(msg).addListener((ChannelFutureListener) future -> {
                         if (future.isSuccess())
                             log.info("向实际客户端写入数据成功.");
-                        else
+                        else{
+                            ctx.close();
                             log.error("向实际客户端写入数据失败.e:{}", future.cause().getMessage(), future.cause());
+
+                        }
                     });
                 }
 

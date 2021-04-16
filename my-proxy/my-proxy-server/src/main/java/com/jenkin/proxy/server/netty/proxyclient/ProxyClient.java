@@ -1,18 +1,16 @@
 package com.jenkin.proxy.server.netty.proxyclient;
 
+import com.jenkin.proxy.server.constant.ProxyConnectStatusEnum;
 import com.jenkin.proxy.server.entities.NettyProxyChannels;
 import com.jenkin.proxy.server.netty.constant.NettyConst;
 import com.jenkin.proxy.server.netty.proxyclient.handlers.ProxyClientResponseHandler;
 import com.jenkin.proxy.server.utils.NettyUtils;
-import com.sun.org.apache.xpath.internal.operations.Bool;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.*;
-import io.netty.channel.nio.NioEventLoop;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.handler.codec.http.*;
-import io.netty.handler.codec.http.websocketx.WebSocketServerProtocolHandler;
 import lombok.extern.slf4j.Slf4j;
 
 import java.net.InetSocketAddress;
@@ -51,11 +49,12 @@ public class ProxyClient {
     }
 
     public Channel getProxyChannel(ChannelHandlerContext ctx) throws InterruptedException {
+
         NettyProxyChannels serverAndProxyChannel = getServerAndProxyChannel(ctx);
         if (serverAndProxyChannel==null){
             throw new RuntimeException("代理连接失败，主机 :"+host+":"+port);
         }
-        log.info("与主机：{} 建立连接成功。",host);
+
         return  serverAndProxyChannel.getProxyChannel();
     }
 
@@ -69,23 +68,48 @@ public class ProxyClient {
         String key = ctx.channel().attr(NettyConst.PROXY_CHANNEL_KEY_ATTR).get();
         NettyConst.LOCK_MAP.put(key,new Object());
         NettyProxyChannels nettyProxyChannels = NettyConst.CHANNEL_MAP.get(key);
-        if(nettyProxyChannels==null||nettyProxyChannels.getProxyChannel()==null||!nettyProxyChannels.getProxyChannel().isActive()){
+        if (nettyProxyChannels!=null&&
+                nettyProxyChannels.getConnectStatus()==ProxyConnectStatusEnum.CONNECT_SUCCESS&&
+                nettyProxyChannels.getProxyChannel().isActive()) {
+            return nettyProxyChannels;
+        }
             Object o = NettyConst.LOCK_MAP.get(key);
             synchronized (o){
+                long t = System.currentTimeMillis();
                 log.info("准备代理客户端连接, host: {}",host);
+                if( checkIsConnecting(nettyProxyChannels)){
+                    log.info("当前主机 {} 正在连接中.......",host);
+                    o.wait();
+                    log.info("当前主机 {} 连接成功.......",host);
+                    return nettyProxyChannels;
+                }
+                nettyProxyChannels=new NettyProxyChannels();
+                nettyProxyChannels.setConnectStatus(ProxyConnectStatusEnum.CONNECTING);
+                NettyConst.CHANNEL_MAP.put(key,nettyProxyChannels);
                 NettyConst.PROXY_CLIENT_EXECUTORS.execute(()->startClient(key));
-                log.info("等待代理客户端连接,已使用线程数量：{}",NettyConst.PROXY_CLIENT_EXECUTORS.getActiveCount());
+                log.info("等待代理客户端连接,核心线程数：{}，已使用线程数量：{}",NettyConst.PROXY_CLIENT_EXECUTORS.getCorePoolSize(),NettyConst.PROXY_CLIENT_EXECUTORS.getActiveCount());
                 o.wait();
                 NettyProxyChannels proxyChannels = NettyConst.CHANNEL_MAP.get(key);
+                log.info("与主机：{} 建立连接成功。耗时：{}",host,System.currentTimeMillis()-t);
                 if(proxyChannels!=null) {
                     proxyChannels.setServerChannel(ctx);
                     return proxyChannels;
                 }
                 return null;
             }
-        }else{
-            return nettyProxyChannels;
+
+    }
+
+    /**
+     * 检查是否正在连接
+     * @param nettyProxyChannels
+     * @return
+     */
+    private boolean checkIsConnecting(NettyProxyChannels nettyProxyChannels) {
+        if (nettyProxyChannels!=null&&nettyProxyChannels.getConnectStatus()==ProxyConnectStatusEnum.CONNECTING) {
+             return true;
         }
+        return false;
     }
 
     private void startClient(String key){
@@ -112,16 +136,18 @@ public class ProxyClient {
         try {
             ChannelFuture sync = bootstrap.connect(new InetSocketAddress(this.host, this.port)).sync();
             Channel channel = sync.channel();
+            NettyProxyChannels nettyProxyChannels=NettyConst.CHANNEL_MAP.get(key);
+            nettyProxyChannels = nettyProxyChannels==null? new NettyProxyChannels():nettyProxyChannels;
             if (sync.isSuccess()) {
                 log.info("代理连接成功，主机：{} ,channelId {}",host,key);
-                NettyProxyChannels nettyProxyChannels = new NettyProxyChannels();
-                nettyProxyChannels.setProxyChannel(channel);
-                NettyConst.CHANNEL_MAP.put(key,nettyProxyChannels);
-                NettyUtils.notifyKey(key);
+                nettyProxyChannels.setConnectStatus(ProxyConnectStatusEnum.CONNECT_SUCCESS);
             }else{
-                NettyUtils.notifyKey(key);
+                nettyProxyChannels.setConnectStatus(ProxyConnectStatusEnum.CONNECT_FAIL);
                 log.error("代理主机连接失败，e:{}", sync.cause().getMessage(), sync.cause());
             }
+            nettyProxyChannels.setProxyChannel(channel);
+            NettyConst.CHANNEL_MAP.put(key,nettyProxyChannels);
+            NettyUtils.notifyKey(key);
             channel.closeFuture().sync();
         } catch (InterruptedException e) {
             e.printStackTrace();
@@ -137,6 +163,7 @@ public class ProxyClient {
         bootstrap.group(group)
                 .option(ChannelOption.TCP_NODELAY,true)
                 .option(ChannelOption.CONNECT_TIMEOUT_MILLIS,NettyConst.CONNECT_TIME_OUT)
+                .option(ChannelOption.SO_KEEPALIVE,true)
                 .channel(NioSocketChannel.class)
                 .handler(new ChannelInitializer<SocketChannel>() {
                     @Override

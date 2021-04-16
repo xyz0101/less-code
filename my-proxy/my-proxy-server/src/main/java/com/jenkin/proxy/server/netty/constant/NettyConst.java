@@ -63,7 +63,7 @@ public class NettyConst {
     public static final ThreadPoolExecutor PROXY_CLIENT_EXECUTORS = new ThreadPoolExecutor(
             Const.CORE_SIZE, Const.MAX_SIZE,
             Const.ALIVE_TIME, TimeUnit.MINUTES,
-            new ArrayBlockingQueue<>(Const.PROXY_CLIENT_QUEUE_SIZE),
+            new ArrayBlockingQueue<>(1),
             new ThreadPoolExecutor.CallerRunsPolicy()
     );
     /**
@@ -73,7 +73,7 @@ public class NettyConst {
     /**
      * http聚合器的最大报文长度
      */
-    public static final int AGGREGATR_MAX_LENGTH = 1 * 1024 * 1024;
+    public static final int AGGREGATR_MAX_LENGTH = 100 * 1024 * 1024;
     /**
      * 与目标主机连接超时的时间 ms
      */
