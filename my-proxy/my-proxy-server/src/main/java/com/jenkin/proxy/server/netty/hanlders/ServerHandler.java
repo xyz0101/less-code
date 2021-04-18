@@ -43,7 +43,10 @@ public class ServerHandler extends ChannelInboundHandlerAdapter  {
             setKeyAndHost(key,host,ctx.channel());
             //处理connect请求
             if(HttpMethod.CONNECT.name().equals(request.method().name())){
-                responseConnectRequest(key,host,ctx);
+                if(!responseConnectRequest(key,host,ctx)){
+                    return;
+                }
+                return;
             }else{
                 //处理http请求
                 writeHttpResponseToClient(key,host,ctx,msg);
@@ -102,18 +105,19 @@ public class ServerHandler extends ChannelInboundHandlerAdapter  {
      * @param ctx
      * @throws InterruptedException
      */
-    private void responseConnectRequest(String key,String host,ChannelHandlerContext ctx) throws InterruptedException {
+    private boolean responseConnectRequest(String key,String host,ChannelHandlerContext ctx) throws InterruptedException {
         ctx.channel().attr(NettyConst.CHANNEL_ISHTTPS_ATTR).set(true);
         Channel proxyChannel=new ProxyClient(host,true ).getProxyChannel(ctx);
         setKeyAndHost(key,host,proxyChannel);
         removeHttpPipline(ctx);
-        ctx.writeAndFlush(Unpooled.wrappedBuffer("HTTP/1.1 200 Connection Established\r\n\r\n".getBytes()))
+        ChannelFuture sync = ctx.writeAndFlush(Unpooled.wrappedBuffer("HTTP/1.1 200 Connection Established\r\n\r\n".getBytes()))
                 .addListener(future -> {
-                    if(future.isSuccess())
+                    if (future.isSuccess())
                         logger.info("HTTPS CONNECT 回应成功.");
                     else
-                        logger.error("HTTPS CONNECT 回应失败.e:{}",future.cause().getMessage(),future.cause());
-                });
+                        logger.error("HTTPS CONNECT 回应失败.e:{}", future.cause().getMessage(), future.cause());
+                }).sync();
+        return sync.isSuccess();
     }
 
     /**
@@ -139,6 +143,11 @@ public class ServerHandler extends ChannelInboundHandlerAdapter  {
     }
 
     @Override
+    public void channelUnregistered(ChannelHandlerContext ctx) throws Exception {
+        logger.warn("服务端取消注册");
+    }
+
+    @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
         logger.error("server 异常");
 //        NettyUtils.closeAndRemoveChannel(ctx);
@@ -148,7 +157,10 @@ public class ServerHandler extends ChannelInboundHandlerAdapter  {
 
     @Override
     public void channelInactive(ChannelHandlerContext ctx) throws Exception {
-//        NettyUtils.closeAndRemoveChannel(ctx);
+        //TODO 2021年4月18日16:11:54
+        // 大量请求是阻塞的原因是因为这里每次都会关闭连接，而代理客户端的连接实际上还没关闭，导致线程堆积
+        // 但是为什么会这样？还不知道原因，这里关闭客户端的连接暂时解决，但是失去了keepalive 属性
+        NettyUtils.closeAndRemoveChannel(ctx);
         //为什么服务端会主动关闭与客户端的连接？？ TODO
         logger.warn("代理服务端连接关闭");
 //        ctx.close();

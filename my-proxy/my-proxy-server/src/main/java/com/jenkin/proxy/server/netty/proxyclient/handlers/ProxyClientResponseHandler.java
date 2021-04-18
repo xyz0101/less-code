@@ -71,6 +71,7 @@ public class ProxyClientResponseHandler extends ChannelInboundHandlerAdapter {
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
         ctx.close();
+        log.error("代理主机异常：{}",cause.getMessage(),cause);
         cause.printStackTrace();
     }
 
@@ -81,6 +82,7 @@ public class ProxyClientResponseHandler extends ChannelInboundHandlerAdapter {
      */
     @Override
     public void channelInactive(ChannelHandlerContext ctx) throws Exception {
+
         log.info("代理连接关闭！");
         ctx.close();
 

@@ -85,6 +85,7 @@ public class ProxyClient {
                 }
                 nettyProxyChannels=new NettyProxyChannels();
                 nettyProxyChannels.setConnectStatus(ProxyConnectStatusEnum.CONNECTING);
+                nettyProxyChannels.setServerChannel(ctx);
                 NettyConst.CHANNEL_MAP.put(key,nettyProxyChannels);
                 NettyConst.PROXY_CLIENT_EXECUTORS.execute(()->startClient(key));
                 log.info("等待代理客户端连接,核心线程数：{}，已使用线程数量：{}",NettyConst.PROXY_CLIENT_EXECUTORS.getCorePoolSize(),NettyConst.PROXY_CLIENT_EXECUTORS.getActiveCount());
@@ -134,7 +135,22 @@ public class ProxyClient {
      */
     private void connectToTargetHost(Bootstrap bootstrap, String key) {
         try {
-            ChannelFuture sync = bootstrap.connect(new InetSocketAddress(this.host, this.port)).sync();
+            ChannelFuture sync = bootstrap.connect(new InetSocketAddress(this.host, this.port)).addListener(
+                    future -> {
+                        if (!future.isSuccess()){
+                            log.error("代理主机连接失败，e:{}", future.cause().getMessage(), future.cause());
+                            NettyProxyChannels nettyProxyChannels=NettyConst.CHANNEL_MAP.get(key);
+                            if (nettyProxyChannels!=null&&nettyProxyChannels.getServerChannel()!=null){
+                                nettyProxyChannels.getServerChannel()
+                                        .writeAndFlush(new DefaultHttpResponse(HttpVersion.HTTP_1_1,
+                                                HttpResponseStatus.REQUEST_TIMEOUT));
+                                log.info("响应超时");
+                                nettyProxyChannels.getServerChannel().close();
+                            }
+                            NettyUtils.notifyKey(key);
+                        }
+                    }
+            ).sync() ;
             Channel channel = sync.channel();
             NettyProxyChannels nettyProxyChannels=NettyConst.CHANNEL_MAP.get(key);
             nettyProxyChannels = nettyProxyChannels==null? new NettyProxyChannels():nettyProxyChannels;
@@ -149,6 +165,7 @@ public class ProxyClient {
             NettyConst.CHANNEL_MAP.put(key,nettyProxyChannels);
             NettyUtils.notifyKey(key);
             channel.closeFuture().sync();
+            log.info("代理客户端channel关闭");
         } catch (InterruptedException e) {
             e.printStackTrace();
         }

@@ -8,6 +8,7 @@ import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelOption;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
+import io.netty.channel.socket.nio.NioChannelOption;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.handler.codec.http.*;
 import lombok.extern.slf4j.Slf4j;
@@ -24,14 +25,22 @@ public class NettyServer {
 
 
     public static void main(String[] args) {
+
+        new NettyServer().startNettyServer(NettyConst.SERVER_PORT);
+
+    }
+
+
+    public void startNettyServer(int port){
         NioEventLoopGroup connectors = new NioEventLoopGroup();
 
         NioEventLoopGroup handlers = new NioEventLoopGroup();
         ServerBootstrap serverBootstrap = new ServerBootstrap();
         serverBootstrap.group(connectors,handlers)
                 .channel(NioServerSocketChannel.class)
-                .option(ChannelOption.SO_BACKLOG,NettyConst.BACK_LOG_SIZE)
                 .option(ChannelOption.CONNECT_TIMEOUT_MILLIS,NettyConst.CONNECT_TIME_OUT*2)
+                .option(ChannelOption.SO_BACKLOG,NettyConst.BACK_LOG_SIZE)
+                .childOption(NioChannelOption.SO_KEEPALIVE,true)
                 .childHandler(new ChannelInitializer<SocketChannel>() {
 
                     @Override
@@ -47,8 +56,8 @@ public class NettyServer {
                     }
                 });
         try {
-            ChannelFuture sync = serverBootstrap.bind(NettyConst.SERVER_PORT).sync();
-            log.info("代理服务启动成功，端口：{}",NettyConst.SERVER_PORT);
+            ChannelFuture sync = serverBootstrap.bind(port).sync();
+            log.info("Netty代理服务启动成功，端口：{}",port);
             sync.channel().closeFuture().sync();
         } catch (InterruptedException e) {
             e.printStackTrace();
@@ -57,9 +66,7 @@ public class NettyServer {
             handlers.shutdownGracefully();
         }
 
-
     }
-
 
 
 

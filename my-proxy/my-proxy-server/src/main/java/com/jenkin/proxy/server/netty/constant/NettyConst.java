@@ -77,7 +77,7 @@ public class NettyConst {
     /**
      * 与目标主机连接超时的时间 ms
      */
-    public static final Integer CONNECT_TIME_OUT = 5000;
+    public static final Integer CONNECT_TIME_OUT = 5000*10;
     /**
      * 半连接队列的大小
      */
