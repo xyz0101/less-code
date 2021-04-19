@@ -43,10 +43,7 @@ public class ServerHandler extends ChannelInboundHandlerAdapter  {
             setKeyAndHost(key,host,ctx.channel());
             //处理connect请求
             if(HttpMethod.CONNECT.name().equals(request.method().name())){
-                if(!responseConnectRequest(key,host,ctx)){
-                    return;
-                }
-                return;
+                responseConnectRequest(key,host,ctx);
             }else{
                 //处理http请求
                 writeHttpResponseToClient(key,host,ctx,msg);
@@ -150,9 +147,7 @@ public class ServerHandler extends ChannelInboundHandlerAdapter  {
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
         logger.error("server 异常");
-//        NettyUtils.closeAndRemoveChannel(ctx);
         cause.printStackTrace();
-//        ctx.close();
     }
 
     @Override
