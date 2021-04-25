@@ -1,0 +1,15 @@
+spring:
+  cloud:
+    gateway:
+      routes:
+      - id: lsc-menu # 路由ID，名称可自定义
+        uri: lb://lsc-menu # 路由地址，可使用注册中心的服务，也可以直接指定地址
+        predicates: # 断言条件
+        - Path=/lsc/system/** # 匹配 system模块的所有地址
+      - id: lsc-generate # 路由ID，名称可自定义
+        uri: lb://lsc-generate # 路由地址，可使用注册中心的服务，也可以直接指定地址
+        predicates: # 断言条件
+        - Path=/lsc/code-generate/** # 匹配所code-generate 的有地址
+
+server:
+  port: 8050
