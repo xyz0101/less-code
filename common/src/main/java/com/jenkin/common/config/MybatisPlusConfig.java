@@ -1,11 +1,17 @@
 package com.jenkin.common.config;
 
+import com.baomidou.mybatisplus.annotation.DbType;
 import com.baomidou.mybatisplus.core.handlers.MetaObjectHandler;
 import com.baomidou.mybatisplus.core.parser.ISqlParser;
 import com.baomidou.mybatisplus.extension.parsers.BlockAttackSqlParser;
+import com.baomidou.mybatisplus.extension.plugins.MybatisPlusInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.OptimisticLockerInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.PaginationInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.SqlExplainInterceptor;
+import com.baomidou.mybatisplus.extension.plugins.inner.BlockAttackInnerInterceptor;
+import com.baomidou.mybatisplus.extension.plugins.inner.InnerInterceptor;
+import com.baomidou.mybatisplus.extension.plugins.inner.OptimisticLockerInnerInterceptor;
+import com.baomidou.mybatisplus.extension.plugins.inner.PaginationInnerInterceptor;
 import com.jenkin.common.shiro.utils.ShiroUtils;
 import org.apache.ibatis.reflection.MetaObject;
 import org.springframework.context.annotation.Bean;
@@ -27,39 +33,36 @@ import java.util.List;
 
 public class MybatisPlusConfig {
 
+
     /**
-         * mybatis-plus分页插件
-         */
-        @Bean
-        public PaginationInterceptor paginationInterceptor() {
-            PaginationInterceptor paginationInterceptor = new PaginationInterceptor();
-            List<ISqlParser> sqlParserList = new ArrayList<>();
-            // 攻击 SQL 阻断解析器、加入解析链
-            sqlParserList.add(new BlockAttackSqlParser());
-            paginationInterceptor.setSqlParserList(sqlParserList);
-            //paginationInterceptor.setLocalPage(true);// 开启 PageHelper 的支持
-            return paginationInterceptor;
-        }
+     * mybatis-plus分页插件 + 乐观锁插件
+     */
+    @Bean
+    public MybatisPlusInterceptor paginationInterceptor() {
+        MybatisPlusInterceptor paginationInterceptor = new MybatisPlusInterceptor();
+        List<InnerInterceptor> sqlParserList = new ArrayList<>();
+        // 攻击 SQL 阻断解析器、加入解析链
+        sqlParserList.add(new BlockAttackInnerInterceptor());
+        paginationInterceptor.setInterceptors(sqlParserList);
+        //乐观锁插件
+        paginationInterceptor.addInnerInterceptor(new OptimisticLockerInnerInterceptor());
 
 
-        /**
-         * 乐观锁mybatis插件
-         */
-        @Bean
-        public OptimisticLockerInterceptor optimisticLockerInterceptor() {
-            return new OptimisticLockerInterceptor();
-        }
+        // v3.4.0版本以上需要添加数据库类型，分页才生效
+        paginationInterceptor.addInnerInterceptor(new PaginationInnerInterceptor(DbType.MYSQL));
+        return paginationInterceptor;
+    }
 
+    /**
+     * 如果是对全表的删除或更新操作，就会终止该操作
+     *
+     * @return
+     */
+    @Bean
+    public BlockAttackInnerInterceptor sqlExplainInterceptor() {
+        return new BlockAttackInnerInterceptor();
+    }
 
-        /**
-         * 如果是对全表的删除或更新操作，就会终止该操作
-         *
-         * @return
-         */
-        @Bean
-        public SqlExplainInterceptor sqlExplainInterceptor() {
-            return new SqlExplainInterceptor();
-        }
 
         @Bean
         public MetaObjectHandler metaObjectHandler(){

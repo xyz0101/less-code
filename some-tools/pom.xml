@@ -14,16 +14,22 @@
     <description>Demo project for Spring Boot</description>
 
     <properties>
+
         <java.version>1.8</java.version>
         <baidu-api-version>4.15.3</baidu-api-version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <spring-boot.version>2.3.7.RELEASE</spring-boot.version>
-        <spring-cloud-alibaba.version>2.2.2.RELEASE</spring-cloud-alibaba.version>
     </properties>
 
 
     <dependencies>
+        <!-- https://mvnrepository.com/artifact/io.projectreactor.netty/reactor-netty -->
+        <!--<dependency>-->
+            <!--<groupId>io.projectreactor.netty</groupId>-->
+            <!--<artifactId>reactor-netty</artifactId>-->
+            <!--<version>1.0.6</version>-->
+        <!--</dependency>-->
+
         <dependency>
             <groupId>com.baidu.aip</groupId>
             <artifactId>java-sdk</artifactId>
@@ -43,6 +49,10 @@
             <groupId>com.jenkin</groupId>
             <artifactId>common</artifactId>
             <version>0.0.1-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-elasticsearch</artifactId>
         </dependency>
     </dependencies>
 

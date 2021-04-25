@@ -21,6 +21,7 @@ spring:
       discovery:
         namespace: lc-${spring.profiles.active}
         server-addr: nacos.jenkin.tech:8848
+        servivc: gateway
         watch:
           enabled: false
   profiles:

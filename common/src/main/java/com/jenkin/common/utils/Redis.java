@@ -1,5 +1,6 @@
 package com.jenkin.common.utils;
 
+import cn.hutool.core.util.ArrayUtil;
 import com.alibaba.fastjson.JSON;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -128,7 +129,8 @@ public class Redis {
             if (key.length == 1) {
                 redisTemplate.delete(key[0]);
             } else {
-                redisTemplate.delete(CollectionUtils.arrayToList(key));
+                List<String> strings = Arrays.asList(key);
+                redisTemplate.delete(strings);
             }
         }
     }
