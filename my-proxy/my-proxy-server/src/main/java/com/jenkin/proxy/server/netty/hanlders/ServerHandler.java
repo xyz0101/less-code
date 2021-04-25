@@ -128,6 +128,7 @@ public class ServerHandler extends ChannelInboundHandlerAdapter  {
         ctx.pipeline().remove(NettyConst.HTTP_RESPONSE_ENCODER);
     }
 
+
     /**
      * 为channel设置当前客户端连接所属的主机和key
      * @param key
