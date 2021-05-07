@@ -5,6 +5,7 @@ import lombok.Data;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.elasticsearch.annotations.Document;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -17,21 +18,25 @@ import java.util.List;
 @Data
 @ApiModel("磁力信息")
 @Document(indexName = "bt_info")
-public class BtInfoVO {
+public class BtInfoVO extends LengthVO{
     @Id
     private String id;
     private String infohash;
 
     private String name;
-
-    private long length;
-
+    private Date recordTime;
     private List<FileInfo> files;
 
+    private float score;
+
+
+
+
+
     @Data
-    static class FileInfo{
+    public static class FileInfo extends LengthVO{
         private List<String> path;
-        private long length;
+
     }
 
 }
