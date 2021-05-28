@@ -16,8 +16,8 @@ import java.util.stream.Collectors;
 public class Myers {
 
     public static void main(String[] args) {
-        String str1 = "ABCDEF";
-        String str2 = "GHIJK";
+        String str1 = "ABCADFEDSFG";
+        String str2 = "ASDFCVFEDGDC";
         myers(str1.toCharArray(),str2.toCharArray());
         /**
          * -A,B,-C,-D,+A,+S,E,+D,+C,F,+D
@@ -41,6 +41,7 @@ public class Myers {
            Map<Integer,Integer> temp = new HashMap<>();
 
             //移动当前步数下K的取值范围,这里面会记录下当前k上面最大的x坐标
+           //假设从原点出发（原点0,0肯定在斜线k上）那么如果要走一步，不论有没有走斜线（走斜线k不变）那么他的k必定是 +d或者-d
             //因为每次k都有两个可选项，所以k的步长是2
           loop: for (int k = -d; k <=d; k+=2) {
 
