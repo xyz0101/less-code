@@ -32,7 +32,6 @@ public class MyersAgain {
         char[] arr2 = str2.toCharArray();
         int m = arr1.length;
         int n = arr2.length;
-
         //我们需要得到一张图
         //横坐标标识步数，纵坐标代表k的取值，横纵坐标对应的值代表在步数d下能够到达的点
         //1、定义一个map，存储我们图里面横向的数据，key为k的值，而value为x坐标，其实也就是步数d
@@ -114,11 +113,11 @@ public class MyersAgain {
         }
 
 
-        Stack<Snack> snacks = generateSnake(dkPositions, arr1, arr2);
-        printSnack(snacks,arr1,arr2);
+        Stack<Snake> snakes = generateSnake(dkPositions, arr1, arr2);
+        printSnack(snakes,arr1,arr2);
     }
 
-    private static void printSnack(Stack<Snack> snacks, char[] arr1, char[] arr2) {
+    private static void printSnack(Stack<Snake> snakes, char[] arr1, char[] arr2) {
 
         int x = 0;
         int y = 0;
@@ -127,8 +126,8 @@ public class MyersAgain {
             System.out.println(arr2[y]);
             x++;y++;
         }
-        while(!snacks.isEmpty()){
-            Snack snack = snacks.pop();
+        while(!snakes.isEmpty()){
+            Snake snack = snakes.pop();
             Boolean right = snack.right;
             x = snack.x;
             y = snack.y;
@@ -154,12 +153,12 @@ public class MyersAgain {
         }
     }
 
-    private static Stack<Snack> generateSnake(List<Map<Integer, Integer>> dkPositions, char[] arr1, char[] arr2) {
-        Stack<Snack> snacks = new Stack<>();
+    private static Stack<Snake> generateSnake(List<Map<Integer, Integer>> dkPositions, char[] arr1, char[] arr2) {
+        Stack<Snake> snakes = new Stack<>();
 
         int currentX = arr1.length;
         int currentY = arr2.length;
-        snacks.push(new Snack(currentX,currentY,null));
+        snakes.push(new Snake(currentX,currentY,null));
         //从终点出发，往前回溯
         for(int d=dkPositions.size()-1;d>0;d--){
             Map<Integer, Integer> preKPositions = dkPositions.get(d-1);
@@ -170,7 +169,7 @@ public class MyersAgain {
             //向右走一步得到当前点的前一个点
             Integer prex2 = preKPositions.getOrDefault(k - 1,-1);
             if (prex1==null&&prex2==null) {
-                return snacks;
+                return snakes;
             }
             //需要判断是从哪一个点过来的
             boolean right = prex2!=null;
@@ -190,18 +189,18 @@ public class MyersAgain {
                 prey = right?y2:y1;
                 prex = right?prex2:prex1;
             }
-            snacks.push(new Snack(prex,prey,right));
+            snakes.push(new Snake(prex,prey,right));
             currentX = prex;
             currentY = prey;
 
         }
-        return snacks;
+        return snakes;
     }
 
     @Data
     @ToString
     @AllArgsConstructor
-    static class Snack{
+    static class Snake{
         private int x;
         private int y;
         private Boolean right;

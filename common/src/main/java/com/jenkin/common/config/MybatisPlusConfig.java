@@ -42,11 +42,9 @@ public class MybatisPlusConfig {
     @Bean
     public MybatisPlusInterceptor paginationInterceptor() {
         MybatisPlusInterceptor paginationInterceptor = new MybatisPlusInterceptor();
-        List<InnerInterceptor> sqlParserList = new ArrayList<>();
-        // 攻击 SQL 阻断解析器、加入解析链
-        sqlParserList.add(new BlockAttackInnerInterceptor());
-        paginationInterceptor.setInterceptors(sqlParserList);
         //乐观锁插件
+        paginationInterceptor.addInnerInterceptor(new BlockAttackInnerInterceptor());
+        paginationInterceptor.addInnerInterceptor(new JoinQueryInterceptor());
         paginationInterceptor.addInnerInterceptor(new OptimisticLockerInnerInterceptor());
 
 

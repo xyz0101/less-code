@@ -1,9 +1,12 @@
 package com.jenkin.common.utils;
 
 import cn.hutool.core.util.ArrayUtil;
+import com.jenkin.common.exception.ExceptionEnum;
+import com.jenkin.common.exception.LscException;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
+import java.lang.annotation.Annotation;
 import java.util.Collection;
 
 /**
@@ -48,5 +51,15 @@ public class NotEmptyUtils {
             }
         }
         return res;
+    }
+
+    public static void allNotEmptyThrow(Object... vals) {
+        if (!ArrayUtil.isEmpty(vals)) {
+            for (Object val : vals) {
+                if(!notEmpty(val)){
+                    throw new LscException(ExceptionEnum.NULL_PARAM_EXCEPTION);
+                }
+            }
+        }
     }
 }
