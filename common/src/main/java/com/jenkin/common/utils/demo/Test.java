@@ -11,14 +11,14 @@ import java.util.*;
  */
 public class Test {
     public static void main(String[] args) {
-
-
-
+      Map<String,String> map = new TreeMap<>(Comparator.comparingInt(Integer::parseInt));
+      map.put("3","123");
+      map.put("10","0");
+      map.put("5","1");
+        System.out.println(map);
 
     }
 
-    public String evaluate(String s, List<List<String>> knowledge) {
-         return s;
-    }
+    
+
 }
-

@@ -29,7 +29,7 @@ spring:
         watch:
           enabled: false
   profiles:
-    active: dev
+    active: devhome
 
 server:
   servlet:

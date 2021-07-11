@@ -3,6 +3,7 @@ package com.jenkin.sometools.btsearch.controller;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.jenkin.common.entity.Response;
 import com.jenkin.common.utils.BeanUtils;
+import com.jenkin.sometools.btsearch.dao.BtMapper;
 import com.jenkin.sometools.btsearch.service.BtService;
 import com.jenkin.sometools.btsearch.service.SyncElasticSearchService;
 import com.jenkin.sometools.btsearch.vo.BtInfoVO;
@@ -26,6 +27,7 @@ import org.springframework.data.elasticsearch.core.query.*;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
+import javax.annotation.Resource;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
