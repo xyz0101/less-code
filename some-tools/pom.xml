@@ -29,7 +29,11 @@
             <!--<artifactId>reactor-netty</artifactId>-->
             <!--<version>1.0.6</version>-->
         <!--</dependency>-->
-
+        <dependency>
+            <groupId>com.aspose</groupId>
+            <artifactId>pdf-jenkin</artifactId>
+            <version>18.9.0</version>
+        </dependency>
         <dependency>
             <groupId>com.baidu.aip</groupId>
             <artifactId>java-sdk</artifactId>

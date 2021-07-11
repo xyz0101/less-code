@@ -1,5 +1,6 @@
 package com.jenkin.common.entity.pos.system;
 
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.gitee.sunchenbin.mybatis.actable.annotation.Column;
 import com.gitee.sunchenbin.mybatis.actable.annotation.Table;
@@ -8,6 +9,7 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.experimental.FieldNameConstants;
+import org.apache.ibatis.annotations.Select;
 
 import java.io.Serializable;
 
@@ -42,5 +44,18 @@ public class MenuPo extends BasePo implements Serializable {
     private Integer menuOrder;
     @ApiModelProperty( "菜单类型，1：菜单，2、按钮")
     private Integer menuType;
+
+    @TableField(select = false,exist = false)
+    @ApiModelProperty("用户名称")
+    private String userName;
+    @TableField(select = false,exist = false)
+    @ApiModelProperty("用户邮箱")
+    private String userEmail;
+
+    @ApiModelProperty("角色名称")
+    @TableField(select = false,exist = false)
+    private String roleName;
+
+
 
 }
