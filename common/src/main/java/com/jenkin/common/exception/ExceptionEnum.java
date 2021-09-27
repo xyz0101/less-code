@@ -16,7 +16,8 @@ public enum ExceptionEnum {
     ERROR_QUESTION_EXCEPTION("513","问题有误，请重新开始任务"),
     ERROR_START_EXCEPTION("514","正在答题ing，请勿重复点击"),
     EXIST_USER_EXCEPTION("515","用户编号已存在"),
-    NULL_PARAM_EXCEPTION("516","参数不允许为空")
+    NULL_PARAM_EXCEPTION("516","参数不允许为空"),
+    CLIANT_OFFLINE_EXCEPTION("517","当前用户客户端未上线")
     ;
     ExceptionEnum(String code, String desc) {
         this.code = code;

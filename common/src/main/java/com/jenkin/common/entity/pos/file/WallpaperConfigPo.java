@@ -25,9 +25,11 @@ import java.io.Serializable;
 public class WallpaperConfigPo extends BasePo implements Serializable {
 
 
-    @ApiModelProperty(" ")
+    @ApiModelProperty("是否启用 ")
     private Boolean onFlag;
-    @ApiModelProperty(" ")
+    @ApiModelProperty("用户编码")
+    private String userCode;
+    @ApiModelProperty("策略json值 ")
     private String strategyValue;
     
 }

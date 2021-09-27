@@ -1,6 +1,7 @@
 package com.jenkin.fileservice.wallpaper_server.server;
 
 import com.jenkin.fileservice.wallpaper_server.hanlder.HeartBeatHandler;
+import com.jenkin.fileservice.wallpaper_server.hanlder.LoginHandler;
 import com.jenkin.fileservice.wallpaper_server.hanlder.WallpaperHandler;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.buffer.ByteBuf;
@@ -63,6 +64,7 @@ public class Server {
                          */
                         socketChannel.pipeline().addLast(new DelimiterBasedFrameDecoder(1024*10,byteBuf));
                         //自定义处理器
+                        socketChannel.pipeline().addLast("login",new LoginHandler());
                         socketChannel.pipeline().addLast("heartBeat",new HeartBeatHandler());
                         socketChannel.pipeline().addLast("wallpaper",new WallpaperHandler());
                     }

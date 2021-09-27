@@ -1,7 +1,10 @@
 package com.jenkin.common.enums;
 
 public enum TimeUnitEnum {
-
+    /**
+     * 秒
+     */
+    SECOND("second",0,"秒"),
     /**
      * 分钟
      */

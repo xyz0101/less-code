@@ -23,7 +23,7 @@ public class StartServer implements ApplicationListener<ContextRefreshedEvent> {
     public void onApplicationEvent(ContextRefreshedEvent contextRefreshedEvent) {
         synchronized (this){
             new Thread(()->{
-                new Server().start(23456);
+                new Server().start(9010);
             }).start();
         }
 

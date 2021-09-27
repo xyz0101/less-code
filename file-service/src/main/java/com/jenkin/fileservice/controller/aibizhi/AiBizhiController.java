@@ -4,14 +4,17 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.jenkin.common.anno.IgnoreCheck;
 import com.jenkin.common.entity.Response;
+import com.jenkin.common.entity.dtos.file.WallpaperConfigDto;
 import com.jenkin.common.entity.vos.aibizhi.AbzResponse;
 import com.jenkin.common.entity.vos.aibizhi.Category;
 import com.jenkin.common.entity.vos.aibizhi.Wallpaper;
 import com.jenkin.common.entity.vos.aibizhi.WallpaperConfigVO;
 import com.jenkin.common.enums.TimeUnitEnum;
+import com.jenkin.common.shiro.utils.ShiroUtils;
 import com.jenkin.common.utils.FileUtils;
 import com.jenkin.fileservice.service.aibizhi.AibizhiDeskDownloadService;
 import com.jenkin.fileservice.service.aibizhi.AibizhiService;
+import com.jenkin.fileservice.service.aibizhi.WallpaperConfigService;
 import com.jenkin.fileservice.wallpaper_server.strategy.BaseStrategy;
 import com.jenkin.fileservice.wallpaper_server.strategy.impl.RandomStrategy;
 import io.swagger.annotations.Api;
@@ -36,6 +39,9 @@ import java.util.List;
 @RequestMapping("/aibizhi")
 @Api(tags = "获取爱壁纸")
 public class AiBizhiController {
+    @Autowired
+    private WallpaperConfigService wallpaperConfigService;
+
     @Autowired
     AibizhiService aibizhiService;
     @Autowired
@@ -74,8 +80,12 @@ public class AiBizhiController {
 
     @PostMapping("/saveConfig")
     @ApiOperation("保存壁纸配置信息")
-    public Response<String> saveConfig(WallpaperConfigVO<JSONObject> configVO){
-
+    public Response<String> saveConfig(@RequestBody WallpaperConfigVO<JSONObject> configVO){
+        WallpaperConfigDto configByUser = wallpaperConfigService.getConfigByUser(ShiroUtils.getUserCode());
+        configByUser.setUserCode(ShiroUtils.getUserCode());
+        configByUser.setOnFlag(configVO.getOn());
+        configByUser.setStrategyValue(JSON.toJSONString(configVO.getData()));
+        wallpaperConfigService.saveWallpaperConfigInfo(configByUser);
         return Response.ok();
     }
 
@@ -84,24 +94,22 @@ public class AiBizhiController {
     @IgnoreCheck
     public Response<WallpaperConfigVO<JSONObject>> getConfig(){
 
-        RandomStrategy randomStrategy = new RandomStrategy();
-        List<String> list = new ArrayList<>();
-        list.add("4e4d610cdf714d2966000000");
-        list.add("4e4d610cdf714d2966000002");
-        list.add("4e4d610cdf714d2966000001");
-        randomStrategy.setCategories(list);
-        randomStrategy.setStrategyCode("RandomStrategy");
-        randomStrategy.setTimeGap(1);
-        randomStrategy.setTimeUnit(TimeUnitEnum.MINUTE.getIntCode());
-        randomStrategy.setUserCode("jenkin");
-
-        WallpaperConfigVO<JSONObject> wallpaperConfigVO = new WallpaperConfigVO<>();
-        wallpaperConfigVO.setOn(true);
-        wallpaperConfigVO.setData(JSON.parseObject(JSONObject.toJSONString(randomStrategy)));
-
-        return Response.ok(wallpaperConfigVO);
+        WallpaperConfigDto configByUser = wallpaperConfigService.getConfigByUser(ShiroUtils.getUserCode());
+        if(configByUser==null){
+            return Response.ok();
+        }
+        WallpaperConfigVO<JSONObject> configVO = new WallpaperConfigVO<>();
+        configVO.setOn(configByUser.getOnFlag());
+        configVO.setData( JSON.parseObject(configByUser.getStrategyValue()));
+        return Response.ok(configVO);
     }
 
+    @PostMapping("/changeWallpaper")
+    @ApiOperation("修改系统桌面壁纸")
+    public Response changeWallpaper(@RequestBody Wallpaper wallpaper){
+        wallpaperConfigService.changeWallpaper(wallpaper);
+        return Response.ok();
+    }
 
 
 }
