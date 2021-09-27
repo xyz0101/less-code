@@ -1,12 +1,19 @@
 package com.jenkin.fileservice.controller.aibizhi;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
+import com.jenkin.common.anno.IgnoreCheck;
 import com.jenkin.common.entity.Response;
 import com.jenkin.common.entity.vos.aibizhi.AbzResponse;
 import com.jenkin.common.entity.vos.aibizhi.Category;
 import com.jenkin.common.entity.vos.aibizhi.Wallpaper;
+import com.jenkin.common.entity.vos.aibizhi.WallpaperConfigVO;
+import com.jenkin.common.enums.TimeUnitEnum;
 import com.jenkin.common.utils.FileUtils;
 import com.jenkin.fileservice.service.aibizhi.AibizhiDeskDownloadService;
 import com.jenkin.fileservice.service.aibizhi.AibizhiService;
+import com.jenkin.fileservice.wallpaper_server.strategy.BaseStrategy;
+import com.jenkin.fileservice.wallpaper_server.strategy.impl.RandomStrategy;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +22,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.ByteArrayInputStream;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -63,6 +71,37 @@ public class AiBizhiController {
         String name = "img." + type.substring(6 );
         FileUtils.downloadFile(name,new ByteArrayInputStream(body),response);
     }
+
+    @PostMapping("/saveConfig")
+    @ApiOperation("保存壁纸配置信息")
+    public Response<String> saveConfig(WallpaperConfigVO<JSONObject> configVO){
+
+        return Response.ok();
+    }
+
+    @GetMapping("/getConfig")
+    @ApiOperation("获取壁纸配置信息")
+    @IgnoreCheck
+    public Response<WallpaperConfigVO<JSONObject>> getConfig(){
+
+        RandomStrategy randomStrategy = new RandomStrategy();
+        List<String> list = new ArrayList<>();
+        list.add("4e4d610cdf714d2966000000");
+        list.add("4e4d610cdf714d2966000002");
+        list.add("4e4d610cdf714d2966000001");
+        randomStrategy.setCategories(list);
+        randomStrategy.setStrategyCode("RandomStrategy");
+        randomStrategy.setTimeGap(1);
+        randomStrategy.setTimeUnit(TimeUnitEnum.MINUTE.getIntCode());
+        randomStrategy.setUserCode("jenkin");
+
+        WallpaperConfigVO<JSONObject> wallpaperConfigVO = new WallpaperConfigVO<>();
+        wallpaperConfigVO.setOn(true);
+        wallpaperConfigVO.setData(JSON.parseObject(JSONObject.toJSONString(randomStrategy)));
+
+        return Response.ok(wallpaperConfigVO);
+    }
+
 
 
 }
