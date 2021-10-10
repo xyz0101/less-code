@@ -5,11 +5,8 @@ import com.alibaba.fastjson.TypeReference;
 import com.jenkin.common.entity.Response;
 import com.jenkin.common.entity.vos.aibizhi.AbzResponse;
 import com.jenkin.common.entity.vos.aibizhi.Category;
-import com.jenkin.fileservice.wallpaper_server.strategy.WallpaperStrategy;
-import com.jenkin.fileservice.wallpaper_server.strategy.impl.OrderStrategy;
 
 import java.nio.ByteBuffer;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -20,7 +17,7 @@ import java.util.stream.Collectors;
  * @modified By：
  * @version: 1.0
  */
-public class Test {
+public class Test3 {
     public static void main(String[] args) throws InterruptedException {
 
         ByteBuffer byteBuffer = ByteBuffer.allocateDirect(5 * 1024 * 1024 * 1024);
@@ -28,10 +25,8 @@ public class Test {
         ByteBuffer byteBuffer2 = ByteBuffer.allocateDirect(5 * 1024 * 1024 * 1024);
         ByteBuffer byteBuffer3 = ByteBuffer.allocateDirect(5 * 1024 * 1024 * 1024);
         ByteBuffer byteBuffer4 = ByteBuffer.allocateDirect(5 * 1024 * 1024 * 1024);
-        ByteBuffer byteBuffer5 = ByteBuffer.allocateDirect(5 * 1024 * 1024 * 1024);
-        ByteBuffer byteBuffer6 = ByteBuffer.allocateDirect(5 * 1024 * 1024 * 1024);
-//        ByteBuffer byteBuffer7 = ByteBuffer.allocateDirect(1 * 1024 * 1024 * 128);
-//        ByteBuffer byteBuffer8 = ByteBuffer.allocateDirect(5 * 1024 * 1024 * 1024);
+
+
 //        ByteBuffer byteBuffer9 = ByteBuffer.allocateDirect(5 * 1024 * 1024 * 1024);
         Thread.sleep(60000);
 

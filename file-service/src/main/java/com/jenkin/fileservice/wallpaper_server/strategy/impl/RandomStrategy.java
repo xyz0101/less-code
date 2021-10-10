@@ -101,14 +101,11 @@ public class RandomStrategy extends BaseStrategy {
         return resolveWallpaper();
     }
 
-    private Integer calculateIndex(String key, Redis redis) {
-        Object o = redis.get(key);
-        if (o==null){
-            o="0";
-        }
-       return Integer.parseInt(o.toString());
-    }
+
     public String getStrategyCode(){
         return "RandomStrategy";
+    }
+    public String getStrategyName(){
+        return "随机策略";
     }
 }

@@ -14,10 +14,7 @@ import java.util.List;
  */
 @Data
 public  class BaseStrategy implements WallpaperStrategy{
-    /**
-     * 当前用户的壁纸索引
-     */
-    public static final String CURRENT_USER_WALLPAPER_INDEX_KEY="wallpaper:current:index:{userCode}";
+
     /**
      * 当前用户的壁纸的URL
      */
@@ -26,11 +23,20 @@ public  class BaseStrategy implements WallpaperStrategy{
      * 壁纸的分页大小
      */
     public static final Integer PAGE_SIZE = 20;
+    /**
+     * 是否启用
+     */
+    private boolean onFlag;
 
     /**
      * 策略编码
      */
     private String strategyCode;
+    /**
+     * 策略名称
+     */
+    private String strategyName;
+
     /**
      * 用户编码
      */

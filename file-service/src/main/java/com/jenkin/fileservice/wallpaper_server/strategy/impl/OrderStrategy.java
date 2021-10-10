@@ -31,6 +31,14 @@ public class OrderStrategy extends BaseStrategy {
      */
     public static final String CURRENT_USER_WALLPAPER_CLASS_INDEX_KEY="wallpaper:current:classIndex:{userCode}";
     /**
+     * 当前分类处于多少页
+     */
+    public static final String CURRENT_CATEGORY_PAGE_KEY = "wallpaper:current:category:{categoryCode}:{userCode}";
+    /**
+     * 页内计数
+     */
+    public static final String CURRENT_CATEGORY_WALLPAPER_INDEX_KEY = "wallpaper:current:index:{categoryCode}:{userCode}";
+    /**
      * 用户获取壁纸的重试次数
      */
     public static final String CURRENT_USER_WALLPAPER_RETRY_COUNT_KEY="wallpaper:current:retryCount:{userCode}";
@@ -41,7 +49,6 @@ public class OrderStrategy extends BaseStrategy {
 
 
 
-    private Integer start;
 
     /**
      * 顺序获取壁纸
@@ -51,14 +58,9 @@ public class OrderStrategy extends BaseStrategy {
     public Wallpaper resolveWallpaper() {
 
         Redis redis = ApplicationContextProvider.getBean(Redis.class);
-        String curIndexKey = CURRENT_USER_WALLPAPER_INDEX_KEY.replace("{userCode}",getUserCode());
-        int index = calculateIndex(curIndexKey,redis);
-        int i = index % 20;
-        int nextI = i+1;
-        int page = ((index/20)*20)+ i>0?i:0;
-        if(i==0){
-            nextI = 0;
-        }
+
+
+
         AibizhiService aibizhiService = ApplicationContextProvider.getBean(AibizhiService.class);
         String classIndexKey = CURRENT_USER_WALLPAPER_CLASS_INDEX_KEY.replace("{userCode}",getUserCode());
         Integer classIndex = calculateIndex(classIndexKey, redis);
@@ -71,14 +73,27 @@ public class OrderStrategy extends BaseStrategy {
             classIndex=0;
         }
         String classCode = categories.get(classIndex);
-        AbzResponse<Wallpaper> wallpaper = aibizhiService.getWallpaperWin(classCode, page,"picasso,170,windows");
+
+        String pageKey = CURRENT_CATEGORY_PAGE_KEY.replace("{categoryCode}",classCode).replace("{userCode}",getUserCode());
+        String indexKey = CURRENT_CATEGORY_WALLPAPER_INDEX_KEY.replace("{categoryCode}",classCode).replace("{userCode}",getUserCode());
+        Integer pageIndex = calculateIndex(pageKey,redis);
+        Integer index = calculateIndex(indexKey,redis);
+
+        AbzResponse<Wallpaper> wallpaper = aibizhiService.getWallpaperWin(classCode, pageIndex,"picasso,170,windows");
         List<Wallpaper> wallpaperList = wallpaper.getRes().getWallpaper();
         if (CollectionUtils.isEmpty(wallpaperList)){
             classIndex=classIndex+1;
         }else{
-            Wallpaper pic = wallpaperList.get(nextI);
-            redis.set(curIndexKey,nextI);
+            int ind = index%20;
+            index= index+1;
+            log.info("当前第 {} 页，第 {} 条，分类 {}",pageIndex,ind,classCode);
+            Wallpaper pic = wallpaperList.get(ind);
+            redis.set(indexKey,index);
             redis.set(classIndexKey,classIndex);
+
+            if(index%20==0){
+                redis.set(pageKey,pageIndex+1);
+            }
             log.info("获取壁纸 {} ",pic);
             return pic;
         }
@@ -102,6 +117,9 @@ public class OrderStrategy extends BaseStrategy {
 
     public String getStrategyCode(){
         return "OrderStrategy";
+    }
+    public String getStrategyName(){
+        return "顺序策略";
     }
 
 }

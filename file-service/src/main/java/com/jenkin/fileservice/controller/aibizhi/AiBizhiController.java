@@ -11,6 +11,7 @@ import com.jenkin.common.entity.vos.aibizhi.Wallpaper;
 import com.jenkin.common.entity.vos.aibizhi.WallpaperConfigVO;
 import com.jenkin.common.enums.TimeUnitEnum;
 import com.jenkin.common.shiro.utils.ShiroUtils;
+import com.jenkin.common.utils.ApplicationContextProvider;
 import com.jenkin.common.utils.FileUtils;
 import com.jenkin.fileservice.service.aibizhi.AibizhiDeskDownloadService;
 import com.jenkin.fileservice.service.aibizhi.AibizhiService;
@@ -84,7 +85,9 @@ public class AiBizhiController {
         WallpaperConfigDto configByUser = wallpaperConfigService.getConfigByUser(ShiroUtils.getUserCode());
         configByUser.setUserCode(ShiroUtils.getUserCode());
         configByUser.setOnFlag(configVO.getOn());
+        configVO.getData().put("userCode",ShiroUtils.getUserCode());
         configByUser.setStrategyValue(JSON.toJSONString(configVO.getData()));
+
         wallpaperConfigService.saveWallpaperConfigInfo(configByUser);
         return Response.ok();
     }
@@ -110,6 +113,18 @@ public class AiBizhiController {
         wallpaperConfigService.changeWallpaper(wallpaper);
         return Response.ok();
     }
+
+    @GetMapping("/getStrategy")
+    @ApiOperation("获取壁纸策略")
+    public Response<List<BaseStrategy>> getStrategy(){
+        String[] beanNamesForType = ApplicationContextProvider.getApplicationContext().getBeanNamesForType(BaseStrategy.class);
+        List<BaseStrategy> baseStrategies = new ArrayList<>();
+        for (String s : beanNamesForType) {
+            baseStrategies.add(ApplicationContextProvider.getBean(s,BaseStrategy.class));
+        }
+        return Response.ok(baseStrategies);
+    }
+
 
 
 }
