@@ -2,6 +2,7 @@ package com.jenkin.fileservice.wallpaper_server.hanlder;
 
 import com.alibaba.fastjson.JSON;
 import com.jenkin.common.entity.vos.aibizhi.Wallpaper;
+import com.jenkin.fileservice.wallpaper_server.WallpaperServerHelper;
 import com.jenkin.fileservice.wallpaper_server.server.Server;
 import com.jenkin.fileservice.wallpaper_server.strategy.BaseStrategy;
 import com.jenkin.fileservice.wallpaper_server.strategy.WallpaperStrategy;
@@ -66,6 +67,9 @@ public class WallpaperHandler extends ChannelInboundHandlerAdapter {
         log.info(operateData);
         BaseStrategy baseStrategy = JSON.parseObject(operateData, BaseStrategy.class);
         log.info("策略：",baseStrategy);
+        if (WallpaperServerHelper.getContext(baseStrategy.getUserCode())==null){
+            WallpaperServerHelper.addContext(baseStrategy.getUserCode(),ctx);
+        }
         String strategyCode = baseStrategy.getStrategyCode();
         WallpaperStrategy instance = WallpaperStrategy.getInstance(strategyCode, operateData);
         Wallpaper wallpaper = instance.resolveWallpaper();

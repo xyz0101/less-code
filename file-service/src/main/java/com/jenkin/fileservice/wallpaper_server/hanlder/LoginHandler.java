@@ -28,7 +28,6 @@ public class LoginHandler extends ChannelInboundHandlerAdapter {
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
 
-        log.info("心跳检测服务激活");
 
     }
 
