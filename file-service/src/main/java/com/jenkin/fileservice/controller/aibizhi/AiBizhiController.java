@@ -83,6 +83,9 @@ public class AiBizhiController {
     @ApiOperation("保存壁纸配置信息")
     public Response<String> saveConfig(@RequestBody WallpaperConfigVO<JSONObject> configVO){
         WallpaperConfigDto configByUser = wallpaperConfigService.getConfigByUser(ShiroUtils.getUserCode());
+        if(configByUser==null){
+            configByUser = new WallpaperConfigDto();
+        }
         configByUser.setUserCode(ShiroUtils.getUserCode());
         configByUser.setOnFlag(configVO.getOn());
         configVO.getData().put("userCode",ShiroUtils.getUserCode());
