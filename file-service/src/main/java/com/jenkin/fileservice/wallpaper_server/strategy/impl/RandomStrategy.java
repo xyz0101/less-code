@@ -74,16 +74,16 @@ public class RandomStrategy extends BaseStrategy {
         if (category!=null){
             int count = category.getCount();
             count = count/20;
-            int index = (int) (Math.random() * 100000);
+            int index = (int) (Math.random() * (100000+count));
             index = index%count;
-            int skip = index/PAGE_SIZE;
+//            int skip = index/PAGE_SIZE;
             int i = index % PAGE_SIZE;
-            if (i==0){
-                skip+=1;
-            }
-            skip=skip+ i;
-            log.info("准备获取壁纸，分类：{}，页数、：{}",classCode,skip);
-            AbzResponse<Wallpaper> wallpaper = aibizhiService.getWallpaperWin(classCode, skip,"picasso,170,windows");
+//            if (i==0){
+//                skip+=1;
+//            }
+//            skip=skip+ i;
+            log.info("准备获取壁纸，分类：{}，，索引： {}",classCode,index);
+            AbzResponse<Wallpaper> wallpaper = aibizhiService.getWallpaperWin(classCode, index,"picasso,170,windows");
             List<Wallpaper> wallpaperList = wallpaper.getRes().getWallpaper();
             if(!CollectionUtils.isEmpty(wallpaperList)){
                 log.info("获取到随机壁纸：{}",wallpaperList.get(i));

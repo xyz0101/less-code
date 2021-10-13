@@ -56,6 +56,7 @@ public class LoginHandler extends ChannelInboundHandlerAdapter {
             ByteBuf byteBuf = Unpooled.wrappedBuffer(JSON.toJSONString(option).getBytes(StandardCharsets.UTF_8));
             ctx.writeAndFlush(byteBuf);
         }else{
+            log.info("不是登陆请求");
             ctx.fireChannelRead(msg);
         }
     }

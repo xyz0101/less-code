@@ -11,11 +11,10 @@ import java.util.*;
  */
 public class Test {
     public static void main(String[] args) {
-      Map<String,String> map = new TreeMap<>(Comparator.comparingInt(Integer::parseInt));
-      map.put("3","123");
-      map.put("10","0");
-      map.put("5","1");
-        System.out.println(map);
+      Byte a = 2;
+      int b = 2;
+        System.out.println(a==b);
+        System.out.println((byte)b);
 
     }
 
